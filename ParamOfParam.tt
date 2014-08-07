@@ -2,17 +2,18 @@ postulate
   f : (A : U) -> A -> A
 
 f' : (A : U) -> (A' : A -> U) ->
-     (x : A) -> (x' : A' x) ->
-     A' (f x)
-f' A A' x x' = (f (A *i A') (x ,i x')).i
+     (a : A) -> (a' : A' a) ->
+     A' (f A a)
+f' A A' a a' = (f ((x : A) *i A' x) (a ,i a')).i
 
 
 
-f'' : (A : U) -> (A'1 : A -> U) ->(A'2 : A -> U) -> (A'' : (x:A) ->
-(x'1 : A'1 x) -> (x'2 : A'2 x) -> U) ->
-      (x : A) -> (x'1 : A'1 x ) ->(x'2 : A'2 x ) -> (x'' : A'' x x'1 x'2) ->
-      A'' (f x)  (f' A A'1 x x'1) (f' A A'2 x x'2)
-f'' A A'1 A'2 x x'1 x'2 x'' =
-    (f ((A *i A'1) *j (A'2 *i A'')) -- not quite correct, but the point remains
-       ((x ,i x'1) ,j (x'2 ,i x''))
+f'' : (A : U) -> (A'1 : A -> U) -> (A'2 : A -> U) -> (A'' : (a:A) -> (a'1 : A'1 a) -> (a'2 : A'2 a) -> U) ->
+      (a : A) -> (a'1 : A'1 a ) -> (a'2 : A'2 a ) -> (a'' : A'' a a'1 a'2) ->
+      A'' (f A a) (f' A A'1 a a'1) (f' A A'2 a a'2)
+f'' A A'1 A'2 a a'1 a'2 a'' =
+    (f ((w : ((x : A) *i A'1 x)) *j
+        ((y : A'2 (w i0)) *i A'' (w i0) (w.i) y)) -- not sure how to write this type using Thierry's rules.
+       ((a ,i a'1) ,j (a'2 ,i a''))
        ).j.i
+
