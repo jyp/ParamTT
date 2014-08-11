@@ -1,19 +1,16 @@
 %\documentclass[12pt,a4paper]{amsart}
 \documentclass[10pt,a4paper]{article}
-\ifx\pdfpageheight\undefined\PassOptionsToPackage{dvips}{graphicx}\else%
-\PassOptionsToPackage{pdftex}{graphicx}
-\PassOptionsToPackage{pdftex}{color}
-\fi
-
-\usepackage[all]{xy}
+\usepackage[utf8]{inputenc}
 \usepackage{url}
+
 \usepackage{verbatim}
 \usepackage{latexsym}
 \usepackage{amssymb,amstext,amsmath}
+\usepackage{mathpartir}
 
-\usepackage{float}
-\floatstyle{boxed}
-\restylefloat{figure}
+\newcommand\CSig[1]{\Sigma^{#1}}
+\newcommand\linefun[3]{\langle #2,#3 \rangle^{#1}}
+\newcommand\linepred[3]{[ #2,#3 ]^{#1}}
 
 \newcommand\myfrac[2]{
  \begin{array}{c}
@@ -55,14 +52,11 @@
 \newcommand{\rats}{\mathbb{Q}}
 \newcommand{\ints}{\mathbb{Z}}
 
-\usepackage{epsf}
-\usepackage{epsfig}
 % \usepackage{isolatin1}
 \usepackage{a4wide}
 \usepackage{verbatim}
 \usepackage{proof}
 \usepackage{latexsym}
-\usepackage{amssymb}
 % \usepackage{stmaryrd}
 \newcommand{\abs}[2]{\lambda #1 . #2}            % abstraction of #1 in #2
 \usepackage{mytheorems}
@@ -164,6 +158,8 @@
 \newcommand{\OO}{O}
 
 % end Marc's macros
+
+\input{unicodedefs}
 \begin{document}
 
 \title{A parametric Type theory}
@@ -486,6 +482,29 @@ $$
 $$
 since we have $(\rho g,u)$ in $(\Gamma.A)fg$.
 
+\section{Special Rules}
+
+
+
+Predicate over line. 
+\inferrule{Γ ⊢_I Q : A → U\\Γ ⊢_I P : (x:A) → P x → Q x → U}
+          {Γ ⊢_{I,i} \linepred i Q R : \CSig i A P → U}
+
+(The predicate Q is necessary to make the above projectible)
+
+Function over line:
+\inferrule{Γ ⊢_I f : A → B\\Γ ⊢_I g : (x:A) → P x → Q (f x)}
+          {Γ ⊢_{I,i} \linefun i f g : \CSig i A P → \CSig i B Q }
+
+
+Application: the above can be used to construct a square type:
+
+\inferrule{A : U \\ P,Q : A → U \\ A : (x:A) → Px → Qx → U}
+          {\CSig j {(\CSig i A P)} \linepred i Q R}
+
+Unfortunately we cannot construct a cube type, because we need a relation like this:
+
+$\CSig i A P → \linepred i Q R → U$
 
 \section{The unit interval}
  
