@@ -487,7 +487,7 @@ since we have $(\rho g,u)$ in $(\Gamma.A)fg$.
 
 
 Predicate over line. 
-\inferrule{Γ ⊢_I Q : A → U\\Γ ⊢_I P : (x:A) → P x → Q x → U}
+\inferrule{Γ ⊢_I Q : A → U\\Γ ⊢_I R : (x:A) → P x → Q x → U}
           {Γ ⊢_{I,i} \linepred i Q R : \CSig i A P → U}
 
 (The predicate Q is necessary to make the above projectible)
@@ -499,7 +499,7 @@ Function over line:
 
 Application: the above can be used to construct a square type:
 
-\inferrule{A : U \\ P,Q : A → U \\ A : (x:A) → Px → Qx → U}
+\inferrule{A : U \\ P,Q : A → U \\ R : (x:A) → Px → Qx → U}
           {\CSig j {(\CSig i A P)} \linepred i Q R}
 
 We cannot even inhabit the square type, because we have nothing of type:
@@ -510,6 +510,28 @@ We cannot construct a cube type, because we cannot construct a relation like thi
 
 $(x : \CSig i A P) → \linepred i Q R x → U$
 
+\section{Inductive definition of param}
+
+predicates. 
+\begin{align*}
+  U.i T &= T → U \\
+  ((x:A) → B x).i f &= (x:A) → (x' : A.i x) → (B (x,_i x')).i (f x) \\
+  (\CSig i A P).j (x,_i p) &= \CSig i (A.j x) (λq → P.j x q p) & \text{!!! swap}
+  % (A,i P).j x  &= a.j x & \text{$p$ says only $a$ is well-formed.}
+\end{align*}
+
+evaluation of values
+\begin{align*}
+  f.i a p &= (f (a,_i p)).i \\
+  (a,_i p).j  &= a.j ,_i p.j 
+\end{align*}
+
+To use with the typings:
+\begin{mathpar}
+\inferrule{Γ ⊢_I a : T i0 \\Γ ⊢_I p : T.i a}{Γ ⊢_{I,i} (a,_i p) : T}
+
+\inferrule{Γ ⊢_I \\Γ ⊢_{I,i} a : T}{Γ ⊢_I a.i : T.i a (i0)}
+\end{mathpar}
 
 \section{The unit interval}
  
