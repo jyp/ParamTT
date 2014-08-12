@@ -502,9 +502,14 @@ Application: the above can be used to construct a square type:
 \inferrule{A : U \\ P,Q : A → U \\ A : (x:A) → Px → Qx → U}
           {\CSig j {(\CSig i A P)} \linepred i Q R}
 
-Unfortunately we cannot construct a cube type, because we need a relation like this:
+We cannot even inhabit the square type, because we have nothing of type:
 
-$\CSig i A P → \linepred i Q R → U$
+$(x : \CSig i A P) → \linepred i Q R x$
+
+We cannot construct a cube type, because we cannot construct a relation like this:
+
+$(x : \CSig i A P) → \linepred i Q R x → U$
+
 
 \section{The unit interval}
  
