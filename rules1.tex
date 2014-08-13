@@ -512,19 +512,18 @@ $(x : \CSig i A P) → \linepred i Q R x → U$
 
 \section{Inductive definition of param}
 
-predicates. 
+$\CSig i A P$ is another notation for $(A ,_i P)$.
+
 \begin{align*}
   U.i T &= T → U \\
   ((x:A) → B x).i f &= (x:A) → (x' : A.i x) → (B (x,_i x')).i (f x) \\
-  (\CSig i A P).j (x,_i p) &= \CSig i (A.j x) (λq → P.j x q p) & \text{!!! swap}
-  % (A,i P).j x  &= a.j x & \text{$p$ says only $a$ is well-formed.}
+  % (\CSig i A P).j (x,_i p) &= \CSig i (A.j x) (λq → P.j x q p) & \text{!!! swap}
+  f.i a p &= (f (a,_i p)).i \\
+  (a,_i p).i  &= p \\
+  (a,_i p).j  &= a.j ,_i \mathsf{swap}( p.j)
 \end{align*}
 
-evaluation of values
-\begin{align*}
-  f.i a p &= (f (a,_i p)).i \\
-  (a,_i p).j  &= a.j ,_i p.j 
-\end{align*}
+swap works on every second and third arguments, and repeats every four.
 
 To use with the typings:
 \begin{mathpar}
@@ -533,6 +532,7 @@ To use with the typings:
 \inferrule{Γ ⊢_I \\Γ ⊢_{I,i} a : T}{Γ ⊢_I a.i : T.i a (i0)}
 \end{mathpar}
 
+If we interpret the index of ⊢ as a list (ordered), we never need to swap.
 \section{The unit interval}
  
  We can introduce a non-standard type $\UI$ with the rules
