@@ -503,31 +503,45 @@ By induction on $a$.
   ((x:A) → B x).i f &= (x:A) → (x' : A.i x) → (B (x,_i x')).i (f x) \\
   (λx. b[x]).i a p &= (b [a,_i p]).i \\
   (a,_i p)_T.i  &= p \\
-  (a,_i p)_T.j  &= (a.j ,_i \sw i j T p.j)_{T.j (a ,_i p)}
+  (a,_i p)_T.j  &= (a.j ,_i \sw i j T p.j)_{T.j (a ,_i p) j0}
 \end{align*}
 \end{definition}
 
+(!!! j0 missing below !!! )
 Remark on the last line: $p : T.i a$ so $p.j : (T.i a).j p$;  but the pair expects something of type $(T.j (a ,_i p)).i a.j$.
 That is, we need $\sw i j T$ to be a conversion from $T.i.j a a.j p$ to $T.j.i a p a.j$.
 
 \begin{definition}[$\sw i j T$]
 We define, by induction on $T$, the function family $\sw i j T$, such that
 it has type : $T.i.j a a'_i a'_j → T.j.i a a'_j a'_i $ where
-  
+
 \begin{align*}
   \sw i j {U} R a a'_i a'_j & = R a a'_j a'_i  \\
   \sw i j {(x:A) → B x} f a a'_i a'_j a'' & = \sw i j {B x} (f a a'_j a'_i (\sw j i A a'')) \\
-  \sw i j {(A ,_k P)_U} & = (A ,_k \sw i j {???} P) \\
-  \sw i j {(A ,_i P)_U} & =  \\
-  \sw i j {(A ,_j P)_U} & =  \\
+  \sw i j {(A ,_i P)_U} & = id \\
+  \sw i j {(A ,_j P)_U} & = id \\
+  \sw i j {(A ,_k P)_U} & = (\sw i j A ,_k \sw i j {\Pi A P}) & \text {guess}\\
 \end{align*}
 \end{definition}
+
+In the last line we must do the conversion: 
+
+\begin{align*}
+(A.i.j ,_k \sw k j {\CSig k A P → U} (\sw k i U P.i).j) t t'_i t'_j  ~~→~~ (A.j.i ,_k \sw k i {\CSig k A P → U} (\sw k j U P.j).i)t t'_j t'_i  \\
+(A.i.j t(k0)  t'_i(k0) t'_j(k0) ,_k \sw k j {\CSig k A P → U} (\sw k i U P.i).j t(k0) t.k t'_i(k0) t'_i.k t'_j(k0) t'_j.k )  ~~→~~ ... \\
+(a : A.i.j ,_k \sw k j {\CSig k A P → U} (\sw k i U P.i).j t(k0) t.k t'_i(k0) t'_i.k t'_j(k0) t'_j.k a )  ~~→~~ ... \\
+(... ×_k \sw k j U ((\sw k i U P.i).j t.k t'_i(k0) t'_i.k t'_j(k0) ) t'_j(k0) t'_j.k a ) \\
+(... ×_k  (\sw k i U P.i).j t.k t'_i(k0) t'_i.k t'_j(k0) t'_j.k t'_j(k0) a) \\
+(... ×_k  (\sw k i U P.i  (t.k, t'_i(k0)) (t'_i.k,t'_j(k0)) (t'_j.k,t'_j(k0))).j  a) \\
+(... ×_k  P.i (t.k, t'_i(k0))  (t'_j.k,t'_j(k0)) (t'_i.k,t'_j(k0)) ).j  a) \\
+(... ×_k  P.i.j (\text{many args in the order that we want} a) \\
+\end{align*}
 
 % \begin{definition}[$\iso i j T$]
 % \end{definition}
 
 \begin{theorem}[swap is a definitional isomorphism.]
-For every type $T$, $\sw i j T ∘ \sw j i T$ is the identity function.
+For every type $T$, $\sw i j T ∘ \sw j i T$ is the identity function, definitionally.
 \end{theorem}
 
 The following example (arbitrary parametricity of parametricity) forces swap:
