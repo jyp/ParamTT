@@ -54,7 +54,6 @@
 
 % \usepackage{isolatin1}
 \usepackage{a4wide}
-\usepackage{verbatim}
 \usepackage{proof}
 \usepackage{latexsym}
 % \usepackage{stmaryrd}
@@ -518,12 +517,14 @@ $\CSig i A P$ is another notation for $(A ,_i P)$.
   U.i T &= T → U \\
   ((x:A) → B x).i f &= (x:A) → (x' : A.i x) → (B (x,_i x')).i (f x) \\
   % (\CSig i A P).j (x,_i p) &= \CSig i (A.j x) (λq → P.j x q p) & \text{!!! swap}
-  f.i a p &= (f (a,_i p)).i \\
+  (λx. b[x]).i a p &= (b [a,_i p]).i \\
   (a,_i p).i  &= p \\
   (a,_i p).j  &= a.j ,_i \mathsf{swap}( p.j)
 \end{align*}
 
 swap works on every second and third arguments, and repeats every four.
+
+$swap f a b c d = swap (f a c b d)$ 
 
 To use with the typings:
 \begin{mathpar}
@@ -532,8 +533,11 @@ To use with the typings:
 \inferrule{Γ ⊢_I \\Γ ⊢_{I,i} a : T}{Γ ⊢_I a.i : T.i a (i0)}
 \end{mathpar}
 
-If we interpret the index of ⊢ as a list (ordered), we never need to swap.
-(Additionally, we can never abstract on an (explicitly) colored type, but that was already implicit above.)
+The following example (arbitrary parametricity of parametricity) forces swap:
+\begin{align*}
+  (λx. x.i).j a p &= (a ,_j p).i.j
+\end{align*}
+
 \section{The unit interval}
  
  We can introduce a non-standard type $\UI$ with the rules
