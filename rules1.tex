@@ -512,8 +512,15 @@ Remark on the last line: $p : T.i a$ so $p.j : (T.i a).j p$;  but the pair expec
 That is, we need $\sw i j T$ to be a conversion from $T.i.j a a.j p$ to $T.j.i a p a.j$.
 
 \begin{definition}[$\sw i j T$]
-We define, by induction on $T$, the function family $\sw i j T$, such that
-it has type : $T.i.j a a'_i a'_j → T.j.i a a'_j a'_i $ where
+We define, by induction on $T$, the function family $\sw i j T$.
+
+such that, given 
+\begin{align*}
+  a : T (i0) (j0) \\
+  a'_i : T (i0).j \\
+  a'_j : T (j0).i 
+\end{align*}
+it has type : $T.i.j a a'_i a'_j → T.j.i a a'_j a'_i$
 
 \begin{align*}
   \sw i j {U} R a a'_i a'_j & = R a a'_j a'_i  \\
@@ -540,6 +547,9 @@ In the last line we must do the conversion:
 % \begin{definition}[$\iso i j T$]
 % \end{definition}
 
+\begin{remark}
+  $\sw i j T = \sw j i T$
+\end{remark}
 \begin{theorem}[swap is a definitional isomorphism.]
 For every type $T$, $\sw i j T ∘ \sw j i T$ is the identity function, definitionally.
 \end{theorem}
