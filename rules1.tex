@@ -481,62 +481,60 @@ $$
 $$
 since we have $(\rho g,u)$ in $(\Gamma.A)fg$.
 
-\section{Special Rules}
-
-
-
-Predicate over line. 
-\inferrule{Γ ⊢_I Q : A → U\\Γ ⊢_I R : (x:A) → P x → Q x → U}
-          {Γ ⊢_{I,i} \linepred i Q R : \CSig i A P → U}
-
-(The predicate Q is necessary to make the above projectible)
-
-Function over line:
-\inferrule{Γ ⊢_I f : A → B\\Γ ⊢_I g : (x:A) → P x → Q (f x)}
-          {Γ ⊢_{I,i} \linefun i f g : \CSig i A P → \CSig i B Q }
-
-
-Application: the above can be used to construct a square type:
-
-\inferrule{A : U \\ P,Q : A → U \\ R : (x:A) → Px → Qx → U}
-          {\CSig j {(\CSig i A P)} \linepred i Q R}
-
-We cannot even inhabit the square type, because we have nothing of type:
-
-$(x : \CSig i A P) → \linepred i Q R x$
-
-We cannot construct a cube type, because we cannot construct a relation like this:
-
-$(x : \CSig i A P) → \linepred i Q R x → U$
 
 \section{Inductive definition of param}
 
-$\CSig i A P$ is another notation for $(A ,_i P)$.
+$\CSig i A P$ is another notation for $(A ,_i P)_U$.
 
-\begin{align*}
-  U.i T &= T → U \\
-  ((x:A) → B x).i f &= (x:A) → (x' : A.i x) → (B (x,_i x')).i (f x) \\
-  % (\CSig i A P).j (x,_i p) &= \CSig i (A.j x) (λq → P.j x q p) & \text{!!! swap}
-  (λx. b[x]).i a p &= (b [a,_i p]).i \\
-  (a,_i p).i  &= p \\
-  (a,_i p).j  &= a.j ,_i \mathsf{swap}( p.j)
-\end{align*}
-
-swap works on every second and third arguments, and repeats every four.
-
-$swap f a b c d = swap (f a c b d)$ 
-
-To use with the typings:
+Typings:
 \begin{mathpar}
-\inferrule{Γ ⊢_I a : T i0 \\Γ ⊢_I p : T.i a}{Γ ⊢_{I,i} (a,_i p) : T}
+\inferrule{Γ ⊢_I a : T i0 \\Γ ⊢_I p : T.i a}{Γ ⊢_{I,i} (a,_i p)_T : T}
 
 \inferrule{Γ ⊢_I \\Γ ⊢_{I,i} a : T}{Γ ⊢_I a.i : T.i a (i0)}
 \end{mathpar}
+
+\newcommand\iso[3]{\mathsf{iso}(#1,#2)_{#3}}
+\newcommand\sw[3]{\mathsf{sw}^{#1#2}_{#3}}
+
+\begin{definition}[$a.i$]
+By induction on $a$.
+\begin{align*}
+  U.i T &= T → U \\
+  ((x:A) → B x).i f &= (x:A) → (x' : A.i x) → (B (x,_i x')).i (f x) \\
+  (λx. b[x]).i a p &= (b [a,_i p]).i \\
+  (a,_i p)_T.i  &= p \\
+  (a,_i p)_T.j  &= (a.j ,_i \sw i j T p.j)_{T.j (a ,_i p)}
+\end{align*}
+\end{definition}
+
+Remark on the last line: $p : T.i a$ so $p.j : (T.i a).j p$;  but the pair expects something of type $(T.j (a ,_i p)).i a.j$.
+That is, we need $\sw i j T$ to be a conversion from $T.i.j a a.j p$ to $T.j.i a p a.j$.
+
+\begin{definition}[$\sw i j T$]
+We define, by induction on $T$, the function family $\sw i j T$, such that
+it has type : $T.i.j a a'_i a'_j → T.j.i a a'_j a'_i $ where
+  
+\begin{align*}
+  \sw i j {U} R a a'_i a'_j & = R a a'_j a'_i  \\
+  \sw i j {(x:A) → B x} f a a'_i a'_j a'' & = \sw i j {B x} (f a a'_j a'_i (\sw j i A a'')) \\
+  \sw i j {(A ,_k P)_U} & = (A ,_k \sw i j {???} P) \\
+  \sw i j {(A ,_i P)_U} & =  \\
+  \sw i j {(A ,_j P)_U} & =  \\
+\end{align*}
+\end{definition}
+
+% \begin{definition}[$\iso i j T$]
+% \end{definition}
+
+\begin{theorem}[swap is a definitional isomorphism.]
+For every type $T$, $\sw i j T ∘ \sw j i T$ is the identity function.
+\end{theorem}
 
 The following example (arbitrary parametricity of parametricity) forces swap:
 \begin{align*}
   (λx. x.i).j a p &= (a ,_j p).i.j
 \end{align*}
+
 
 \section{The unit interval}
  
@@ -657,6 +655,37 @@ $$
 
  We have $(a,_i p).i = p$.
 
+
+
+
+
+\section{Special Rules}
+
+
+
+Predicate over line. 
+\inferrule{Γ ⊢_I Q : A → U\\Γ ⊢_I R : (x:A) → P x → Q x → U}
+          {Γ ⊢_{I,i} \linepred i Q R : \CSig i A P → U}
+
+(The predicate Q is necessary to make the above projectible)
+
+Function over line:
+\inferrule{Γ ⊢_I f : A → B\\Γ ⊢_I g : (x:A) → P x → Q (f x)}
+          {Γ ⊢_{I,i} \linefun i f g : \CSig i A P → \CSig i B Q }
+
+
+Application: the above can be used to construct a square type:
+
+\inferrule{A : U \\ P,Q : A → U \\ R : (x:A) → Px → Qx → U}
+          {\CSig j {(\CSig i A P)} \linepred i Q R}
+
+We cannot even inhabit the square type, because we have nothing of type:
+
+$(x : \CSig i A P) → \linepred i Q R x$
+
+We cannot construct a cube type, because we cannot construct a relation like this:
+
+$(x : \CSig i A P) → \linepred i Q R x → U$
 
 
 \begin{thebibliography}{9}
