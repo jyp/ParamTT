@@ -503,28 +503,27 @@ By induction on $a$.
   ((x:A) → B x).i f &= (x:A) → (x' : A.i x) → (B (x,_i x')).i (f x) \\
   (λx. b[x]).i a p &= (b [a,_i p]).i \\
   (a,_i p)_T.i  &= p \\
-  (a,_i p)_T.j  &= (a.j ,_i \sw i j T p.j)_{T.j (a ,_i p) j0}
+  (a,_i p)_T.j  &= (a.j ,_i \sw i j T p.j)_{T.j ((a ,_i p) j0)}
 \end{align*}
 \end{definition}
 
-(!!! j0 missing below !!! )
-Remark on the last line: $p : T.i a$ so $p.j : (T.i a).j p$;  but the pair expects something of type $(T.j (a ,_i p)).i a.j$.
-That is, we need $\sw i j T$ to be a conversion from $T.i.j a a.j p$ to $T.j.i a p a.j$.
+
+Remark on the last line: $p : T.i a$ so $p.j : (T.i a).j p(j0)$. But, the second component of the pair should be of type $(T.j ((a ,_i p) j0)).i a.j$.
+That is, we need $\sw i j T$ to be a conversion from $T.i.j a(j0) a.j p(j0)$ to $T.j.i a(j0) p(j0) a.j$.
 
 \begin{definition}[$\sw i j T$]
-We define, by induction on $T$, the function family $\sw i j T$.
-
+We define, by induction on $T$, a family of functions $\sw i j T$
 such that, given 
 \begin{align*}
   a : T (i0) (j0) \\
   a'_i : T (i0).j \\
   a'_j : T (j0).i 
 \end{align*}
-it has type : $T.i.j a a'_i a'_j → T.j.i a a'_j a'_i$
+$\sw i j T : T.i.j a a'_i a'_j → T.j.i a a'_j a'_i$
 
 \begin{align*}
   \sw i j {U} R a a'_i a'_j & = R a a'_j a'_i  \\
-  \sw i j {(x:A) → B x} f a a'_i a'_j a'' & = \sw i j {B x} (f a a'_j a'_i (\sw j i A a'')) \\
+  \sw i j {(x:A) → B x} f a a'_i a'_j a'' & = \sw i j {B ((a,_ia'_j),_j(a'_i,_ia''))} (f a a'_j a'_i (\sw j i A a'')) \\
   \sw i j {(A ,_i P)_U} & = id \\
   \sw i j {(A ,_j P)_U} & = id \\
   \sw i j {(A ,_k P)_U} & = (\sw i j A ,_k \sw i j {\Pi A P}) & \text {guess}\\
