@@ -484,7 +484,7 @@ since we have $(\rho g,u)$ in $(\Gamma.A)fg$.
 
 \section{Inductive definition of param}
 
-$\CSig i A P$ is another notation for $(A ,_i P)_U$.
+$\CSig i A P$ and $(x:A) ×_i P x$ are other notations for $(A ,_i P)_U$.
 
 Typings:
 \begin{mathpar}
@@ -501,9 +501,9 @@ By induction on $a$.
 \begin{align*}
   U.i T &= T → U \\
   ((x:A) → B x).i f &= (x:A) → (x' : A.i x) → (B (x,_i x')).i (f x) \\
-  (λx. b[x]).i a p &= (b [a,_i p]).i \\
+  (f_{(x:A) → B x}).i a p &= ((f (a,_i p)_A)_{B (a,_i p)}).i \\
   (a,_i p)_T.i  &= p \\
-  (a,_i p)_T.j  &= (a.j ,_i \sw i j T p.j)_{T.j ((a ,_i p) j0)}
+  (a,_i p)_T.j  &= (a.j ,_i \sw i j T a (j0) a.j p.j)_{T.j ((a ,_i p) j0)}
 \end{align*}
 \end{definition}
 
@@ -516,17 +516,18 @@ We define, by induction on $T$, a family of functions $\sw i j T$
 such that, given 
 \begin{align*}
   a : T (i0) (j0) \\
-  a'_i : T (i0).j \\
-  a'_j : T (j0).i 
+  a_i : T (j0).i \\
+  a_j : T (i0).j \\
+  a_{ij} : T.i.j a a_j a_i 
 \end{align*}
-$\sw i j T : T.i.j a a'_i a'_j → T.j.i a a'_j a'_i$
+$\sw i j T a a' a'_j a'_i$ has type  $T.j.i a a'_j a'_i$.
 
 \begin{align*}
-  \sw i j {U} R a a'_i a'_j & = R a a'_j a'_i  \\
-  \sw i j {(x:A) → B x} f a a'_i a'_j a'' & = \sw i j {B ((a,_ia'_j),_j(a'_i,_ia''))} (f a a'_j a'_i (\sw j i A a'')) \\
-  \sw i j {(A ,_i P)_U} & = id \\
-  \sw i j {(A ,_j P)_U} & = id \\
-  \sw i j {(A ,_k P)_U} & = (\sw i j A ,_k \sw i j {\Pi A P}) & \text {guess}\\
+  \sw i j {U} A P Q R a a'_i a'_j & = R a a'_j a'_i  \\
+  \sw i j {(x:A) → B x} f f_j f_i f_{ij} a a'_i a'_j a'' & = \sw i j {B ((a,_ia'_j),_j(a'_i,_ia''))} (f a a'_j a'_i (\sw j i A a'')) \\
+  \sw i j {(A ,_i P)_U} x x_j x_i x_{ij} & = x_{ij} \\
+  \sw i j {(A ,_j P)_U} x x_j x_i x_{ij} & = x_{ij} \\
+  \sw i j {(A ,_k P)_U} (x ,_k x_k)(x_j ,_k x_{jk})(x_i ,_k x_{ik}) & = (\sw i j A x x_j x_i x_{ij},_k \sw i j {P ((x,x_i),(x_j,x_{ij}))} x_k x_{ik} x_{jk}) \\
 \end{align*}
 \end{definition}
 
