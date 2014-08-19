@@ -520,45 +520,46 @@ such that, given
   a_j : T (i0).j \\
   a_{ij} : T.i.j a a_j a_i 
 \end{align*}
-$\sw i j T a a' a'_j a'_i$ has type  $T.j.i a a'_j a'_i$.
+$\sw i j T a a_j a_i a_{ij}$ has type  $T.j.i a a_i a_j$.
 
 \begin{align*}
-  \sw i j {U} A P Q R a a'_i a'_j & = R a a'_j a'_i  \\
-  \sw i j {(x:A) → B x} f f_j f_i f_{ij} a a'_i a'_j a'' & = \sw i j {B ((a,_ia'_j),_j(a'_i,_ia''))} (f a a'_j a'_i (\sw j i A a'')) \\
+  \sw i j {U} A A_j A_i A_{ij} a a_i a_j & = A_{ij} a a_j a_i  \\
+  \sw i j {(x:A) → B[x]} f f_j f_i f_{ij} a a_i a_j a_{ji} & = \sw i j {B[((a,_ia_i),_j(a_j,_ia_{ji}))]} (f a)
+(f_j a a_j) (f_i a a_i) (f_{ij} a a_j a_i (\sw j i A a a_i a_j a_{ji})) \\
   \sw i j {(A ,_i P)_U} x x_j x_i x_{ij} & = x_{ij} \\
   \sw i j {(A ,_j P)_U} x x_j x_i x_{ij} & = x_{ij} \\
-  \sw i j {(A ,_k P)_U} (x ,_k x_k)(x_j ,_k x_{jk})(x_i ,_k x_{ik}) & = (\sw i j A x x_j x_i x_{ij},_k \sw i j {P ((x,x_i),(x_j,x_{ij}))} x_k x_{ik} x_{jk}) \\
+  \sw i j {(A ,_k P)_U} (x ,_k x_k) (x_j ,_k x_{jk}) (x_i ,_k x_{ik}) (x_{ij},_k x_{ijk}) & = 
+    (\sw i j A x x_j x_i x_{ij},_k \sw i j {P ((x,_ix_i),_j(x_j,_i x_{ij}))} x_k x_{jk} x_{jk} x_{ijk})_T
 \end{align*}
 \end{definition}
 
-In the last line we must do the conversion: 
+ In the last line we have $T = (x_{ji}:A.j.i x x_i x_j) \times_k P.j.i x x_i x_j x_{ji} x_k x_{ik} x_{jk}$
+and we have the following type
 
 \begin{align*}
-(A.i.j ,_k \sw k j {\CSig k A P → U} (\sw k i U P.i).j) t t'_i t'_j  ~~→~~ (A.j.i ,_k \sw k i {\CSig k A P → U} (\sw k j U P.j).i)t t'_j t'_i  \\
-(A.i.j t(k0)  t'_i(k0) t'_j(k0) ,_k \sw k j {\CSig k A P → U} (\sw k i U P.i).j t(k0) t.k t'_i(k0) t'_i.k t'_j(k0) t'_j.k )  ~~→~~ ... \\
-(a : A.i.j ,_k \sw k j {\CSig k A P → U} (\sw k i U P.i).j t(k0) t.k t'_i(k0) t'_i.k t'_j(k0) t'_j.k a )  ~~→~~ ... \\
-(... ×_k \sw k j U ((\sw k i U P.i).j t.k t'_i(k0) t'_i.k t'_j(k0) ) t'_j(k0) t'_j.k a ) \\
-(... ×_k  (\sw k i U P.i).j t.k t'_i(k0) t'_i.k t'_j(k0) t'_j.k t'_j(k0) a) \\
-(... ×_k  (\sw k i U P.i  (t.k, t'_i(k0)) (t'_i.k,t'_j(k0)) (t'_j.k,t'_j(k0))).j  a) \\
-(... ×_k  P.i (t.k, t'_i(k0))  (t'_j.k,t'_j(k0)) (t'_i.k,t'_j(k0)) ).j  a) \\
-(... ×_k  P.i.j (\text{many args in the order that we want} a) \\
+ x &: A(i0)(j0) \\
+ x_k &: P(i0)(j0) x \\
+ x_j &: A(i0).j x \\
+ x_{jk} &: P(i0).j x x_j x_k \\
+ x_i &: A(j0).i x \\
+ x_{ik} &: P(j0).i x x_i x_k \\
+ x_{ij} &: A.i.j x x_j x_i \\
+ x_{ijk} &: P.i.j x x_j x_i x_{ij} x_k x_{jk} x_{ik}
 \end{align*}
+
+
 
 % \begin{definition}[$\iso i j T$]
 % \end{definition}
 
-\begin{remark}
-  $\sw i j T = \sw j i T$
-\end{remark}
 \begin{theorem}[swap is a definitional isomorphism.]
-For every type $T$, $\sw i j T ∘ \sw j i T$ is the identity function, definitionally.
+For every closed type $T$, we have $\sw i j T x x_j x_i (\sw j i T x x_i x_j x_{ji}) = x_{ji}$, definitionally.
 \end{theorem}
 
 The following example (arbitrary parametricity of parametricity) forces swap:
 \begin{align*}
   (λx. x.i).j a p &= (a ,_j p).i.j
 \end{align*}
-
 
 \section{The unit interval}
  
