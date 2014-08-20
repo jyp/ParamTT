@@ -411,6 +411,18 @@ $$\lambda X\lambda a\lambda f~~f~(f~(a,_x a_0),_x a_1)$$
 is an element $l:L$ representing the list $[a_0,a_1]$ and such that
 $$l(x0) = \lambda X\lambda a\lambda f~~f~(f~a)$$
 
+
+$L.x n$ is then the type of vectors of size $n$:
+
+\begin{align*}
+L.x n = & ∀X. ∀X'. 
+        & ∀z:X. ∀z':(X → A → X').
+        & ∀s:X→X. ∀s':(∀m. A → X'(s m)).
+        & X'(n z s)
+\end{align*}
+
+One checks: $λX X' z z' s s'. s' (sn) a_0 (s' z a_1 z')$ has type $L.x 2$.
+
 \section{Semantics}
 
  A context $\Gamma\vdash_I$ is interpreted
