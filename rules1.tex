@@ -546,12 +546,20 @@ $\sw i j T a a_j a_i a_{ij}$ has type  $T.j.i a a_i a_j$.
   \sw i j {(A ,_i P)_U} x x_j x_i x_{ij} & = x_{ij} \\
   \sw i j {(A ,_j P)_U} x x_j x_i x_{ij} & = x_{ij} \\
   \sw i j {(A ,_k P)_U} (x ,_k x_k) (x_j ,_k x_{jk}) (x_i ,_k x_{ik}) (x_{ij},_k x_{ijk}) & = 
-    (\sw i j A x x_j x_i x_{ij},_k \sw i j {P ((x,_jx_j),_i(x_i,_j x_{ij}))} x_k x_{jk} x_{jk} x_{ijk})_T
+    (\sw i j A x x_j x_i x_{ij},_k \sw i j {P ((x,_jx_j),_i(x_i,_j x_{ij}))} x_k x_{jk} x_{jk} x_{ijk})_X
 \end{align*}
 \end{definition}
 
- In the last line we have $T = (x_{ji}:A.j.i x x_i x_j) \times_k P.j.i x x_i x_j x_{ji} x_k x_{ik} x_{jk}$
-and we have the following type
+Comment for the last line. The source type $W$ of the swap is
+$(x_{ij}:A.i.j x x_j x_i) \times_k P.i.j x x_j x_i x_{ij} x_k x_{jk}
+x_{ik}$. By computation (using other cases of the definition), all the
+occurences of swap disappear in $W$.
+
+The target type is $X$ and $X = (x_{ji}:A.j.i x x_i x_j) \times_k
+P.j.i x x_i x_j x_{ji} x_k x_{ik} x_{jk}$.  One might think that swaps
+should be applied to certain variables in $X$, but it is not
+the case.  This can be checked by verifying that the following types
+for variables match both the source and the target.
 
 \begin{align*}
  x &: A(i0)(j0) \\
@@ -563,7 +571,6 @@ and we have the following type
  x_{ij} &: A.i.j x x_j x_i \\
  x_{ijk} &: P.i.j x x_j x_i x_{ij} x_k x_{jk} x_{ik}
 \end{align*}
-
 
 
 % \begin{definition}[$\iso i j T$]
