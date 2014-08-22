@@ -82,6 +82,7 @@ T ∋_{∅} x &= T \\
 T ∋_{J,k} x & = ((T ∋_J x) [({x_I},_k {x_{I,k}}) /x \mid I ⊂ J]).k   x_J
 \end{align*}
 
+Then, variables must be swapped in the target type, using the mapping: $x_{σ(I)} ↦ \sw {σ} T ⋯ x_I$.
 
 \begin{definition}[Reduction]~
 
@@ -128,7 +129,7 @@ $T.i.j a(j0) a.j p(j0)$ to $T.j.i a(j0) p(j0) a.j$.
   sequences are guaranteed to be consistent (one is a swap of the
   other). In fact, they are inferrable from the type of the last
   argument, because $n$ is a neutral term.
-\item $ij$ stands for the substitution $ij ↦ ji$.
+\item $ij$ stands for the substitution $i↦j, j↦i$.
 \item (***): The source type of the swap is
 $$W = (x_{ij}:A.i.j x x_j x_i) \times_k P.i.j x x_j x_i x_{ij} x_k x_{jk}
 x_{ik}$$ By computation (using other cases of the definition), all the
