@@ -10,6 +10,7 @@
 \newcommand\CTimes[3]{#2 ×_{#1} #3}
 \newcommand\sw[2]{\mathsf{sw}^{#1}_{#2}}
 \newcommand\dom{\mathsf{dom}}
+\newcommand\param[1]{\!\cdot\!#1~}
 
 
 \input{unicodedefs}
@@ -29,7 +30,7 @@
     ρ,σ & ::= permutations \\
     t,u,A,B & ::= x ~|~ U \\
             & ~|~ λx:A. t      ~|~ t u ~|~ (x:A) → B \\
-            & ~|~ \CC i t u A  ~|~ t.i ~|~ \sw {σ} T
+            & ~|~ \CC i t u A  ~|~ t \param i ~|~ \sw {σ} T
   \end{align*}
 \end{definition}
 $\CSig i A P$ and $(x:A) ×_i P x$ are other notations for $(A ,_i P)_U$.
@@ -53,7 +54,7 @@ Types:
 
 Terms:
   \begin{mathpar}
-    \inferrule[Var]{x:A ∈ Γ \\Γ ⊢_I }{Γ ⊢_I x : A}
+    \inferrule[Var]{x:A ∈ Γ \\Γ ⊢_I A}{Γ ⊢_I x : A}
 
     \inferrule[Wk]{Γ ⊢_I A \\Γ ⊢_I t : T}{Γ,x:A ⊢_I t : T}
 
@@ -63,9 +64,9 @@ Terms:
 
     \\\inferrule[Coloring]{Γ ⊢_I \\Γ ⊢_I a : T i0 \\Γ ⊢_I p : T.i a}{Γ ⊢_{I,i} (a,_i p)_T : T}
 
-    \inferrule[Param]{Γ ⊢_I \\Γ ⊢_{I,i} a : T}{Γ ⊢_I a.i : T.i a (i0)}
+    \inferrule[Param]{Γ ⊢_I \\Γ ⊢_{I,i} a : T}{Γ ⊢_I a \param i : T \param i a (i0)}
  
-    \inferrule[Swap]{\dom (σ) = J \\ Γ ⊢_{I,J} T }{Γ ⊢_{I,J} \sw {σ} T : (x : T)_J → T ∋_{(σ J)} x  }
+    \inferrule[Swap]{\dom (σ) = J \\ I ∩ J = ∅ \\ Γ ⊢_{I} T }{Γ ⊢_{I} \sw {σ} T : (x : T)_J → T ∋_{(σ J)} x  }
 
   \end{mathpar}
 \end{definition}
@@ -78,7 +79,7 @@ where the hypercubic expansions used in the swap rule are defined as follows:
 \end{align*}
 \begin{align*}
 T ∋_{∅} x &= T \\
-T ∋_{J,k} x & = (T_J[({x_I},_k {x_{I,k}}) /x \mid I ⊂ J]).k   x_J
+T ∋_{J,k} x & = ((T ∋_J x) [({x_I},_k {x_{I,k}}) /x \mid I ⊂ J]).k   x_J
 \end{align*}
 
 
@@ -94,10 +95,10 @@ Param:
 \begin{align*}
   U.i T &= T → U \\
   ((x:A) → B x).i f &= (x:A) → (x' : A.i x) → (B (x,_i x')).i (f x) \\
-  (λx. b[x]).i &= (λx:A. λx':A.i x. b[(x,x')].i) \\
+  (λx. b[x]).i &= (λx:A. λx':A.i x. b[\CC i x {x'} A].i) \\
   (f a).i &= f.i (a (i0)) (a.i) \\
   (a,_i p)_T.i  &= p \\
-  (a,_i p)_T.j  &= (a.j ,_i \sw {i j} T a (j0) a.j p.j)_{T.j ((a ,_i p) j0)}  & (*) \\
+  (a,_i p)_T.j  &= (a.j ,_i \sw {i j} T   a(j0)   a.j   p(j0)   p.j)_{T.j ((a ,_i p) j0)}  & (*) \\
     (\sw {σ} T).i  &= \sw {σ,i↦i} T \\ 
 \end{align*}
 
