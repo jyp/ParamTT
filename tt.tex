@@ -8,6 +8,7 @@
 \newcommand\CC[4]{(#2,_{#1} #3)_{#4}}
 \newcommand\CSig[1]{\Sigma^{#1}}
 \newcommand\CTimes[3]{#2 ×_{#1} #3}
+\newcommand\SW[2]{\mathsf{SW}^{#1}_{#2}}
 \newcommand\sw[2]{\mathsf{sw}^{#1}_{#2}}
 \newcommand\dom{\mathsf{dom}}
 \newcommand\param[1]{\!\cdot\!#1~}
@@ -24,98 +25,95 @@
 \maketitle
 
 
-\begin{definition}[Syntax of terms]
+\begin{definition}[Syntax of terms and contexts]
   
   \begin{align*}
-    ρ,σ & ::= permutations \\
     t,u,A,B & ::= x ~|~ U \\
             & ~|~ λx:A. t      ~|~ t u ~|~ (x:A) → B \\
-            & ~|~ \CC i t u A  ~|~ t \param i ~|~ \sw {σ} T
+            & ~|~ \CC i t u A  ~|~ t \param i ~|~ \sw {ij} T \\
+    \Gamma,\Delta & ::= () ~|~ \Gamma,x:A ~|~ \Gamma,I 
   \end{align*}
 \end{definition}
 $\CSig i A P$ and $(x:A) ×_i P x$ are other notations for $(A ,_i P)_U$.
 
+ We use $I,J,…$ for finite {\em set} of colours.
+
 \begin{definition}[Typing relation]
 Contexts:
   \begin{mathpar}
-    \inferrule[Empty]{~}{ ⊢_I }
+    \inferrule[Empty]{~}{ ⊢ }
 
-    \inferrule[Cons]{Γ⊢_I \\ Γ ⊢_I A }{ Γ,A ⊢_I }
+    \inferrule[Cons]{Γ⊢ \\ Γ ⊢ A }{ Γ,A ⊢ }
   \end{mathpar}
 (Could be removed in presence of weakening; except Param rules uses it.)
  
 Types:
  \begin{mathpar}
-    \inferrule[Universe]{Γ ⊢_I}{Γ ⊢_I U : U}
+    \inferrule[Universe]{Γ ⊢}{Γ ⊢ U : U}
 
-    \inferrule[Pi]{Γ ⊢_I A : U \\ Γ,x:A ⊢_I B : U}{Γ ⊢_I (x:A) → B : U}
+    \inferrule[Pi]{Γ ⊢ A : U \\ Γ,x:A ⊢ B : U}{Γ ⊢ (x:A) → B : U}
 
   \end{mathpar}
 
 Terms:
   \begin{mathpar}
-    \inferrule[Var]{x:A ∈ Γ \\Γ ⊢_I A}{Γ ⊢_I x : A}
+    \inferrule[Conv]{Γ ⊢ t:A \\ A = B}{Γ ⊢ t : B}
 
-    \inferrule[Wk]{Γ ⊢_I A \\Γ ⊢_I t : T}{Γ,x:A ⊢_I t : T}
+    \inferrule[Var]{Γ ⊢ A}{Γ,x:A ⊢ x : A}
 
-    \inferrule[Lam]{Γ,x:A ⊢_I B}{Γ ⊢_I λx:A.b : (x:A) → B}
+    \inferrule[Wk]{Γ ⊢ A \\Γ ⊢ t : T}{Γ,x:A ⊢ t : T}
+
+    \inferrule[CWk]{Γ ⊢ t : T}{Γ,I ⊢ t : T}
+
+    \inferrule[Lam]{Γ,x:A ⊢ B}{Γ ⊢ λx:A.b : (x:A) → B}
  
-    \inferrule[App]{Γ ⊢_I t : (x:A) → B \\ Γ ⊢_I u : A}{Γ ⊢_I t u: B[u/x] }
+    \inferrule[App]{Γ ⊢ t : (x:A) → B[x] \\ Γ ⊢ u : A}{Γ ⊢ t u: B[u] }
 
-    \\\inferrule[Coloring]{Γ ⊢_I \\Γ ⊢_I a : T i0 \\Γ ⊢_I p : T.i a}{Γ ⊢_{I,i} (a,_i p)_T : T}
+    \\\inferrule[Coloring]{Γ,I ⊢ a : T i0 \\Γ,I ⊢ p : T.i a}{Γ,I,i ⊢ (a,_i p)_T : T}
 
-    \inferrule[Param]{Γ ⊢_I \\Γ ⊢_{I,i} a : T}{Γ ⊢_I a \param i : T \param i a (i0)}
+    \inferrule[Param]{Γ,I,i ⊢ a : T}{Γ,I ⊢ a \param i : T \param i a (i0)}
  
-    \inferrule[Swap]{\dom (σ) = J \\ I ∩ J = ∅ \\ Γ ⊢_{I} T }{Γ ⊢_{I} \sw {σ} T : (x : T)_J → T ∋_{(σ J)} x  }
+%    \inferrule[Swap]{\dom (σ) = J \\ I ∩ J = ∅ \\ Γ ⊢_{I} T }{Γ ⊢_{I} \sw {σ} T : (x : T)_J → T ∋_{(σ J)} x  }
+
+    \inferrule[Swap]{Γ,I,i,j ⊢ T }{Γ,I ⊢ \sw {ij} T : \SW {ij} T}
 
   \end{mathpar}
 \end{definition}
 
-where the hypercubic expansions used in the swap rule are defined as follows:
-
-\begin{align*}
-(x:T)_{∅} & = x:T \\
-(x:T)_{i,J} & = (x:T(i0))_J, (x_i:T.i x)_J
-\end{align*}
-\begin{align*}
-T ∋_{∅} x &= T \\
-T ∋_{J,k} x & = ((T ∋_J x) [({x_I},_k {x_{I,k}}) /x \mid I ⊂ J]).k   x_J
-\end{align*}
-
-Then, variables must be swapped in the target type, using the mapping: $x_{σ(I)} ↦ \sw {σ} T ⋯ x_I$.
+where $\SW {ij} T = (x:T(i0)(j0)) → (x_j:T(i0).j x) → (x_i : T(j0).i x) → T.i.j x x_j x_i → T.j.i x x_i x_j$.
 
 \begin{definition}[Reduction]~
 
 Functions:
 \begin{align*}
   (λx:A. u[x]) t &= u[t]  \\
-  (f ,_i g) a & = (f a(i0) ,_i g a(i0) a.i)
+  (f ,_i g)_{(x:A)→ B[x]} a & = (f a(i0) ,_i g a(i0) a.i)_{B[a]}
 \end{align*}
 
 Param:
 \begin{align*}
   U.i T &= T → U \\
-  ((x:A) → B x).i f &= (x:A) → (x' : A.i x) → (B (x,_i x')).i (f x) \\
-  (λx. b[x]).i &= (λx:A. λx':A.i x. b[\CC i x {x'} A].i) \\
+  ((x:A) → B[x]).i f &= (x:A) → (x' : A.i x) → (B[(x,_i x')_A]).i (f x) \\
+  (λx:A. b[x]).i &= (λx:A(i0). λx':A.i x. b[\CC i x {x'} A].i) \\
   (f a).i &= f.i (a (i0)) (a.i) \\
   (a,_i p)_T.i  &= p \\
-  (a,_i p)_T.j  &= (a.j ,_i \sw {i j} T   a(j0)   a.j   p(j0)   p.j)_{T.j ((a ,_i p) j0)}  & (*) \\
-    (\sw {σ} T).i  &= \sw {σ,i↦i} T \\ 
+  (a,_i p)_T.j  &= (a.j ,_i \sw {i j} T   a(j0)   a.j   p(j0)   p.j)_{T.j ((a ,_i p) j0)}  & (*)
 \end{align*}
 
-Swap: We have two sets of reduction rules for swap. If the type is canonical, then the substitution is expanded into a series of swaps. Each swap can then be expanded until one hits a neutral term.
-Swaps where T is neutral are on the other hand composed.
 \begin{align*}
-  \sw {σ} n ⋯ (\sw {ρ} n ⋯ t)  &= \sw {σ ∘ ρ} n ⋯ t & (**)\\
-  \sw {(ij)∘σ} T & = \text{expand if $T$ is canonical.}\\
   \sw {i j} {U} A A_j A_i A_{ij} a a_i a_j & = A_{ij} a a_j a_i  \\
   \sw {i j} {(x:A) → B[x]} f f_j f_i f_{ij} a a_i a_j a_{ji} & = \sw {i j} {B[((a,_ia_i),_j(a_j,_ia_{ji}))]} (f a)
 (f_j a a_j) (f_i a a_i) (f_{ij} a a_j a_i (\sw {j i} A a a_i a_j a_{ji})) \\
   \sw {i j} {(A ,_i P)_U} x x_j x_i x_{ij} & = x_{ij} \\
   \sw {i j} {(A ,_j P)_U} x x_j x_i x_{ij} & = x_{ij} \\
   \sw {i j} {(A ,_k P)_U} (x ,_k x_k) (x_j ,_k x_{jk}) (x_i ,_k x_{ik}) (x_{ij},_k x_{ijk}) & = 
-    (\sw {i j} A x x_j x_i x_{ij},_k \sw {i j} {P ((x,_jx_j),_i(x_i,_j x_{ij}))} x_k x_{jk} x_{jk} x_{ijk})_X \\
+    (\sw {i j} A x x_j x_i x_{ij},_k \sw {i j} {P  ((x,_jx_j),_i(x_i,_j x_{ij}))} x_k x_{jk} x_{ik} x_{ijk})_X & (**) \\
 \end{align*}
+
+ The last rule might also be written for $T = (A,_k P)_U$  (CONJECTURE)
+$$
+\sw {ij} T = (\sw {ij} A,_k \sw {ij} {(x:A)→ P x})_{\SW {ij} T}
+$$
 
 
 \begin{itemize}
@@ -125,12 +123,7 @@ the second component of the pair should be of type $(T.j ((a ,_i p)
 j0)).i a.j$.  That is, we need $\sw{ i j} T$ to be a conversion from
 $T.i.j a(j0) a.j p(j0)$ to $T.j.i a(j0) p(j0) a.j$.
 
-\item (**): $⋯$ stands for $2^{|σ|}-1$ arguments. $n$ is neutral. Both
-  sequences are guaranteed to be consistent (one is a swap of the
-  other). In fact, they are inferrable from the type of the last
-  argument, because $n$ is a neutral term.
-\item $ij$ stands for the substitution $i↦j, j↦i$.
-\item (***): The source type of the swap is
+\item (**): The source type of the swap is
 $$W = (x_{ij}:A.i.j x x_j x_i) \times_k P.i.j x x_j x_i x_{ij} x_k x_{jk}
 x_{ik}$$ By computation (using other cases of the definition), all the
 occurences of swap disappear in $W$.
@@ -144,13 +137,43 @@ for variables match both the source and the target.
 \end{itemize}
 \end{definition}
 
+
+
+
 \begin{definition}[Conversion]
   \begin{mathpar}
+    \inferrule{t x = u} {t = λ x:A.u}
     \inferrule{t (i0) = a \\ t.i = p} {t = \CC i a p T}
   \end{mathpar}
 + congruences.
 \end{definition}
 
+ We define substitution between contexts
+
+  \begin{align*}
+    σ, δ & ::= ()  |  (σ,x=t)  |  (σ,f)
+  \end{align*}
+
+where $f$ is a function from a finite set of colours to colours or $0$.
+
+The identity substitution $1_{Γ}$ is defined as usual and $(i0)$ is
+an abbreviation for $(1_{Γ},i=0)$. Also $b[u]$ is an abbreviation for
+$b(1_{Γ},x=u)$.
+We define $tσ$ by induction on $t$
+
+\begin{align*}
+  Uσ &= U \\
+  x(σ,f) &= xσ \\
+  x(σ,y=u) &= xσ \\
+  x(σ,x=u) &= u \\
+  ((x:A)→ B)σ &= (y:Aσ) → B(σ,x=y) \\
+  (λ x:A. b)σ &= λ y:Aσ. b(σ,x=y) \\
+  (f a)σ &= fσ  (aσ) \\
+  (a,_i b)_T(σ,x=u)  &= (a,_i b)_Tσ  \\
+  (a,_i b)_T(σ,f)  &= (aσ,_i pσ)_Tσ & i \# f \\
+  (a,_i b)_T(σ,f)  &= a(σ,f-i) & f(i) = 0 \\
+  (a,_i b)_T(σ,f)  &= (a(σ,f-i),_j b(σ,f-i))_{T(σ,f)} & f(i) = j
+\end{align*}
 
 
 
