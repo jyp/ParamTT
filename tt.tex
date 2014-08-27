@@ -64,7 +64,7 @@ Terms:
 
     \inferrule[CWk]{Γ ⊢ t : T}{Γ,I ⊢ t : T}
 
-    \inferrule[Lam]{Γ,x:A ⊢ B}{Γ ⊢ λx:A.b : (x:A) → B}
+    \\\inferrule[Lam]{Γ,x:A ⊢ B}{Γ ⊢ λx:A.b : (x:A) → B}
  
     \inferrule[App]{Γ ⊢ t : (x:A) → B[x] \\ Γ ⊢ u : A}{Γ ⊢ t u: B[u] }
 
