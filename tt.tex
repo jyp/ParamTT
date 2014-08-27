@@ -4,6 +4,7 @@
 \usepackage{mathpartir}
 \usepackage{mytheorems}
 \usepackage[a4paper,margin=1.8cm]{geometry}
+\usepackage{fancyref}
 
 \newcommand\CC[4]{(#2,_{#1} #3)_{#4}}
 \newcommand\CSig[1]{\Sigma^{#1}}
@@ -35,16 +36,21 @@
 \end{definition}
 $\CSig i A P$ and $(x:A) ×_i P x$ are other notations for $(A ,_i P)_U$.
 
- We use $I,J,…$ for finite {\em set} of colours.
+ We use $I,J,…$ for finite {\em sets} of colours (order does not matter).
 
 \begin{definition}[Typing relation]
 Contexts:
   \begin{mathpar}
-    \inferrule[Empty]{~}{ ⊢ }
+    \inferrule[Empty]{~}{() ⊢ }
 
     \inferrule[Cons]{Γ⊢ \\ Γ ⊢ A }{ Γ,x:A ⊢ }
 
     \inferrule[CCons]{Γ⊢ \\ Γ ⊢ }{ Γ,I ⊢ }
+
+    \inferrule[NewVar]{Γ⊢ \\ Γ ⊢ A }{ Γ,x:A ⊢ }
+
+    \inferrule[NewColor]{Γ⊢}{ Γ,I ⊢ }
+
   \end{mathpar}
  
 Types:
@@ -73,12 +79,12 @@ Terms:
 
     \inferrule[Param]{Γ,I,i ⊢ a : T}{Γ,I ⊢ a \param i : T \param i a (i0)}
  
-%    \inferrule[Swap]{\dom (σ) = J \\ I ∩ J = ∅ \\ Γ ⊢_{I} T }{Γ ⊢_{I} \sw {σ} T : (x : T)_J → T ∋_{(σ J)} x  }
-
     \inferrule[Swap]{Γ,I,i,j ⊢ T }{Γ,I ⊢ \sw {ij} T : \SW {ij} T}
 
   \end{mathpar}
 \end{definition}
+%    \inferrule[Swap]{\dom (σ) = J \\ I ∩ J = ∅ \\ Γ ⊢_{I} T }{Γ ⊢_{I} \sw {σ} T : (x : T)_J → T ∋_{(σ J)} x  }
+
 
 where $\SW {ij} T = (x:T(i0)(j0)) → (x_j:T(i0) \param j x) → (x_i : T(j0) \param i x) → T \param i \param j x x_j x_i → T \param j \param i x x_i x_j$.
 
@@ -100,21 +106,22 @@ Param:
   (a,_i p)_T \param j  &= (a \param j ,_i \sw {i j} T   a(j0)   a \param j   p(j0)   p \param j)_{T \param j ((a ,_i p) j0)}  & (*)
 \end{align*}
 
+Swap:
 \begin{align*}
-  \sw {i j} {U} A A_j A_i A_{ij} a a_i a_j & = A_{ij} a a_j a_i  \\
+  \sw {i j} {U} A A_j A_i A_{ij} a a_i a_j & = A_{ij} a a_j a_i  \\
   \sw {i j} {(x:A) → B[x]} f f_j f_i f_{ij} a a_i a_j a_{ji} & = \sw {i j} {B[((a,_ia_i),_j(a_j,_ia_{ji}))]} (f a)
 (f_j a a_j) (f_i a a_i) (f_{ij} a a_j a_i (\sw {j i} A a a_i a_j a_{ji})) \\
   \sw {i j} {(A ,_i P)_U} x x_j x_i x_{ij} & = x_{ij} \\
   \sw {i j} {(A ,_j P)_U} x x_j x_i x_{ij} & = x_{ij} \\
   \sw {i j} {(A ,_k P)_U} (x ,_k x_k) (x_j ,_k x_{jk}) (x_i ,_k x_{ik}) (x_{ij},_k x_{ijk}) & = 
-    (\sw {i j} A x x_j x_i x_{ij},_k \sw {i j} {P  ((x,_jx_j),_i(x_i,_j x_{ij}))} x_k x_{jk} x_{ik} x_{ijk})_X & (**) \\
+    (\sw {i j} A x  x_j  x_i  x_{ij},_k \sw {i j} {P((x,_jx_j),_i(x_i,_j x_{ij}))} x_k  x_{jk}  x_{ik}  x_{ijk})_X & (**) \\
 \end{align*}
 
- The last rule might also be written for $T = (A,_k P)_U$  (CONJECTURE)
-$$
-\sw {ij} T = (\sw {ij} A,_k \sw {ij} {(x:A)→ P x})_{\SW {ij} T}
-$$
-
+%  The last rule might also be written for $T = (A,_k P)_U$  (CONJECTURE)
+% $$
+% \sw {ij} T = (\sw {ij} A,_k \sw {ij} {(x:A)→ Px})_{\SW {ij} T}
+% $$
+% Nope: the second part of the pair needs four functions to swap; but the first part is a single function (which also has not quite the right shape).
 
 \begin{itemize}
 \item 
@@ -142,8 +149,9 @@ for variables match both the source and the target.
 
 \begin{definition}[Conversion]
   \begin{mathpar}
-    \inferrule{t x = u} {t = λ x:A.u} \\
-    \inferrule{t (i0) = a \\ t\param i = p} {t = \CC i a p T}
+    \inferrule{t x = u} {t = λ x:A.u}
+
+    \inferrule{t (i0) = a \\ t.i = p} {t = \CC i a p T}
   \end{mathpar}
 + congruences.
 \end{definition}
@@ -154,6 +162,9 @@ for variables match both the source and the target.
     σ, δ & ::= ()  |  (σ,x=t)  |  (σ,f)
   \end{align*}
 
+  \begin{mathpar}
+    \inferrule {σ : Δ → Γ \\ f : I → J} {(σ,f) : Δ,I → Γ,J}
+  \end{mathpar}
 where $f$ is a function from a finite set of colours to colours or $0$.
 
 The identity substitution $1_{Γ}$ is defined as usual and $(i0)$ is
@@ -175,6 +186,81 @@ We define $tσ$ by induction on $t$
   (a,_i b)_T(σ,f)  &= (a(σ,f-i),_j b(σ,f-i))_{T(σ,f)} & f(i) = j
 \end{align*}
 
+\begin{lemma}\label{lem:term-swap}
+  for any $a:T$, $a.j.i = \sw {ij} T a(i0)(j0)~a(i0).j~a(j0).i~a.i.j$.
+\end{lemma}
+\begin{proof}
+  \begin{align*}
+    a &= a & \text{refl} \\
+    a &= \CC i {a(i0)} {a.i} T & \text{conversion rule} \\
+    a.j & = \CC i {a(i0)} {a.i} T .j & \text{congruence} \\
+    a.j & = \CC i {a(i0).j} {\sw{ij} T a(i0)(j0)~a(i0).j~a(j0).i~a.i.j} T & \text{reduction} \\
+    a.j.i & = \CC i {a(i0).j} {\sw{ij} T a(i0)(j0)~a(i0).j~a(j0).i~a.i.j} T.i & \text{congruence} \\
+    a.j.i & = \sw{ij} T a(i0)(j0)~a(i0).j~a(j0).i~a.i.j & \text{subst} \\
+\end{align*}
+\end{proof}
+\subsection{Swap and symmetric groups.}
 
+The function $\sw {ij} T$ has four arguments, but the one which
+matters is the last one.  Indeed, the purpose of the term $\sw {ij} T$
+is to convert from $T.i.j$ to $T.j.i$, that is, to permute the role of
+$i$ and $j$. In the rest of the section we ignore the first three
+arguments of $\sw {ij} T$.
+
+\begin{theorem}
+Any permutation of colors can be defined in the system.
+
+As examples, consider the following cases:
+\begin{itemize}
+\item $\sw{ij} {T.k~x}$ converts from $T.k.i.j$ to $T.k.j.i$.
+\item $\sw{ij} {T}.k$ converts from $T.i.j.k$ to $T.j.i.k$.
+\end{itemize}
+
+\end{theorem}
+
+\begin{proof}
+  In general, $\sw{i_m~i_{m+1}} {T.i_0⋯T_{m-1} x_1 …
+    x_{2^{m-1}}}.i_{m+2}⋯i_n$ converts from $T.i_0 ⋯ i_n$ to
+  $T.i_0⋯i_{m-1}.i_{m+1}.i_m .i_{m+2}⋯i_n$.
+
+  That is, it performs the permutation of colors $(i_m~i_{m+1})$ over
+  the domain $i_0 … i_n$. The permutations generated by terms in the
+  above form are generators of symmetric groups.
+\end{proof}
+
+In the following, we write $\sw {σ} T$ the swapping term constructed
+above for the permutation $σ$. The function $\sw {σ} T$ has $2^{|σ|}$
+arguments, of which only the last one matters.
+
+\begin{lemma}
+  $\sw{ij} T x x_j x_i (\sw {ji} T x x_j x_i x_{ji}) = x_{ji}$ 
+\end{lemma}
+\begin{proof}
+  Let $a = \CC j {\CC i x {x_i} {T(j0)}} {\CC i {x_j} {x_{ji}} {T.i}} T$.
+  By Lem. \ref{lem:term-swap}, $a.j.i = \sw {ji} T x x_j x_i
+  a.j.i$. By performing reductions, we obtain our result.
+\end{proof}
+\begin{lemma}[$σ_i^2 = 1$]
+  We obtain this from first moving the $.k$'s out; then the above lemma, then pushing them back in.
+\end{lemma}
+\begin{lemma}[$σ_i ∘ σ_j = σ_j ∘ σ_i$ if $abs(j-i) > 1$]
+  
+\end{lemma}
+\begin{proof}
+  A consequence of using variable names instead of positions.
+\end{proof}
+\begin{lemma}
+  [$\sigma_i ∘\sigma_{i+1} ∘\sigma_i = \sigma_{i+1} ∘\sigma_i ∘\sigma_{i+1}$]
+  $\sw{ij}{T}.k ∙ \sw{ik}{T.j} ∙ \sw{kj}T.i = \sw{jk}{T.i} ∙ \sw{ki}T.j ∙ \sw{ij}{T.k}$
+\end{lemma}
+\begin{proof}
+  We let $a$ be a cube of 3 dimensions...
+\end{proof}
+\begin{theorem}
+  The generators satisfy the laws of symmetric groups.
+\end{theorem}
+\begin{proof}
+  Combination of the above lemmas.
+\end{proof}
 
 \end{document}
