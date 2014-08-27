@@ -68,7 +68,7 @@ Terms:
  
     \inferrule[App]{Γ ⊢ t : (x:A) → B[x] \\ Γ ⊢ u : A}{Γ ⊢ t u: B[u] }
 
-    \\\inferrule[Coloring]{Γ,I ⊢ a : T i0 \\Γ,I ⊢ p : T.i a}{Γ,I,i ⊢ (a,_i p)_T : T}
+    \\\inferrule[Coloring]{Γ,I ⊢ a : T i0 \\Γ,I ⊢ p : T \param i a}{Γ,I,i ⊢ (a,_i p)_T : T}
 
     \inferrule[Param]{Γ,I,i ⊢ a : T}{Γ,I ⊢ a \param i : T \param i a (i0)}
  
@@ -79,24 +79,24 @@ Terms:
   \end{mathpar}
 \end{definition}
 
-where $\SW {ij} T = (x:T(i0)(j0)) → (x_j:T(i0).j x) → (x_i : T(j0).i x) → T.i.j x x_j x_i → T.j.i x x_i x_j$.
+where $\SW {ij} T = (x:T(i0)(j0)) → (x_j:T(i0) \param j x) → (x_i : T(j0) \param i x) → T \param i \param j x x_j x_i → T \param j \param i x x_i x_j$.
 
 \begin{definition}[Reduction]~
 
 Functions:
 \begin{align*}
   (λx:A. u[x]) t &= u[t]  \\
-  (f ,_i g)_{(x:A)→ B[x]} a & = (f a(i0) ,_i g a(i0) a.i)_{B[a]}
+  (f ,_i g)_{(x:A)→ B[x]} a & = (f a(i0) ,_i g a(i0) a \param i)_{B[a]}
 \end{align*}
 
 Param:
 \begin{align*}
-  U.i T &= T → U \\
-  ((x:A) → B[x]).i f &= (x:A) → (x' : A.i x) → (B[(x,_i x')_A]).i (f x) \\
-  (λx:A. b[x]).i &= (λx:A(i0). λx':A.i x. b[\CC i x {x'} A].i) \\
-  (f a).i &= f.i (a (i0)) (a.i) \\
-  (a,_i p)_T.i  &= p \\
-  (a,_i p)_T.j  &= (a.j ,_i \sw {i j} T   a(j0)   a.j   p(j0)   p.j)_{T.j ((a ,_i p) j0)}  & (*)
+  U\param i T &= T → U \\
+  ((x:A) → B[x])\param i f &= (x:A) → (x' : A\param i x) → (B[(x,_i x')_A])\param i (f x) \\
+  (λx:A. b[x])\param i &= (λx:A(i0). λx':A\param i x. b[\CC i x {x'} A]\param i) \\
+  (f a)\param i &= f\param i (a (i0)) (a\param i) \\
+  (a,_i p)_T\param i  &= p \\
+  (a,_i p)_T \param j  &= (a \param j ,_i \sw {i j} T   a(j0)   a \param j   p(j0)   p \param j)_{T \param j ((a ,_i p) j0)}  & (*)
 \end{align*}
 
 \begin{align*}
@@ -117,18 +117,18 @@ $$
 
 \begin{itemize}
 \item 
-(*): $p : T.i a$ so $p.j : (T.i a).j p(j0)$. But,
-the second component of the pair should be of type $(T.j ((a ,_i p)
-j0)).i a.j$.  That is, we need $\sw{ i j} T$ to be a conversion from
-$T.i.j a(j0) a.j p(j0)$ to $T.j.i a(j0) p(j0) a.j$.
+(*): $p : T\param i a$ so $p \param j : (T\param i a) \param j p(j0)$. But,
+the second component of the pair should be of type $(T \param j ((a ,_i p)
+j0))\param i a \param j$.  That is, we need $\sw{ i j} T$ to be a conversion from
+$T\param i \param j a(j0) a \param j p(j0)$ to $T \param j\param i a(j0) p(j0) a \param j$.
 
 \item (**): The source type of the swap is
-$$W = (x_{ij}:A.i.j x x_j x_i) \times_k P.i.j x x_j x_i x_{ij} x_k x_{jk}
+$$W = (x_{ij}:A\param i \param j x x_j x_i) \times_k P\param i \param j x x_j x_i x_{ij} x_k x_{jk}
 x_{ik}$$ By computation (using other cases of the definition), all the
 occurences of swap disappear in $W$.
 
-The target type is $X$ and $X = (x_{ji}:A.j.i x x_i x_j) \times_k
-P.j.i x x_i x_j x_{ji} x_k x_{ik} x_{jk}$.  One might think that swaps
+The target type is $X$ and $X = (x_{ji}:A \param j\param i x x_i x_j) \times_k
+P \param j \param i x x_i x_j x_{ji} x_k x_{ik} x_{jk}$.  One might think that swaps
 should be applied to certain variables in $X$, but it is not
 the case.  This can be checked by verifying that the following types
 for variables match both the source and the target.
@@ -142,7 +142,7 @@ for variables match both the source and the target.
 \begin{definition}[Conversion]
   \begin{mathpar}
     \inferrule{t x = u} {t = λ x:A.u} \\
-    \inferrule{t (i0) = a \\ t.i = p} {t = \CC i a p T}
+    \inferrule{t (i0) = a \\ t\param i = p} {t = \CC i a p T}
   \end{mathpar}
 + congruences.
 \end{definition}
