@@ -42,9 +42,10 @@ Contexts:
   \begin{mathpar}
     \inferrule[Empty]{~}{ ⊢ }
 
-    \inferrule[Cons]{Γ⊢ \\ Γ ⊢ A }{ Γ,A ⊢ }
+    \inferrule[Cons]{Γ⊢ \\ Γ ⊢ A }{ Γ,x:A ⊢ }
+
+    \inferrule[CCons]{Γ⊢ \\ Γ ⊢ }{ Γ,I ⊢ }
   \end{mathpar}
-(Could be removed in presence of weakening; except Param rules uses it.)
  
 Types:
  \begin{mathpar}
@@ -79,7 +80,7 @@ Terms:
   \end{mathpar}
 \end{definition}
 
-where $\SW {ij} T = (x:T(i0)(j0)) → (x_j:T(i0) \param j x) → (x_i : T(j0) \param i x) → T \param i \param j x x_j x_i → T \param j \param i x x_i x_j$.
+where $\SW {ij} T = (x:T(i0)(j0)) → (x_j:T(i0) \param j x) → (x_i : T(j0) \param i x) → T \param i \param j x x_j x_i → T \param j \param i x x_i x_j$.
 
 \begin{definition}[Reduction]~
 
@@ -93,7 +94,7 @@ Param:
 \begin{align*}
   U\param i T &= T → U \\
   ((x:A) → B[x])\param i f &= (x:A) → (x' : A\param i x) → (B[(x,_i x')_A])\param i (f x) \\
-  (λx:A. b[x])\param i &= (λx:A(i0). λx':A\param i x. b[\CC i x {x'} A]\param i) \\
+  (λx:A. b[x])\param i &= λx:A(i0). λx':A\param i x. b[\CC i x {x'} A]\param i \\
   (f a)\param i &= f\param i (a (i0)) (a\param i) \\
   (a,_i p)_T\param i  &= p \\
   (a,_i p)_T \param j  &= (a \param j ,_i \sw {i j} T   a(j0)   a \param j   p(j0)   p \param j)_{T \param j ((a ,_i p) j0)}  & (*)
