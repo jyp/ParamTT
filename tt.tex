@@ -28,8 +28,7 @@
 \begin{definition}[Syntax of terms and contexts]
   
   \begin{align*}
-    t,u,A,B & ::= x ~|~ U \\
-            & ~|~ λx:A. t      ~|~ t u ~|~ (x:A) → B \\
+    t,u,A,B & ::= x ~|~ U ~|~ λx:A. t      ~|~ t u ~|~ (x:A) → B \\
             & ~|~ \CC i t u A  ~|~ t \param i ~|~ \sw {ij} T \\
     \Gamma,\Delta & ::= () ~|~ \Gamma,x:A ~|~ \Gamma,I 
   \end{align*}
@@ -142,7 +141,7 @@ for variables match both the source and the target.
 
 \begin{definition}[Conversion]
   \begin{mathpar}
-    \inferrule{t x = u} {t = λ x:A.u}
+    \inferrule{t x = u} {t = λ x:A.u} \\
     \inferrule{t (i0) = a \\ t.i = p} {t = \CC i a p T}
   \end{mathpar}
 + congruences.
@@ -170,7 +169,7 @@ We define $tσ$ by induction on $t$
   (λ x:A. b)σ &= λ y:Aσ. b(σ,x=y) \\
   (f a)σ &= fσ  (aσ) \\
   (a,_i b)_T(σ,x=u)  &= (a,_i b)_Tσ  \\
-  (a,_i b)_T(σ,f)  &= (aσ,_i pσ)_Tσ & i \# f \\
+  (a,_i b)_T(σ,f)  &= (a,_i p)_Tσ & i \# f \\
   (a,_i b)_T(σ,f)  &= a(σ,f-i) & f(i) = 0 \\
   (a,_i b)_T(σ,f)  &= (a(σ,f-i),_j b(σ,f-i))_{T(σ,f)} & f(i) = j
 \end{align*}
