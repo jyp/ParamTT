@@ -163,9 +163,12 @@ for variables match both the source and the target.
   \end{align*}
 
   \begin{mathpar}
-    \inferrule {σ : Δ → Γ \\ f : I → J} {(σ,f) : Δ,I → Γ,J}
+    \inferrule {σ : Δ → Γ\\ Δ ⊢ t:Aσ} {(σ,x=t) : Δ → Γ,x:A} 
+
+    \inferrule {σ : Δ → Γ} {(σ,f) : Δ → Γ,J}
   \end{mathpar}
-where $f$ is a function from a finite set of colours to colours or $0$.
+where $f$ is a function of domain $J$ and taking as values $0,1$ or
+colours declared in $Δ$ (and such that $j=k$ if $f(j) = f(k)$ is a colour).
 
 The identity substitution $1_{Γ}$ is defined as usual and $(i0)$ is
 an abbreviation for $(1_{Γ},i=0)$. Also $b[u]$ is an abbreviation for
@@ -179,6 +182,7 @@ We define $tσ$ by induction on $t$
   x(σ,x=u) &= u \\
   ((x:A)→ B)σ &= (y:Aσ) → B(σ,x=y) \\
   (λ x:A. b)σ &= λ y:Aσ. b(σ,x=y) \\
+  (t.i)σ &= (t(σ,i=j)).j \\
   (f a)σ &= fσ  (aσ) \\
   (a,_i b)_T(σ,x=u)  &= (a,_i b)_Tσ  \\
   (a,_i b)_T(σ,f)  &= (a,_i p)_Tσ & i \# f \\
