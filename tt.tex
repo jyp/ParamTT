@@ -246,10 +246,22 @@ arguments, of which only the last one matters.
 \end{proof}
 \begin{lemma}
   [$\sigma_i ∘\sigma_{i+1} ∘\sigma_i = \sigma_{i+1} ∘\sigma_i ∘\sigma_{i+1}$]
-  $\sw{ij}{T}.k ∙ \sw{ik}{T.j} ∙ \sw{kj}T.i = \sw{jk}{T.i} ∙ \sw{ki}T.j ∙ \sw{ij}{T.k}$
+  $\sw{kj}T.i (\sw{ik}{T.j} (\sw{ij}{T}.k~ x_{ijk})) = \sw{ij}{T.k} (\sw{ki}T.j  (\sw{jk}{T.i} x_{ijk}))$
 \end{lemma}
 \begin{proof}
-  We let $a$ be a cube of 3 dimensions...
+  Compute the lhs:
+  \begin{align*}
+     \sw{kj}T.i (\sw{ik}{T.j} (\sw{ij}{T}.k (a.i.j.k)) ) 
+    &= \sw{kj}T.i (\sw{ik}{T.j} (\sw{ij}{T} a.i.j).k ) \\
+    &= \sw{kj}T.i (\sw{ik}{T.j} (a.j.i).k ) \\
+    &= \sw{kj}T.i (\sw{ik}{T.j} a.j.i.k ) \\
+    &= \sw{kj}T.i  (a.j.k.i) \\
+    &= (\sw{kj}T  a.j.k).i \\
+    &= (a.k.j).i \\
+    &= a.k.j.i 
+  \end{align*}
+  Computing the rhs yields the same expression.
+  Let $a$ be a cube constructed such that $a.k.j.i = x_{ijk}$.
 \end{proof}
 \begin{theorem}
   The generators satisfy the laws of symmetric groups.
