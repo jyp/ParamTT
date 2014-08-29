@@ -12,7 +12,8 @@
 \newcommand\SW[2]{\mathsf{SW}^{#1}_{#2}}
 \newcommand\sw[2]{\mathsf{sw}^{#1}_{#2}}
 \newcommand\dom{\mathsf{dom}}
-\newcommand\param[1]{\!\cdot\!#1~}
+\newcommand\param[1]{\!\cdot\!#1}
+\newcommand\pvar[2]{{#1}^{(#2)}}
 
 
 \input{unicodedefs}
@@ -203,6 +204,7 @@ We define $tσ$ by induction on $t$
     a.j.i & = \sw{ij} T a(i0)(j0)~a(i0).j~a(j0).i~a.i.j & \text{subst} \\
 \end{align*}
 \end{proof}
+
 \subsection{Swap and symmetric groups.}
 
 The function $\sw {ij} T$ has four arguments, but the one which
@@ -281,5 +283,46 @@ arguments, of which only the last one matters.
 \begin{proof}
   Combination of the above lemmas.
 \end{proof}
+
+\begin{lemma}\label{lem:param-var}
+  $x.i.j = x.j.i$
+\end{lemma}
+\begin{proof}
+  By $α$-equivalence of terms.
+\end{proof}
+
+Applying parametricity to many variables is useful and (by the above)
+does not depend on the names of the variables. Hence we use the
+notation $\pvar x k$ for $k$ applications of parametricity to the
+variable $x$.
+
+\begin{lemma}\label{lem:sym-two}
+  For any variable $x$, $\sw {ij} T x.i.j = x.i.j$.
+\end{lemma}
+\begin{proof}
+  Because $.i$ is a binder, we have $x.i.j = x.j.i$. Then combine this
+  result with lemma \ref{lem:term-swap}.
+\end{proof}
+
+\begin{corollary}
+  $\pvar x k$ generates terms which are invariant under all permutations
+  of $1…k$. That is, 
+
+   $$   \text{if~} dom π ⊆ \{1…k\} \text{~then~} \sw {π} {} \pvar x k = \pvar x k$$
+\end{corollary}
+
+\subsection{Normal forms}
+
+\begin{align*}
+  n,m & ::= \pvar x k ~|~ n t \\
+  t,u,A,B & ::= U ~|~ λx:A. t      ~|~ \sw {π} {} n ~|~  (x:A) → B 
+             ~|~ \CC i t u A
+\end{align*}
+
+
+\subsection{Semantics}
+
+- Nominality; dependence on a finite number of colors.
+
 
 \end{document}
