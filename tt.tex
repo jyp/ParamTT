@@ -12,7 +12,8 @@
 \newcommand\SW[2]{\mathsf{SW}^{#1}_{#2}}
 \newcommand\sw[2]{\mathsf{sw}^{#1}_{#2}}
 \newcommand\dom{\mathsf{dom}}
-\newcommand\param[1]{\!\cdot\!#1~}
+\newcommand\param[1]{\!\cdot\!#1}
+\newcommand\pvar[2]{{#1}^{(#2)}}
 
 
 \input{unicodedefs}
@@ -43,9 +44,14 @@ Contexts:
   \begin{mathpar}
     \inferrule[Empty]{~}{() ⊢ }
 
+    \inferrule[Cons]{Γ⊢ \\ Γ ⊢ A }{ Γ,x:A ⊢ }
+
+    \inferrule[CCons]{Γ⊢ \\ Γ ⊢ }{ Γ,I ⊢ }
+
     \inferrule[NewVar]{Γ⊢ \\ Γ ⊢ A }{ Γ,x:A ⊢ }
 
     \inferrule[NewColor]{Γ⊢}{ Γ,I ⊢ }
+
   \end{mathpar}
  
 Types:
@@ -81,7 +87,7 @@ Terms:
 %    \inferrule[Swap]{\dom (σ) = J \\ I ∩ J = ∅ \\ Γ ⊢_{I} T }{Γ ⊢_{I} \sw {σ} T : (x : T)_J → T ∋_{(σ J)} x  }
 
 
-where $\SW {ij} T = (x:T(i0)(j0)) → (x_j:T(i0) \param j x) → (x_i : T(j0) \param i x) → T \param i \param j x x_j x_i → T \param j \param i x x_i x_j$.
+where $\SW {ij} T = (x:T(i0)(j0)) → (x_j:T(i0) \param j x) → (x_i : T(j0) \param i x) → T \param i \param j x x_j x_i → T \param j \param i x x_i x_j$.
 
 \begin{definition}[Reduction]~
 
@@ -95,7 +101,7 @@ Param:
 \begin{align*}
   U\param i T &= T → U \\
   ((x:A) → B[x])\param i f &= (x:A) → (x' : A\param i x) → (B[(x,_i x')_A])\param i (f x) \\
-  (λx:A. b[x])\param i &= (λx:A(i0). λx':A\param i x. b[\CC i x {x'} A]\param i) \\
+  (λx:A. b[x])\param i &= λx:A(i0). λx':A\param i x. b[\CC i x {x'} A]\param i \\
   (f a)\param i &= f\param i (a (i0)) (a\param i) \\
   (a,_i p)_T\param i  &= p \\
   (a,_i p)_T \param j  &= (a \param j ,_i \sw {i j} T   a(j0)   a \param j   p(j0)   p \param j)_{T \param j ((a ,_i p) j0)}  & (*)
@@ -158,9 +164,12 @@ for variables match both the source and the target.
   \end{align*}
 
   \begin{mathpar}
-    \inferrule {σ : Δ → Γ \\ f : I → J} {(σ,f) : Δ,I → Γ,J}
+    \inferrule {σ : Δ → Γ\\ Δ ⊢ t:Aσ} {(σ,x=t) : Δ → Γ,x:A} 
+
+    \inferrule {σ : Δ → Γ} {(σ,f) : Δ → Γ,J}
   \end{mathpar}
-where $f$ is a function from a finite set of colours to colours or $0$.
+where $f$ is a function of domain $J$ and taking as values $0,1$ or
+colours declared in $Δ$ (and such that $j=k$ if $f(j) = f(k)$ is a colour).
 
 The identity substitution $1_{Γ}$ is defined as usual and $(i0)$ is
 an abbreviation for $(1_{Γ},i=0)$. Also $b[u]$ is an abbreviation for
@@ -174,6 +183,7 @@ We define $tσ$ by induction on $t$
   x(σ,x=u) &= u \\
   ((x:A)→ B)σ &= (y:Aσ) → B(σ,x=y) \\
   (λ x:A. b)σ &= λ y:Aσ. b(σ,x=y) \\
+  (t.i)σ &= (t(σ,i=j)).j \\
   (f a)σ &= fσ  (aσ) \\
   (a,_i b)_T(σ,x=u)  &= (a,_i b)_Tσ  \\
   (a,_i b)_T(σ,f)  &= (a,_i p)_Tσ & i \# f \\
@@ -194,6 +204,7 @@ We define $tσ$ by induction on $t$
     a.j.i & = \sw{ij} T a(i0)(j0)~a(i0).j~a(j0).i~a.i.j & \text{subst} \\
 \end{align*}
 \end{proof}
+
 \subsection{Swap and symmetric groups.}
 
 The function $\sw {ij} T$ has four arguments, but the one which
@@ -203,7 +214,7 @@ $i$ and $j$. In the rest of the section we ignore the first three
 arguments of $\sw {ij} T$.
 
 \begin{theorem}
-For any permutation $σ$, conversion from $T.i_0 … i_n$ to $$T.σ(i_0) …
+For any permutation $σ$, conversion from $T.i_0 … i_n$ to $T.σ(i_0) …
 σ(i_n)$ is definable.
 
 \end{theorem}
@@ -249,10 +260,22 @@ arguments, of which only the last one matters.
 \end{proof}
 \begin{lemma}
   [$\sigma_i ∘\sigma_{i+1} ∘\sigma_i = \sigma_{i+1} ∘\sigma_i ∘\sigma_{i+1}$]
-  $\sw{ij}{T}.k ∙ \sw{ik}{T.j} ∙ \sw{kj}T.i = \sw{jk}{T.i} ∙ \sw{ki}T.j ∙ \sw{ij}{T.k}$
+  $\sw{kj}T.i (\sw{ik}{T.j} (\sw{ij}{T}.k~ x_{ijk})) = \sw{ij}{T.k} (\sw{ki}T.j  (\sw{jk}{T.i} x_{ijk}))$
 \end{lemma}
 \begin{proof}
-  We let $a$ be a cube of 3 dimensions...
+  Compute the lhs:
+  \begin{align*}
+     \sw{kj}T.i (\sw{ik}{T.j} (\sw{ij}{T}.k (a.i.j.k)) ) 
+    &= \sw{kj}T.i (\sw{ik}{T.j} (\sw{ij}{T} a.i.j).k ) \\
+    &= \sw{kj}T.i (\sw{ik}{T.j} (a.j.i).k ) \\
+    &= \sw{kj}T.i (\sw{ik}{T.j} a.j.i.k ) \\
+    &= \sw{kj}T.i  (a.j.k.i) \\
+    &= (\sw{kj}T  a.j.k).i \\
+    &= (a.k.j).i \\
+    &= a.k.j.i 
+  \end{align*}
+  Computing the rhs yields the same expression.
+  Let $a$ be a cube constructed such that $a.k.j.i = x_{ijk}$.
 \end{proof}
 \begin{theorem}
   The generators satisfy the laws of symmetric groups.
@@ -260,5 +283,46 @@ arguments, of which only the last one matters.
 \begin{proof}
   Combination of the above lemmas.
 \end{proof}
+
+\begin{lemma}\label{lem:param-var}
+  $x.i.j = x.j.i$
+\end{lemma}
+\begin{proof}
+  By $α$-equivalence of terms.
+\end{proof}
+
+Applying parametricity to many variables is useful and (by the above)
+does not depend on the names of the variables. Hence we use the
+notation $\pvar x k$ for $k$ applications of parametricity to the
+variable $x$.
+
+\begin{lemma}\label{lem:sym-two}
+  For any variable $x$, $\sw {ij} T x.i.j = x.i.j$.
+\end{lemma}
+\begin{proof}
+  Because $.i$ is a binder, we have $x.i.j = x.j.i$. Then combine this
+  result with lemma \ref{lem:term-swap}.
+\end{proof}
+
+\begin{corollary}
+  $\pvar x k$ generates terms which are invariant under all permutations
+  of $1…k$. That is, 
+
+   $$   \text{if~} dom π ⊆ \{1…k\} \text{~then~} \sw {π} {} \pvar x k = \pvar x k$$
+\end{corollary}
+
+\subsection{Normal forms}
+
+\begin{align*}
+  n,m & ::= \pvar x k ~|~ n t \\
+  t,u,A,B & ::= U ~|~ λx:A. t      ~|~ \sw {π} {} n ~|~  (x:A) → B 
+             ~|~ \CC i t u A
+\end{align*}
+
+
+\subsection{Semantics}
+
+- Nominality; dependence on a finite number of colors.
+
 
 \end{document}
