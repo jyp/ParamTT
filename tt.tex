@@ -249,6 +249,8 @@ arguments, of which only the last one matters.
   By Lem. \ref{lem:term-swap}, $a.j.i = \sw {ji} T x x_j x_i
   a.j.i$. By performing reductions, we obtain our result.
 \end{proof}
+
+
 \begin{lemma}[$σ_i^2 = 1$]
   We obtain this from first moving the $.k$'s out; then the above lemma, then pushing them back in.
 \end{lemma}
@@ -303,13 +305,30 @@ variable $x$.
   Because $.i$ is a binder, we have $x.i.j = x.j.i$. Then combine this
   result with lemma \ref{lem:term-swap}.
 \end{proof}
-
 \begin{corollary}
   $\pvar x k$ generates terms which are invariant under all permutations
   of $1…k$. That is, 
 
    $$   \text{if~} dom π ⊆ \{1…k\} \text{~then~} \sw {π} {} \pvar x k = \pvar x k$$
 \end{corollary}
+
+\begin{lemma}[$U$ is variant under swap] \label{lem:sw-U}
+  $\sw {ij} U U.i.j ‌≠ U.j.i$
+\end{lemma}
+\begin{proof}
+By definition.
+\end{proof}
+
+\begin{theorem}[inconsistency]
+  
+\end{theorem}
+\begin{proof}
+  By lemma \ref{lem:sym-two}, we have
+  $$\sw {ij} T x.i.j = x.i.j$$
+  Substitute $U$ for $x$:
+  $$\sw {ij} U U.i.j = U.i.j$$
+  Which is not consistent with lemma \ref{lem:sw-U}.
+\end{proof}
 
 \subsection{Normal forms}
 
