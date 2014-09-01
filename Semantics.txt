@@ -1,0 +1,39 @@
+⟦I ⊢ U⟧000 = Set
+⟦I ⊢ U⟧001 = \T000. T000 -> Set
+⟦I ⊢ U⟧011 = \T000 T001 T010. (x000 : T000) -> (T001 x000)  -> Set
+
+
+⟦I ⊢ A⟧ = hypercube of sets of dimensions I
+
+⟦A⟧000 : Set
+⟦A⟧001 : ⟦A⟧000 -> Set
+⟦A⟧010 : ⟦A⟧000 -> Set
+⟦A⟧100 : ⟦A⟧000 -> Set
+⟦A⟧011 : (x:⟦A⟧000) -> ⟦A⟧001 x -> ⟦A⟧010 x -> Set
+etc.
+
+(swapping has any influence only because we have pre-applied the types:
+it would work better with
+⟦A⟧001 : \(T:Set) -> T -> Set
+)
+
+
+a = ⟦I ⊢ a:A⟧ = hypercube of objects
+
+a000 : ⟦A⟧000
+a001 : ⟦A⟧001 a000
+a011 : ⟦A⟧011 a000 a001
+etc.
+
+
+F = ⟦I ⊢ (x:A) → B⟧ = hypercube of functions:
+
+F000 = (x:⟦A⟧000) → ⟦B⟧000
+F001 f000 = (x001:⟦A⟧000) -> (x001 : ⟦A⟧001) → ⟦B⟧001 (f000 x000)
+F011 f000 f001 f010 = (x001:⟦A⟧000) -> (x001 : ⟦A⟧001) -> (x010 : ⟦A⟧010) -> (x011 : ⟦A⟧011 x000 x001 x010) → ⟦B⟧011 (f000 x000) (f001 x001) (f010 x010)
+etc.
+
+⟦I,i ⊢ (a,i p) : T⟧000 = ⟦I ⊢ a : (i0)T(i0)⟧00
+⟦I,i ⊢ (a,i p) : T⟧001 = ⟦I ⊢ p : T.i a⟧00
+
+
