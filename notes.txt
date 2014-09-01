@@ -1,0 +1,41 @@
+Let:
+
+       Γ,i,j ⊢ a : T
+--------------------------------
+  Γ,j,i ⊢  sw i j a : Sw i j T
+
+The order of colors in the context is thus taken care by swaps.
+Note that Sw is not the same thing as sw.
+
+according to Remarks.agda, we should have:
+
+sw i j ((a ,i p) ,j (q ,i r)) = ((a ,i q) ,j (p ,i r))
+Sw i j (Σj (Σi A P) (Σi Q R)) = (Σj (Σi A Q) (Σi P (flip R)))
+
+where
+flip R x y z = flip x z y
+
+
+Where does this take us?
+
+(λx:T. x.i)   : (x:T) -> T.i x
+(λx:T. x.i).j : (x:T) -> (x' : T.j x) -> T.i.j x x' (x.i)
+
+(λx:T. x.i).j a p            : T.i.j a(i0) p a.i
+((λx. x.i) (a ,j p)).j
+(a ,j p).i.j                 : T.i.j a(i0) p a.i
+(a ,j p)                     : T
+
+((a(i0) ,i a.i) ,j (p(i0) ,i p.i))                     : T
+((a(i0) ,j p(i0)) ,i (a.i ,j p.i))                     : Sw i j T
+
+((a(i0) ,j p(i0)) ,i (a.i ,j p.i)).j                     : (Sw i j T).j (a(i0) ,i a.i)
+((a(i0) ,j p(i0)) ,i (a.i ,j p.i)).j.i                   : ((Sw i j T).j (a(i0) ,i a.i)).i p
+                                                         : (Sw i j T).j.i a(i0) a.i p
+
+So we would like:
+
+((Sw i j T).j.i  === flip T.i.j
+a.i.j === (sw i j a).j.i
+
+
