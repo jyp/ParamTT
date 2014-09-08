@@ -1,10 +1,9 @@
-Let:
+Let's add:
 
        Γ,i,j ⊢ a : T
 --------------------------------
   Γ,j,i ⊢  sw i j a : Sw i j T
 
-The order of colors in the context is thus taken care by swaps.
 Note that Sw is not the same thing as sw.
 
 according to Remarks.agda, we should have:
@@ -13,7 +12,7 @@ sw i j ((a ,i p) ,j (q ,i r)) = ((a ,i q) ,j (p ,i r))
 Sw i j (Σj (Σi A P) (Σi Q R)) = (Σj (Σi A Q) (Σi P (flip R)))
 
 where
-flip R x y z = flip x z y
+flip R x y z = R x z y
 
 
 Where does this take us?
@@ -35,7 +34,158 @@ Where does this take us?
 
 So we would like:
 
-((Sw i j T).j.i  === flip T.i.j
+(Sw i j T).j.i  === flip T.i.j
 a.i.j === (sw i j a).j.i
 
 
+Some sanity checking:
+
+   Γ,j,i ⊢  sw i j a : Sw i j T
+------------------------------------------------------
+   Γ,j ⊢  (sw i j a).i : (Sw i j T).i (sw i j a)(i0)
+------------------------------------------------------
+   Γ,j ⊢  (sw i j a).i : (Sw i j T).i a(i0)
+--------------------------------------------------------------------
+   Γ ⊢  (sw i j a).i.j : ((Sw i j T).i a(i0)).j ((sw i j a).i)(j0)
+---------------------------------------------------------------------------
+   Γ ⊢  (sw i j a).i.j : (Sw i j T).i.j a(i0)(j0) a(i0).j (sw i j a(j0)).i
+---------------------------------------------------------------------------
+   Γ ⊢  (sw i j a).i.j : (Sw i j T).i.j a(i0)(j0) a(i0).j a(j0).i
+---------------------------------------------------------------------------
+   Γ ⊢  a.j.i : T.j.i a(i0)(j0) a(j0).i a(i0).j
+
+And compute like this:
+
+(λx:T. x.i).j a p
+
+= 
+((λx. x.i) (a ,j p)).j
+
+= subst
+(a ,j p).i.j
+
+= {- expanding -}
+((a(i0) ,i a.i) ,j (p(i0) ,i p.i)).i.j
+
+= {- swapping -}
+((a(i0) ,j p(i0)) ,i (a.i ,j p.i)).j.i
+
+So: this will never reduce!
+
+
+Do we have a problem with canonical forms?
+Let us check that we calculate, if T were a function type.
+
+We have:
+  T = A -> B
+  T.i.j f fi fj = (x:A) -> (xi : A.i) -> (xj : A.j) -> (xij : A.i.j x xi xj) -> B.i.j (f x) (fi xi) (fj xj)
+
+And we can check that (a ,j p) behaves like a function:
+
+(a ,j p).i.j x xj xi xij
+= (a ,j p) ((x,j xj) ,i (xi ,j xij))
+= (a ,j p) X
+= (a X(j0) ,j p X(j0) X.j)
+= (a (x ,i xj) ,j p (x ,i xj) X.j)
+
+
+===============
+Projections of pairs:
+
+T = Σ A P
+
+T(i0) = Σ A(i0) P(i0)
+T.i (a,p) = Σ (A.i a) × \x -> P.i a x p
+
+o=(b ,i q) : T
+b : T(i0)
+  : Σ A(i0) P(i0)
+q : T.i b
+  : Σ (A.i b.1) (\x -> P.i b.1 x b.2)
+
+
+q.2 : P.i b.1 q.1 b.2
+
+
+o.1 = (b.1 ,i q.1)
+
+o.2 : P o.1
+
+o.2 = (b.2 ,i ?)
+
+? : (P o.1).i (o.2)(i0)
+  : P.i o(i0).1 o.1.i b.2
+  : P.i o(i0).1 o.i.1 b.2
+  : P.i o(i0).1 q.1 b.2
+
+The above assumes a.1.i = a.i.1
+
+Let us check:
+
+a : Σ A P
+a.1 : A
+a.i.1 : A.i a(i0).1
+
+a.i : (Σ A P).i a(i0)
+    : (x : A.i a(i0).1) × (P.i a(i0).1 x a(i0).2)
+
+
+We also can have a.2.i = a.i.2
+
+a.2 : P a.1
+a.2.i : P.i a(i0).1 a.i.1 a(i0).2
+
+a.i.2 : P.i a(i0).1 a.i.1 a(i0).2
+
+
+===============
+
+t = ( (a ,i p) ,j (q ,i r) ) : U
+
+t.i : (a ,j q) -> U
+t.i.j : (x:a) -> q x -> p x -> U
+
+(q ,i r) : (a ,i p) -> U
+r : (x : a) -> p x -> q x -> U
+
+===============
+
+(a ,j p) : U
+
+(a ,j p).i : (a(i0) ,j p(i0)) -> U
+
+(a ,j p).i x = (a.i x ,j \y -> p.i x(j0) y x.j)
+
+=================
+
+(a ,j p) : A -> B
+(a ,j p).i x xi = ((a ,j p) (x ,i xi)).i
+                = ((a (x(j0) ,i xi(j0)) ,j p (x(j0) ,i xi(j0)) (x ,i xi).j)).i
+
+================
+
+T : U
+T.i : T -> U
+T.i.j : (x:T) -> T.j x -> T.i x -> U
+
+Theorem[type-swap]: If T : U then T.i.j x y z = T.j.i x z y
+Proof:
+Let T be the square (A,P,Q,R) and compute.
+
+((A ,i P) ,j (Q ,i R)).i.j x y z =
+(((A ,i P) ,j (Q ,i R)).i (x ,j y)).j z =
+(((A ,i P) ,j (Q ,i R)).i (x ,j y)).j z =
+(l : ... ×j (Q ,i R).i x l y).j z =
+R x z y
+
+and arrange R = T.j.i
+
+---------------
+
+if p : T
+
+p.i : T.i p
+p.i.j : T.i.j p p.j p.i
+
+p.j.i : T.j.i p p.i p.j
+      : T.i.j p p.j p.i (by [type-swap])
