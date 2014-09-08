@@ -170,22 +170,102 @@ T.i.j : (x:T) -> T.j x -> T.i x -> U
 
 Theorem[type-swap]: If T : U then T.i.j x y z = T.j.i x z y
 Proof:
-Let T be the square (A,P,Q,R) and compute.
+Let T be the square (A,P,Q,R),
+where
+A = T(i0)(j0)
+P = T(j0).i
+Q = T(i0).j
+R = T.j.i
 
+T.i.j x y z =
 ((A ,i P) ,j (Q ,i R)).i.j x y z =
 (((A ,i P) ,j (Q ,i R)).i (x ,j y)).j z =
 (((A ,i P) ,j (Q ,i R)).i (x ,j y)).j z =
 (l : ... ×j (Q ,i R).i x l y).j z =
-R x z y
+R x z y =
+T.j.i x z y
 
-and arrange R = T.j.i
+-------------
 
+Proving U.i.j x y z = U.j.i x z y is a contradiction.
+
+Apply the above:
+We can build (A,P,Q,R), equal to U,
+where
+A = U
+P = U.i
+Q = U.j
+R = U.j.i
+
+
+
+U.i.j x y z =
+((A ,i P) ,j (Q ,i R)).i.j x y z =
+(((A ,i P) ,j (Q ,i R)).i (x ,j y)).j z =
+(((A ,i P) ,j (Q ,i R)).i (x ,j y)).j z =
+(l : ... ×j (Q ,i R).i x l y).j z =
+R x z y =
+U.j.i x z y
+
+Which is a contradiction.
+
+We must reject either the pairing rule or the definition of .i on colored pair types
 ---------------
 
-if p : T
+Theorem [value-swap]
+if p : T then p.i.j has the same type as p.j.i
 
 p.i : T.i p
 p.i.j : T.i.j p p.j p.i
 
 p.j.i : T.j.i p p.i p.j
       : T.i.j p p.j p.i (by [type-swap])
+
+==========================
+
+So what is ((A ,i P) ,j (Q ,i R)).i.j x y z ?
+
+((A ,i P) ,j (Q ,i R)).i.j x y z =
+
+(((A ,i P) ,j (Q ,i R)).i (x ,i y)).j z =
+
+==========================
+
+When is T.i.j == T.j.i?
+
+Let T = ((A ,i P) ,j (Q ,i R))
+
+T.j.i = ((A ,i P) ,j (Q ,i R)).j.i
+      
+T.i.j = ((A ,i P) ,j (Q ,i R)).i.j
+      = ((A ,j P) ,i (Q ,j R)).j.i
+
+
+So we have the equality if
+
+((A ,j P) ,i (Q ,j R)) = ((A ,i P) ,j (Q ,i R))
+
+ie.
+(A ,j P) = ((A ,i P) ,j (Q ,i R))(i0)
+(Q ,j R) = ((A ,i P) ,j (Q ,i R)).i
+
+ie.
+(A ,j P) = (A ,j Q)
+Q = ((A ,i P) ,j (Q ,i R)).i(j0)
+R = ((A ,i P) ,j (Q ,i R)).i.j
+
+ie.
+P = Q
+R = ((A ,i P) ,j (Q ,i R)).i.j
+  = T.i.j
+
+ie.
+only if R is itself a swap.
+(so swap is involutive)
+
+===========================
+
+In sum, swaps never reduce. The only thing to add in the
+evaluator is to add (A ,i B) = A if B = A.i.
+
+
