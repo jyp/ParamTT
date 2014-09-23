@@ -4,26 +4,27 @@ We interpret terms as hypercubes. So values depend on a list of colors
 
 ⟦x⟧ρχ = ρ(x,χ)
 ⟦t.i⟧ρχ = ⟦t⟧(extend ρ)(χ,i)
-⟦a,i p⟧ρχ = ⟦a⟧ρχ  if i ∉ χ
+⟦a,ᵢ p⟧ρχ = ⟦a⟧ρχ  if i ∉ χ
           = ⟦p⟧ρχ  if i ∈ χ
 ⟦λx:A.t⟧ρχ = (for every o ⊆ χ) λxₒ. ⟦t⟧(ρ,(o,xₒ))χ
 ⟦f a⟧ρχ = (for every o ⊆ χ) ⟦f⟧ρχ ⟦f⟧ρo
-⟦∀x:A. B⟧ρχ = (for every o ⊆ χ)(for every i ⊆ χ)
+⟦∀x:A. B⟧ρχ = (for every o ⊆ χ)(for every i ⊂ χ)
               λfᵢ. ∀xₒ:⟦A⟧ρo. ⟦B⟧(ρ,(o,xₒ))χ (fᵢ xᵢ)
 
+(note the strict inclusion)
 
 The way to extend the context ρ is given by the number of colors already present in χ.
 
 if zero, we extend the context normally:
 
 a : T      yields aᵢ : Tᵢ a
-p : Tᵢ a   yields pᵢ : Tᵢ a aᵢ p
+p : Tⱼ a   yields pⱼ : Tⱼ a aᵢ p
 etc.
 
 if one, we extend the context using shifted parametricity:
 
 a : T      yields aᵢ : Tᵢ a
-p : Tᵢ a   yields pᵢ : Tᵢ a p aᵢ
+p : Tⱼ a   yields pⱼ : Tⱼ a p aᵢ
 
 and so on for any number of colors.
 
