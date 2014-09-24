@@ -29,3 +29,17 @@ p : Tⱼ a   yields pᵢ : Tᵢⱼ a p aᵢ
 and so on for any number of colors.
 
 
+-----------------
+
+Actually, it should be "easy" to pre-extend the context. That is, when
+we put a variable in the context, we also put the evaluations with
+fresh variables:
+
+
+⟦λx:A.t⟧ρχ = (for every o ⊆ (ext χ)) λxₒ. ⟦t⟧(ρ,(o,xₒ))χ
+
+where ext χ is the list χ extended with an infinite list of fresh variables.
+Interpreting parametricity (.i) is then just the allocation of a fresh variable to i:
+
+⟦t.i⟧ρχ = ⟦t⟧(ρ[i/fresh₁])(χ,i)
+
