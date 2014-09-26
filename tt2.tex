@@ -100,15 +100,6 @@ Param:
 \end{align*}
 \end{definition}
 
-\begin{definition}
-  A type (term) $T$ is called $i$-stable when, for any $j$: $T\param i \param j x y z = T\param j \param i x z y $.
-
-\end{definition}
-\begin{conjecture}
-  Only $\CSig i A P$ is  $i$-stable.
-\end{conjecture}
-In particular, $U$ is not $i$-stable.
-
 \begin{conjecture}[Conversion]
   \begin{mathpar}
     \inferrule{t x = u} {t = λ x:A.u}
@@ -128,6 +119,17 @@ In the second case, the rule subsumes the following particular case:
 
     \inferrule{a(j0) = b(i0) \\ a.j = q(i0) \\ b.i = p(j0) \\ p.j = q.i} {\CC i a p {\CSig i A P} = \CC j b q {\CSig i B Q}}
 \end{conjecture}
+
+\begin{definition}
+  A type (term) $T$ is called $i$-stable when, for any $j$: $T\param i \param j x y z = T\param j \param i x z y $.
+
+\end{definition}
+\begin{conjecture}
+  Only $\CSig i A P$ is  $i$-stable.
+\end{conjecture}
+In particular, $U$ is not $i$-stable.
+
+
 
 \begin{definition}
  We define substitution between contexts
@@ -168,9 +170,45 @@ We define $tσ$ by induction on $t$
 \end{align*}
 \end{definition}
 
+\subsection{Equality issues}
+
+Should we have $a = (a(i0),_i a.i)$?
+
+With this rule, assuming $a:T$, we have:
+\begin{align*}
+  a &= \CC j a {a \param j} T \\
+  a \param i &= \CC j a {a \param j} T \param i \\
+  a \param i \param j &= \CC j a {a \param j} T \param i \param j\\
+\end{align*}
+
+Therefore, the computation rule that we have for the right-hand-side must be
+compatible with the equations written above.
+
+\begin{itemize}
+\item 
+for $T = U$ the equation becomes
+$$a \param i \param j = flip a \param i \param j$$
+It is not possible to satisfy this equation in general, but we can add a special version of equality between $U$ pairs (as above).
+\item
+for $T = A → B$ we do not have computation rules; so the equality is acceptable.
+\item
+for $T = \CSig i A P$, the equation reduces to
+\[
+a.i.j = a.j.i
+\]
+Again, it is not possible to satisfy this equation in general.
+\item
+for a $T$ neutral, we cannot proceed, as we may substitute for any of the above.
+\end{itemize}
+
+
 \subsection{Canonicity}
 
-We have new normal forms:
+We have new normal forms, because, in general, it is not the case that $(n(i0),_i n.i) = n$.
+
+However, $n(i0)$ is a canonical form, then $n.i$ is also in canonical form, and we can thus
+reduce the pair to a canonical form not involving a colored pair.
+
 
 \subsection{Swap and symmetric groups.}
 
