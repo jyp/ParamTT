@@ -41,7 +41,9 @@ fresh variables:
               λfᵢ. ∀xₒ:⟦A⟧ρo. ⟦B⟧(ρ,(o,xₒ))χ (fᵢ xᵢ)
 
 where φ is the list χ extended with an infinite list of fresh colors.
-Interpreting parametricity (.i) is then just the allocation of a fresh variable to i:
+
+Interpreting parametricity (.i) is then just the allocation of a fresh
+variable to i:
 
 ⟦t.i⟧ρχ = ⟦t⟧(ρ[i/fresh₁])(χ,i)
 
@@ -50,3 +52,12 @@ The other rules do not change:
 ⟦x⟧ρχ = ρ(x,χ)
 ⟦a,ᵢ p⟧ρχ = ⟦a⟧ρχ      if i ∉ χ
           = ⟦p⟧ρ(χ-i)  if i ∈ χ
+
+------------------------------
+
+The above is not quite right; one has to fiddle a little bit to not
+obtain infinitary nesting of abstractions, etc. A better way is:
+
+
+⟦λx:A.t⟧ρχ = (for every o ⊆ χ) λ(xₒ: ⟦⟧). ⟦t⟧(ρ,(o,xₒ))χ
+⟦

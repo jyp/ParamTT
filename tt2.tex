@@ -6,8 +6,7 @@
 \usepackage[a4paper,margin=1.8cm]{geometry}
 \usepackage{fancyref}
 
-\newcommand\CC[4]{(#2,_{#1} #3)}
-\newcommand\CP[3]{(#2,_{#1} #3)}
+\newcommand\CC[4]{(#2,_{#1} #3)_{#4}}
 \newcommand\CSig[1]{\Sigma^{#1}}
 \newcommand\CTimes[3]{#2 ×_{#1} #3}
 \newcommand\SW[2]{\mathsf{SW}^{#1}_{#2}}
@@ -32,11 +31,11 @@
   
   \begin{align*}
     t,u,A,B & ::= x ~|~ U ~|~ λx:A. t      ~|~ t u ~|~ (x:A) → B \\
-            & ~|~ \CC i t u  ~|~ t \param i ~|~ \sw {ij} T \\
+            & ~|~ \CC i t u A  ~|~ t \param i  \\
     \Gamma,\Delta & ::= () ~|~ \Gamma,x:A ~|~ \Gamma,I 
   \end{align*}
 \end{definition}
-$(x:A) ×_i P x$ is a notation for $\CSig i A P$.
+$\CSig i A P$ and $(x:A) ×_i P x$ are other notations for $(A ,_i P)_U$.
 
 We use $I,J,…$ for finite {\em sets} of colours (order does not matter).
 
@@ -44,10 +43,6 @@ We use $I,J,…$ for finite {\em sets} of colours (order does not matter).
 Contexts:
   \begin{mathpar}
     \inferrule[Empty]{~}{() ⊢ }
-
-    \inferrule[Cons]{Γ⊢ \\ Γ ⊢ A }{ Γ,x:A ⊢ }
-
-    \inferrule[CCons]{Γ⊢ \\ Γ ⊢ }{ Γ,I ⊢ }
 
     \inferrule[NewVar]{Γ⊢ \\ Γ ⊢ A }{ Γ,x:A ⊢ }
 
@@ -60,8 +55,6 @@ Types:
     \inferrule[Universe]{Γ ⊢}{Γ ⊢ U : U}
 
     \inferrule[Pi]{Γ ⊢ A : U \\ Γ,x:A ⊢ B : U}{Γ ⊢ (x:A) → B : U}
-
-    \inferrule[Color-Form]{Γ,I ⊢ A : U \\Γ,I ⊢ P : A → U}{Γ,I,i ⊢ \CSig i A P : U}
   \end{mathpar}
 
 Terms:
@@ -98,31 +91,43 @@ Param:
   U\param i T &= T → U \\
   ((x:A) → B[x])\param i f &= (x:A) → (x' : A\param i x) → (B[(x,_i x')_A])\param i (f x) \\
   \CSig i A P \param i x  &= P x\\
-  \CSig i A P \param j \CP i x {x_i} &= (x_j : A \param j x) ×_i (P \param j x x_j x_i) \\
+  \CSig i A P \param j (x,i {x_i}) &= (x_j : A \param j x) ×_i (P \param j x x_j x_i) \\
   (λx:A. b[x])\param i &= λx:A(i0). λx':A\param i x. b[\CC i x {x'} A]\param i \\
   (f a)\param i &= f\param i (a (i0)) (a\param i) \\
-  (a,_i p)\param i  &= p \\
-  (a,_i p) \param j  &= (a \param j ,_i p \param j) \\
+  (a,_i p)_T\param i  &= p \\
+  (a,_i p)_{\CSig i A P} \param j  &= (a \param j ,_i p \param j) \\
+  (a,_i p)_{\CSig j A P} \param j  &= (a \param j ,_i p \param j) & ???\\
 \end{align*}
 \end{definition}
 
-\begin{definition}[Conversion]
+\begin{definition}
+  A type (term) $T$ is called $i$-stable when, for any $j$: $T\param i \param j x y z = T\param j \param i x z y $.
+
+\end{definition}
+\begin{conjecture}
+  Only $\CSig i A P$ is  $i$-stable.
+\end{conjecture}
+In particular, $U$ is not $i$-stable.
+
+\begin{conjecture}[Conversion]
   \begin{mathpar}
     \inferrule{t x = u} {t = λ x:A.u}
 
     \inferrule{i ≠ j \\ A(j0) = B(i0) \\ A.j = Q(i0) \\ B.i = P(j0) \\ flip (P.j) = Q.i} {\CSig i A P = \CSig j B Q}
 
+    % \inferrule{t (i0) = a \\ t.i = p} {t = \CC i a p {\CSig i A P}}
 
-    \inferrule{t (i0) = a \\ t.i = p} {t = \CP i a p}
+    \inferrule{t (i0) = u (i0) \\ t.i = u.i \\ \text{If $T$ is $i$-stable}} {t = u : T}
 
+    \inferrule{???} {t.i = u}
   \end{mathpar}
 + congruences.
 
 One \emph{cannot} deduce $\CSig i T(i0) T.i = T$. Hence in particular the last rule is valid only in the case where the type of $t$ is either $\CSig i A P$ or $\CSig j B Q$.
 In the second case, the rule subsumes the following particular case:
 
-    \inferrule{a(j0) = b(i0) \\ a.j = q(i0) \\ b.i = p(j0) \\ p.j = q.i} {\CP i a p = \CP j b q}
-\end{definition}
+    \inferrule{a(j0) = b(i0) \\ a.j = q(i0) \\ b.i = p(j0) \\ p.j = q.i} {\CC i a p {\CSig i A P} = \CC j b q {\CSig i B Q}}
+\end{conjecture}
 
 \begin{definition}
  We define substitution between contexts
@@ -163,8 +168,11 @@ We define $tσ$ by induction on $t$
 \end{align*}
 \end{definition}
 
-\subsection{Swap and symmetric groups.}
+\subsection{Canonicity}
 
+We have new normal forms:
+
+\subsection{Swap and symmetric groups.}
 
 \begin{lemma}\label{lem:param-var}
   $x.i.j = x.j.i$
@@ -178,9 +186,27 @@ does not depend on the names of the variables. Hence we use the
 notation $\pvar x k$ for $k$ applications of parametricity to the
 variable $x$.
 
-Remark: attempting to relate $a.i.j$ to $a.j.i$ in the calculus is
-fruitless, because we cannot construct the equality $a = \CP i a
-{a.i}$ for an arbitrary type.
+\begin{definition}
+We define the following, well-typed term:
+  $\sw {ij} T a q p r = (\CC i {\CC j a p T} {\CC j q r {T.i \_}} T) \param j \param i$
+
+in the context.
+\begin{align*}
+  T &: U \\
+  q &: T \param i a \\
+  p &: T \param j a \\
+  r &: T \param i \param j a p q \\
+  \sw {ij} T a q p r & : T \param j \param i a q p \\
+\end{align*}
+\end{definition}
+
+\begin{corollary}
+  The relation $\pvar y 2 x$ is symmetric.
+\end{corollary}
+
+\begin{conjecture}
+  Swapping is involutive.
+\end{conjecture}
 
 \subsection{Normal forms}
 
