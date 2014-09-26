@@ -172,13 +172,13 @@ We define $tσ$ by induction on $t$
 
 \subsection{Equality issues}
 
-Should we have $a = (a(i0),_i a.i)$?
+Should we have $a = (a(i0),_i p[i])$, for some $p[i]$?
 
 With this rule, assuming $a:T$, we have:
 \begin{align*}
-  a &= \CC j a {a \param j} T \\
-  a \param i &= \CC j a {a \param j} T \param i \\
-  a \param i \param j &= \CC j a {a \param j} T \param i \param j\\
+  a &= \CC j {a(j0)} {p[j]} T \\
+  a \param i &= \CC j {a(j0)} {p[j]} T \param i \\
+  a \param i \param j &= \CC j {a(j0)} {p[j]} T \param i \param j\\
 \end{align*}
 
 Therefore, the computation rule that we have for the right-hand-side must be
@@ -187,14 +187,14 @@ compatible with the equations written above.
 \begin{itemize}
 \item 
 for $T = U$ the equation becomes
-$$a \param i \param j = flip a \param i \param j$$
+$$a \param i \param j = flip (p[j] \param i)$$
 It is not possible to satisfy this equation in general, but we can add a special version of equality between $U$ pairs (as above).
 \item
 for $T = A → B$ we do not have computation rules; so the equality is acceptable.
 \item
 for $T = \CSig i A P$, the equation reduces to
 \[
-a.i.j = a.j.i
+a.i.j = p[j].i
 \]
 Again, it is not possible to satisfy this equation in general.
 \item
