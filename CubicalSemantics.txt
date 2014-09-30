@@ -60,4 +60,26 @@ obtain infinitary nesting of abstractions, etc. A better way is:
 
 
 ⟦λx:A.t⟧ρχ = (for every o ⊆ χ) λ(xₒ: ⟦⟧). ⟦t⟧(ρ,(o,xₒ))χ
-⟦
+
+=================================================================
+
+In sum:
+
+⟦x⟧ρ = ρ(x)
+⟦t.i⟧ρχ = ⟦t⟧(ρ[i/fresh₁])(χ,i)
+⟦a,ᵢ p⟧ρχ = ⟦a⟧ρχ      if i ∉ χ
+          = ⟦p⟧ρ(χ-i)  if i ∈ χ
+⟦λx:A.t⟧ρχ = (for every o ⊆ χ) λxₒ. ⟦t⟧(ρ,(o,xₒ))χ
+⟦f a⟧ρχ = (for every o ⊆ χ) ⟦f⟧ρχ ⟦f⟧ρo
+⟦∀x:A. B⟧ρχ = (for every o ⊆ χ)(for every i ⊂ χ)(for every p ⊂ o)
+              λfᵢ. ∀xₒ:⟦A⟧ρo ∙ xₚ. ⟦B⟧(ρ,x ↦ cube(xₒ))χ (fᵢ xᵢ)
+
+
+However, this assumes that each variable is given multiple parametric interpretations for each color set:
+
+xᵢⱼ is (a priori) unrelated to xⱼᵢ
+
+The relation between those objects is requiried by the computational rules of the form
+
+(a,ᵢp).j
+
