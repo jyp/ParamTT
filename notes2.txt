@@ -1,0 +1,44 @@
+
+
+a : T ==>  aηn = Tηn a
+  (if T is of the form Xη(n-1) args)
+
+η1:
+Uη1 A =  A -> U
+(A -> B)η1 f = (x:A) -> Aη1 x -> Bη1 (f x)
+(f u)η1 = fη1 u uη1
+
+η2:
+(A -> U)η2 P = (x:A) -> P x -> Aη1 x -> U
+(P a)η2 x = Pη2 a x aη1
+((x:A) -> P x -> B)η1 = (x:A) -> (y : P x) -> Aη1 x -> (P x)η2 y -> Bη2 (f x y)
+(f u v)η2 = fη2 u v uη1 vη2
+
+η3:
+(A -> B -> C -> U)η3 P = (x:A)(y:B)(z:C) -> R x y z -> Aη1 x -> Bη2 y -> Cη2 z -> U
+(P a b c)η2 x = Pη3 a b c x aη1 bη2 cη2
+...
+
+(a,ip)ηnj = (aηnj ,i pη(n+1)j)
+(a,ip)η1j = (aη1j ,i pη2j)
+
+
+Other eqs (from simplicial sets?):
+fη1jη2i = fη1iη1j
+fηnjηmi = fη(m-1)iηnj   (m>n)
+...
+
+We have:
+p : Tη1 a
+pη2 : (Tη1 a)η2 p
+    : Tη1η2 a p aη1
+    : Tη1η1 a p aη1
+
+---------
+
+Check surjective pairing:
+
+a = (a ,i aη1i)
+aη1j = (a ,i aη1i)η1j
+     = (aη1j ,i aη1iη2j)
+aη1jη1i = aη1iη2j
