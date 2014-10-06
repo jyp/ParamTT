@@ -1,0 +1,117 @@
+Salut,
+
+Voici une version moins bancale du calcul, suivant l'idee de
+vendredi. Le but est de coller a la semantique ou les predicats, et
+fonctions travaillent "d'un coup" sur des cubes, mais sans alourdir la
+syntaxe du lambda calcul traditionel pour supporter ces cubes. Seul la
+partie "parametricite" du calcul est modifiee; on laisse les fonctions
+et l'univers tels quels.
+
+
+--------
+On generalise x.i vers x(ηni); pour tout n>0
+
+(dans les cas ou la couleur i est evidente, j'ecrirai seulement ηn; et
+j'ommetrai egalement les effacements (i0))
+
+
+On a:
+
+si     a : T
+alors  aηn = Tηn a
+
+(avec la condition supplementaire que T est de la forme Xη(n-1) args)
+
+--------
+
+Definitions:
+η1:
+Uη1 A =  A -> U
+(A -> B)η1 f = (x:A) -> Aη1 x -> Bη1 (f x)
+(f u)η1 = fη1 u uη1
+
+η2:
+(A -> U)η2 P = (x:A) -> P x -> Aη1 x -> U
+(P a)η2 x = Pη2 a x aη1
+(\(x:A) -> T) = \(x:A) (xj : T) (xi : Aη1 x). -> Tη2 x xi xj
+
+((x:A) -> P x -> B)η1 = (x:A) -> (y : P x) -> Aη1 x -> (P x)η2 y -> Bη2 (f x y)
+(f u v)η2 = fη2 u v uη1 vη2
+
+η3:
+(A -> B -> C -> U)η3 P = (x:A)(y:B)(z:C) -> R x y z -> Aη1 x -> Bη2 y -> Cη2 z -> U
+(dependences implicites)
+(P a b c)η2 x = Pη3 a b c x aη1 bη2 cη2
+...
+
+---------
+
+De plus on peut normaliser les cascades de η. Les equations sont
+probablement les memes que pour les ensembles simpliciaux:
+
+a(ηnj)(ηmi) = a(η(m-1)i)(ηnj)   (m>n)
+...
+(on verifie que l'equation ci-dessus est confluente avec les definitions pour tout a)
+
+---------
+
+Le calcul sur les paires est donc:
+(a,ip)ηnj = (aηnj ,i pη(n+1)j)
+
+Le typage est bon: le "swap" est realise par η2
+
+p : Tη1 a
+pη2 : (Tη1 a)η2 p
+    : Tη1η2 a p aη1
+    : Tη1η1 a p aη1
+
+---------
+
+Et on a la surjectivite des paires:
+
+En partant de
+a = (a ,i a(η1i))
+
+on calcule:
+aη1j = (a ,i a(η1i))(η1j)
+     = (aη1j ,i a(η1i)(η2j))
+
+puis:
+a(η1j)(η1i) = a(η1i)(η2j)
+
+ce qui est une equation du systeme.
+
+------
+Cas particulier: Sigma^i
+
+ (Sigma^i A P).j = A.j ,i P(η2j)
+
+ et si P : A -> U, alors P(η2j) : (x:A) -> P x -> A.j x -> U
+
+------------
+-- Surjectivite des paires pour U
+
+ U =  Sigma^i U U.i
+
+ U.j =  (Sigma^i U U.i).j
+     =  U.j ,i U.i(η2j)
+ 
+ U.j.i =  U.i(η2j)
+
+ et comme U est incolore, on laisse tomber toutes les couleurs et on ecrit:
+
+ U(η1)(η1) =  U(η1)(η2)
+
+
+On calcule:
+
+U(η1) = \(A:U). A -> U
+U(η1)(η1) = \(A:U). \(P : A -> U). ((A,P) -> U)η1
+          = \(A:U). \(P : A -> U). \(Q : A -> U). ((A,P) -> U)η1 Q
+          = \(A:U). \(P : A -> U). \(Q : A -> U). (x:A) -> (xi : P x) -> Uη1 Q
+          = \(A:U). \(P : A -> U). \(Q : A -> U). (x:A) -> (xi : P x) -> (xj : Q x) -> U
+
+U(η1)(η2) = (\(A:U). A -> U)η2
+          = \(A:U). \(P : A -> U). \(Q : A->U). -> (A -> U)η2 A P Q
+          = \(A:U). \(P : A -> U). \(Q : A->U). -> ((A,Q) -> U)η2 P
+          = \(A:U). \(P : A -> U). \(Q : A->U). -> (x:A) -> (xi : P x) -> (xj : Q x) -> U
