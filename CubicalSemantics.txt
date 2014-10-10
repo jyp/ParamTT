@@ -14,9 +14,22 @@ We interpret terms as hypercubes. So values depend on a set of colors
 ⟦t(ηni)⟧ρχ = ⟦t⟧(ρ[i/freshₙ])(χ+i)
 ⟦a,ᵢ p⟧ρχ = ⟦a⟧ρχ           if i ∉ χ
           = ⟦p⟧(ρ(i))(χ-i)  if i ∈ χ 
-⟦Ψ(i) P⟧ρχ = ⟦P⟧ρχ
-⟦P ∋ a⟧ρχ = 
+⟦ΨP⟧ρχ = ⟦P⟧ρχ
+⟦P ∋ a⟧ρχ = ⟦P⟧ρχ ⟦a⟧ρχ 
 
+
+Development of ΨP:
+
+Assume 
+
+  P : A -> U
+--------------
+ ΨP : U ∋ᵢ A
+
+ΨP(∅) = P(∅)    (type: A(∅) -> Set )
+
+ΨP(i) = P(i)  -- but arguments are in another order
+...
 
 
 χ is a set of colors
