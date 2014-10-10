@@ -1,0 +1,195 @@
+\documentclass[10pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amssymb,amstext,amsmath}
+\usepackage{mathpartir}
+\usepackage{mytheorems}
+\usepackage[a4paper,margin=1.8cm]{geometry}
+\usepackage{fancyref}
+
+\newcommand\CC[4]{(#2,_{#1} #3)}
+\newcommand\CP[3]{(#2,_{#1} #3)}
+\newcommand\CSig[1]{\Sigma^{#1}}
+\newcommand\CTimes[3]{#2 ×_{#1} #3}
+\newcommand\SW[2]{\mathsf{SW}^{#1}_{#2}}
+\newcommand\sw[2]{\mathsf{sw}^{#1}_{#2}}
+\newcommand\dom{\mathsf{dom}}
+\newcommand\param[1]{\!\cdot\!#1}
+\newcommand\pvar[2]{{#1}^{(#2)}}
+\newcommand\op[1]{∋_{#1}}
+\newcommand\ip{Ψ}
+
+
+\input{unicodedefs}
+
+\title{A parametric Type theory}
+
+\author{}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+
+\begin{definition}[Syntax of terms and contexts]
+  
+  \begin{align*}
+    t,u,A,B & ::= x ~|~ U ~|~ λx:A. t      ~|~ t u ~|~ (x:A) → B \\
+            & ~|~ \CC i t u A  ~|~ t \param i  \\
+            & ~|~ A ∋ u ~|~ \ip A \\
+    \Gamma,\Delta & ::= () ~|~ \Gamma,x:A ~|~ \Gamma,I
+  \end{align*}
+\end{definition}
+$\CSig i A P$ and $(x:A) ×_i P x$ are other notations for $(A ,_i \ip P)$.
+
+$A \op i x$ is a notation for $A \param i ∋ x$.
+
+We use $I,J,…$ for finite {\em sets} of colours (order does not matter).
+
+\begin{definition}[Typing relation]
+Contexts:
+  \begin{mathpar}
+    \inferrule[Empty]{~}{() ⊢ }
+
+    \inferrule[NewVar]{Γ⊢ \\ Γ ⊢ A }{ Γ,x:A ⊢ }
+
+    \inferrule[NewColor]{Γ⊢}{ Γ,I ⊢ }
+
+  \end{mathpar}
+ 
+Types:
+ \begin{mathpar}
+    \inferrule[Universe]{Γ ⊢}{Γ ⊢ U : U}
+
+    \inferrule[Pi]{Γ ⊢ A : U \\ Γ,x:A ⊢ B : U}{Γ ⊢ (x:A) → B : U}
+
+    \inferrule[Out-Pred]{Γ ⊢ P : U \op i A \\ Γ ⊢ a : A}{Γ ⊢ P ∋ a : U}
+
+    \inferrule[In-Pred]{Γ ⊢ P : A → U}{Γ ⊢ \ip P : U \op i A}
+ \end{mathpar}
+
+Terms:
+  \begin{mathpar}
+    \inferrule[Conv]{Γ ⊢ t:A \\ A = B}{Γ ⊢ t : B}
+
+    \inferrule[Var]{Γ ⊢ A}{Γ,x:A ⊢ x : A}
+
+    \inferrule[Wk]{Γ ⊢ A \\Γ ⊢ t : T}{Γ,x:A ⊢ t : T}
+
+    \inferrule[CWk]{Γ ⊢ t : T}{Γ,I ⊢ t : T}
+
+    \\\inferrule[Lam]{Γ,x:A ⊢ B}{Γ ⊢ λx:A.b : (x:A) → B}
+ 
+    \inferrule[App]{Γ ⊢ t : (x:A) → B[x] \\ Γ ⊢ u : A}{Γ ⊢ t u: B[u] }
+
+    \\\inferrule[Color-intro]{Γ,I ⊢ a : T i0 \\Γ,I ⊢ p : T \param i a}{Γ,I,i ⊢ \CC i a p T : T}
+
+    \inferrule[Color-elim]{Γ,I,i ⊢ a : T}{Γ,I ⊢ a \param i : T \op i  a (i0)}
+
+
+  \end{mathpar}
+\end{definition}
+
+\begin{definition}[Reduction]~
+
+Functions:
+\begin{align*}
+  (λx:A. u[x]) t &= u[t]  \\
+  (f ,_i g)_{(x:A)→ B[x]} a & = (f a(i0) ,_i g a(i0) a \param i)_{B[a]}
+\end{align*}
+
+Param:
+\begin{align*}
+  \ip P ∋ a &= P a \\
+  ((x:A) → B[x]) \op i f &= (x:A) → (x' : A\op i x) → (B[(x,_i x')_A])\op i (f x)  & ??? \\
+  (λx:A. b[x])\param i &= λx:A(i0). λx':A\op i x. b[\CC i x {x'} A]\param i \\
+  (f a)\param i &= f\param i (a (i0)) (a\param i) \\
+  (a,_i p) \param i  &= p \\
+  (a,_i p) \param j  &= (a \param j ,_i p \param j) \\
+\end{align*}
+\end{definition}
+
+\begin{definition}[Conversion]
+  \begin{mathpar}
+    \inferrule{t x = u} {t = λ x:A.u}
+
+    \inferrule{}{(T \op i {\CP j a p}) \op j q = (T \op j {\CP i a q}) \op i p}
+
+    \inferrule{t (i0) = a \\ t.i = p} {t = \CC i a p {\CSig i A P}}
+
+  \end{mathpar}
++ congruences.
+\end{definition}
+
+\begin{definition}
+ We define substitution between contexts
+
+  \begin{align*}
+    σ, δ & ::= ()  |  (σ,x=t)  |  (σ,f)
+  \end{align*}
+
+  \begin{mathpar}
+    \inferrule {σ : Δ → Γ\\ Δ ⊢ t:Aσ} {(σ,x=t) : Δ → Γ,x:A} 
+
+    \inferrule {σ : Δ → Γ} {(σ,f) : Δ → Γ,J}
+  \end{mathpar}
+where $f$ is a function of domain $J$ and taking as values $0,1$ or
+colours declared in $Δ$ (and such that $j=k$ if $f(j) = f(k)$ is a colour).
+
+The identity substitution $1_{Γ}$ is defined as usual and $(i0)$ is
+an abbreviation for $(1_{Γ},i=0)$. Also $b[u]$ is an abbreviation for
+$b(1_{Γ},x=u)$.
+\end{definition}
+
+\begin{definition}
+We define $tσ$ by induction on $t$
+
+\begin{align*}
+  Uσ &= U \\
+  x(σ,f) &= xσ \\
+  x(σ,y=u) &= xσ \\
+  x(σ,x=u) &= u \\
+  ((x:A)→ B)σ &= (y:Aσ) → B(σ,x=y) \\
+  (λ x:A. b)σ &= λ y:Aσ. b(σ,x=y) \\
+  (t.i)σ &= (t(σ,i=j)).j \\
+  (f a)σ &= fσ  (aσ) \\
+  (a,_i b)_T(σ,x=u)  &= (a,_i b)_Tσ  \\
+  (a,_i b)_T(σ,f)  &= (a,_i p)_Tσ & i \# f \\
+  (a,_i b)_T(σ,f)  &= a(σ,f-i) & f(i) = 0 \\
+  (a,_i b)_T(σ,f)  &= (a(σ,f-i),_j b(σ,f-i))_{T(σ,f)} & f(i) = j
+\end{align*}
+\end{definition}
+
+
+
+\subsection{Semantics}
+
+- Nominality; dependence on a finite number of colors.
+
+Le modele correspond a pretendre connaitre toutes les expansions en hypercubes.
+
+un type A sur i,j,... couleurs est
+
+A : Set
+A.i : A -> Set
+A.j : A -> Set
+A.i.j : (x:A) -> A.i x -> A.j x -> Set
+...
+
+mais A.j.i est donne par
+
+A.j.i a p q = A.i.j a q p     (eq. 1)
+
+Le swap est donc purement formel, et uniquement dans les types.
+
+En effet, avoir a : A sur i,j,... couleurs est
+
+a : A
+a.i : A.i a
+a.j : A.j a
+a.i.j : A.i.j a a.i a.j
+...
+
+a.j.i est donne par a.i.j (pas de transformation)
+
+
+\end{document}

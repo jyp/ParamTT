@@ -11,9 +11,12 @@ We interpret terms as hypercubes. So values depend on a set of colors
 ⟦f a⟧ρχ = (for every o ⊆ χ) ⟦f⟧ρχ ⟦f⟧ρo
 ⟦∀x:A. B⟧ρχ = (for every o ⊆ χ)(for every i ⊂ χ)(for every p ⊂ o)
               λfᵢ. ∀xₒ:⟦A⟧ρo ∙ xₚ. ⟦B⟧(ρ,x ↦ cube(xₒ))χ (fᵢ xᵢ)
-⟦t(ηni)⟧ρχ = ⟦t⟧(ρ[i/freshₙ])(insert n i χ)
-⟦a,ᵢ p⟧ρχ = ⟦a⟧ρχ          if i ∉ χ
-          = ⟦p⟧(ρ-i)(χ-i)  if i ∈ χ   -- see example for what this means
+⟦t(ηni)⟧ρχ = ⟦t⟧(ρ[i/freshₙ])(χ+i)
+⟦a,ᵢ p⟧ρχ = ⟦a⟧ρχ           if i ∉ χ
+          = ⟦p⟧(ρ(i))(χ-i)  if i ∈ χ 
+⟦Ψ(i) P⟧ρχ = ⟦P⟧ρχ
+⟦P ∋ a⟧ρχ = 
+
 
 
 χ is a set of colors
@@ -26,16 +29,20 @@ The color sets in the environment are of the following form:
    variables must be a subset of χ.
 (All sets of the above form must be mapped to a value.)
 
+ρ(i) is the restriction of the environment to i. That is, for each value v(χ) in ρ,
+we replace it by v(χ,i)
+
+
 Example:
 
 
-| Term      | ρ(a)                                | ρ(p)                                          |
-|-----------+-------------------------------------+-----------------------------------------------|
-| (a,i p).j | (x:A, x':A'x, x'':A'' x x' x', ...) | (yⁱ:Aⁱ x, yⁱ':Aⁱ' x x' yⁱ,  y'ⁱ:A'ⁱ x yⁱ x' ) |
-| (a,i p)   | (x:A, xʲ:Aʲx, x'ʲ:A'ʲ x x' xʲ, ...) | (yⁱ:Aⁱ x, yⁱʲ:Aⁱʲ x xʲ yⁱ,  yʲⁱ:Aʲⁱ x yⁱ xʲ ) |
-| a         | (x:A, xʲ:Aʲx, x'ʲ:A'ʲ x x' xʲ, ...) |                                               |
-| p         |                                     | (y:Aⁱ x, yʲ:Aⁱʲ x yⁱ xʲ )                     |
-|           |                                     |                                               |
+| Term      | ρ(a)                                | ρ(p)                        |
+|-----------+-------------------------------------+-----------------------------|
+| (a,i p).j | (x:A, x':A'x, x'':A'' x x' x', ...) | (yⁱ:Aⁱ x, yⁱ':Aⁱ' x x' yⁱ ) |
+| (a,i p)   | (x:A, xʲ:Aʲx, x'ʲ:A'ʲ x x' xʲ, ...) | (yⁱ:Aⁱ x, yⁱʲ:Aⁱʲ x xʲ yⁱ ) |
+| a         | (x:A, xʲ:Aʲx, x'ʲ:A'ʲ x x' xʲ, ...) |                             |
+| p         |                                     | (y:Aⁱ x, yʲ:Aⁱʲ x yⁱ xʲ )   |
+|           |                                     |                             |
 
 (*) values xᴵ where i ∈ I will always be ignored, so I do not write
 them. Dually, yᴵ where i ∉ I will always be ignored, so I write only
