@@ -1,5 +1,81 @@
 -*- org -*-
 
+⟦x⟧ρ = ρ(x)
+⟦U⟧ρχ = (for every i ⊂ χ) (for every i ⊂ o) λXᵢ:⟦U⟧ρ. (xᵢ : Xᵢ ∙ xₒ) → U
+⟦λx:A.t⟧ρχ = (for every o ⊆ χ) λxₒ. ⟦t⟧(ρ,(o,xₒ))χ
+⟦f a⟧ρχ = (for every o ⊆ χ) ⟦f⟧ρχ ⟦f⟧ρo
+⟦∀x:A. B⟧ρχ = (for every o ⊆ χ)(for every i ⊂ χ)(for every p ⊂ o)
+              λfᵢ. ∀xₒ:⟦A⟧ρo ∙ xₚ. ⟦B⟧(ρ,x ↦ cube(xₒ))χ (fᵢ xᵢ)
+⟦t(ηni)⟧ρχ = ⟦t⟧(ρ[i/ⁿ])(insert n i χ)
+⟦a,ᵢ p⟧ρχ = ⟦a⟧ρχ      if i ∉ χ
+          = ⟦p⟧ρ(χ-i)  if i ∈ χ   -- see example for what this means
+
+
+In the environment, we map couples (var,list of colors) to values.
+The color lists in the environment are of the following form:
+ - Colors are picked from the list {ⁿ,...,²,¹}+χ. That is, we also allow for an
+   extra fresh/anonymous color (written ²), which may occur anywhere
+   and multiple times.
+ - Non anonymous colors occur at most once. The list of non-anonymous
+   variables must be a sublist of χ.
+(All sublists of the above form must be mapped to a value.)
+
+A type is interpreted as:
+
+A : Set
+Aⁱ : A → Set;  A¹ : A → Set; ...  (all sublists of size 1 of {n,...2,1,i})
+A¹ⁱ : (x:A) → Aⁱ x → A¹ x → Set; A²¹ : (x:A) → A¹ x → A² x → Set;  (all sublists of size 2 of {n,...2,1,i})
+...
+
+(the arguments come in the same order as in the syntax)
+
+Property of the env: if x:T ∈ Γ, then ρ(x)χ : ⟦T⟧ρχ ∙ ρ(x)i (for every i ⊂ χ)
+
+Example:
+
+assume p : A.i a
+
+evaluate A.i for various χ:
+
+| χ   |            |            |      |
+|-----+------------+------------+------|
+| ∅   | ⟦A.i⟧∅     | ⟦A⟧(i)     | Aⁱ   |
+| 1   | ⟦A.i⟧(1)   | ⟦A⟧(1,i)   | A¹ⁱ  |
+| 2   | ⟦A.i⟧(2)   | ⟦A⟧(2,i)   | A²ⁱ  |
+| 2,1 | ⟦A.i⟧(2,1) | ⟦A⟧(2,1,i) | A²¹ⁱ |
+| ... |            |            |      |
+
+
+| Term      | ρ(a)                                | ρ(p)                      |       |                            |
+|-----------+-------------------------------------+---------------------------+-------+----------------------------|
+| (a,i p).j | (x:A, x¹:A¹x, x²¹:A²¹ x x¹ x², ...) | (y:Aⁱ x, y¹:A¹ⁱ x y x¹  ) | χ     |                            |
+| (a,i p)   | (x:A, xʲ:Aʲx, x¹ʲ:A¹ʲ x xʲ x¹, ...) | (y:Aⁱ x, yʲ:Aʲⁱ x y xʲ )  | χ,j   | apply subst in ρ: j/1; 1/2 |
+| a         | (x:A, xʲ:Aʲx, x¹ʲ:A¹ʲ x xʲ x¹, ...) |                           | χ,j   |                            |
+| p         |                                     | (y:Aⁱ x, yʲ:Aʲⁱ x y xʲ )  | χ-i,j |                            |
+
+
+So, we get the final values:
+
+| χ | value         |
+|---+---------------|
+| ∅ | xʲ:Aʲx        |
+| i | yʲ:Aʲⁱ x y xʲ |
+
+Which is "well typed".
+
+Let's repeat the process with the reduct:  (a.j ,i p(η2j))
+(We do only p(η2j), the rest is boring)
+
+| Term   | ρ(p)                                                                 |   |                                 |
+|--------+----------------------------------------------------------------------+---+---------------------------------|
+| p(η2j) | (y:Aⁱ x, y¹:A¹ⁱ x y x¹, y²: A²ⁱ x y x²; y²¹:A²¹ⁱ x y x¹ x² y² x²¹  ) | χ |                                 |
+| p      | (y:Aⁱ x, y¹:A¹ⁱ x y x¹, yʲ: Aʲⁱ x y xʲ; yʲ¹:Aʲ¹ⁱ x y x¹ xʲ yʲ xʲ¹  ) | χ | apply subst in ρ: j/2; 2/3; ... |
+
+--> and we get the same value.
+
+=============================
+-- Older, "bad" versions follow
+
 
 We interpret terms as hypercubes. So values depend on a set of colors
 (χ) in addition to an environment of values (ρ).
@@ -78,7 +154,6 @@ Which is a "good" cube
 
 
 ================================
--- Older, "bad" versions follow
 
 We interpret terms as hypercubes. So values depend on a list of colors
 (χ) in addition to an environment of values (ρ).
@@ -163,54 +238,4 @@ xᵢⱼ is (a priori) unrelated to xⱼᵢ
 The relation between those objects is requiried by the computational rules of the form
 
 (a,ᵢp).j
-
-==================================================
-
-⟦x⟧ρ = ρ(x)
-⟦U⟧ρχ = (for every i ⊂ χ) (for every i ⊂ o) λXᵢ:⟦U⟧ρ. (xᵢ : Xᵢ ∙ xₒ) → U
-⟦λx:A.t⟧ρχ = (for every o ⊆ χ) λxₒ. ⟦t⟧(ρ,(o,xₒ))χ
-⟦f a⟧ρχ = (for every o ⊆ χ) ⟦f⟧ρχ ⟦f⟧ρo
-⟦∀x:A. B⟧ρχ = (for every o ⊆ χ)(for every i ⊂ χ)(for every p ⊂ o)
-              λfᵢ. ∀xₒ:⟦A⟧ρo ∙ xₚ. ⟦B⟧(ρ,x ↦ cube(xₒ))χ (fᵢ xᵢ)
-⟦t(ηni)⟧ρχ = ⟦t⟧(ρ[i/freshₙ])(χ,i)
-⟦a,ᵢ p⟧ρχ = ⟦a⟧ρχ      if i ∉ χ
-          = ⟦p⟧(ρ­i)(χ-i)  if i ∈ χ   -- see example for what this means
-
-
-In the environment, we map couples (var,list of colors) to values.
-The color lists in the environment are of the following form:
- - Colors are picked from the set χ∪{'}. That is, we also allow for an
-   extra fresh/anonymous color (written '), which may occur anywhere
-   and multiple times.
- - Non anonymous colors occur at most once. The list of non-anonymous
-   variables must be a sublist of χ.
-(All sublists of the above form must be mapped to a value.)
-
-Example:
-
-| Term      | ρ(a)                                                 | ρ(p)                                          |                                                |
-|-----------+------------------------------------------------------+-----------------------------------------------+------------------------------------------------|
-| (a,i p).j | (x:A, x':A'x, x'':A'' x x' x', ...)                  | (yⁱ:Aⁱ x, yⁱ':Aⁱ' x x' yⁱ,  y'ⁱ:A'ⁱ x yⁱ x' ) | xⁱ will always be ignored so I do not write it |
-| (a,i p)   | (x:A, xʲ:Aʲx, x'ʲ:A'ʲ x x' xʲ, xʲ':Aʲ' x xʲ x', ...) | (yⁱ:Aⁱ x, yⁱʲ:Aⁱʲ x xʲ yⁱ,  yʲⁱ:Aʲⁱ x yⁱ xʲ ) |                                                |
-| a         | (x:A, xʲ:Aʲx, x'ʲ:A'ʲ x x' xʲ, xʲ':Aʲ' x xʲ x', ...) |                                               |                                                |
-| p         |                                                      | (y:Aⁱ x, yʲ:Aⁱʲ x yⁱ xʲ )                     | select only the subenv where i is last         |
-|           |                                                      |                                               |                                                |
-
-
-So, we get the final values:
-
-| χ  | value |
-|----+-------|
-| —  | x     |
-| i  | y     |
-| j  | xʲ    |
-| ij | yʲ    |
-
-Which is "well typed".
-
-It is a bit ugly that we have to have i (and all free colors) in all
-positions, only to ignore all but those where i is last. This is
-because we allow, in the syntax, to build cubes in whatever order.
-Maybe it is not necessary to be so permissive.
-
 
