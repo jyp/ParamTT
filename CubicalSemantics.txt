@@ -1,27 +1,15 @@
 -*- org -*-
+* Current version
 
-⟦x⟧ρ = ρ(x)
-⟦U⟧ρχ = (for every i ⊂ χ) (for every i ⊂ o) λXᵢ:⟦U⟧ρ. (xᵢ : Xᵢ ∙ xₒ) → U
-⟦λx:A.t⟧ρχ = (for every o ⊆ χ) λxₒ. ⟦t⟧(ρ,(o,xₒ))χ
-⟦f a⟧ρχ = (for every o ⊆ χ) ⟦f⟧ρχ ⟦f⟧ρo
-⟦∀x:A. B⟧ρχ = (for every o ⊆ χ)(for every i ⊂ χ)(for every p ⊂ o)
-              λfᵢ. ∀xₒ:⟦A⟧ρo ∙ xₚ. ⟦B⟧(ρ,x ↦ cube(xₒ))χ (fᵢ xᵢ)
-⟦t(ηni)⟧ρχ = ⟦t⟧(ρ[i/ⁿ])(insert n i χ)
-⟦a,ᵢ p⟧ρχ = ⟦a⟧ρχ      if i ∉ χ
-          = ⟦p⟧ρ(χ-i)  if i ∈ χ   -- see example for what this means
+A[i] can also be written Aⁱ
 
+** Universe
 
-In the environment, we map couples (var,list of colors) to values.
-The color lists in the environment are of the following form:
- - Colors are picked from the list {ⁿ,...,²,¹}+χ. That is, we also allow for an
-   extra fresh/anonymous color (written ²), which may occur anywhere
-   and multiple times.
- - Non anonymous colors occur at most once. The list of non-anonymous
-   variables must be a sublist of χ.
-(All sublists of the above form must be mapped to a value.)
+U0 = Set
+U1 A = A → Set
+U2 A A1 A2 = ...
 
-A type is interpreted as:
-
+** A type (over a set of colors {n,...,2,1,i}) is interpreted as
 A : Set
 Aⁱ : A → Set;  A¹ : A → Set; ...  (all sublists of size 1 of {n,...2,1,i})
 A¹ⁱ : (x:A) → Aⁱ x → A¹ x → Set; A²¹ : (x:A) → A¹ x → A² x → Set;  (all sublists of size 2 of {n,...2,1,i})
@@ -29,9 +17,70 @@ A¹ⁱ : (x:A) → Aⁱ x → A¹ x → Set; A²¹ : (x:A) → A¹ x → A² x �
 
 (the arguments come in the same order as in the syntax)
 
-Property of the env: if x:T ∈ Γ, then ρ(x)χ : ⟦T⟧ρχ ∙ ρ(x)i (for every i ⊂ χ)
+** A value a : A (over the same set of colors) is interpreted as:
+a : A
+aⁱ : Aⁱ a;  a¹ : A (for all sublists of size 1 ...)
+a¹ⁱ : A¹ⁱ a aⁱ a¹;  a²¹ : A²¹ a a¹ a² (for all sublists of size 2 ...)
+...
 
-Example:
+** Cube restriction
+
+We define (a/χ)[θ] = a[θ,χ]
+
+
+** Evaluator
+
+⟦a⟧ρ[χ] : ⟦T ∋χ ⟦a⟧ρ[i]⟧  (i ⊂ χ)
+
+1. ⟦T ∋χ vᵢ⟧ρ (for every i ⊂ χ) (each vᵢ is itself a cube (infinite))
+2. ⟦a⟧ρ[χ] : a cube (of cubes)
+
+| ⟦T ∋∅ vᵢ⟧ρ = ⟦T⟧ρ∅                                                   |                                                                                                |
+| ⟦U ∋χ Xᵢ⟧ρ = (for every o ⊂ i) (xᵢ : Xᵢ ∋i xₒ) → U                   |                                                                                                |
+| ⟦∀x:A. B ∋χ fᵢ⟧ρ (for every p ⊂ i) ∀xᵢ:⟦A ∋i xₚ⟧ρ. ⟦B⟧(ρ,x)χ (fᵢ xᵢ) |                                                                                                |
+| ⟦x ∋χ yᵢ⟧ρ = ρ(x)/χ yᵢ                                               | satisfy the predicate ρ(x)[χ] with yᵢ[0], create a predicate from the relation ρ(x)[1,χ], etc. |
+
+
+| ⟦x⟧ρχ = ρ(x)/χ                                       |                                       |
+| ⟦λx:A.t⟧ρχ = (for every o ⊆ χ) λxₒ. ⟦t⟧(ρ,(x,o)↦xₒ)χ | each xₒ gives a portion of the cube x |
+| ⟦f a⟧ρχ = (for every o ⊆ χ) ⟦f⟧ρχ ⟦a⟧ρo              |                                       |
+| ⟦t(ηni)⟧ρχ = ⟦t⟧(ρ[i/n])(insertAt n i χ)             |                                       |
+| ⟦a,ᵢ p⟧ρχ = ⟦a⟧(ρ-i)χ      if i ∉ χ                  |                                       |
+| ⟦a,ᵢ p⟧ρχ = ⟦p⟧(ρ-i)(χ-i)  if i ∈ χ                  |                                       |
+| ⟦T⟧ρχ = λxᵢ:⟦T ∋i xₒ⟧. ⟦T ∋χ xᵢ⟧                     |                                       |
+
+
+Properties of the env:
+
+- The environments contains cubes over {n,...,2,1}+χ That is, we also
+  allow for an extra fresh/anonymous colors (whose names are numbers).
+  In fact, we must have those to interpret parametricity.
+
+- if x:T ∈ Γ, then ρ(x)[θ] : ⟦T⟧ρ[θ] ∙ ρ(x)[i] (for every i ⊂ θ)  --
+
+** What happens for a redex?
+
+⟦(λx. b[x]) a⟧ρ{}
+  = ⟦(λx. b[x])⟧ρ{} ⟦a⟧ρ{}
+  = (λx⁰. ⟦b[x]⟧(ρ,(x,{})=x⁰){}) a⁰
+  = ⟦b[x]⟧(ρ,(x,{})=a⁰)
+
+NOTE that a⁰ is a cube (where the dimension is the (infinite) set of free vars). So in the (new) env we simply associate x to a⁰.
+
+Let's see what happens with χ = {i}
+
+⟦(λx. b[x]) a⟧ρ{i}
+  = ⟦(λx. b[x])⟧ρ{i} ⟦a⟧ρ{} ⟦a⟧ρ{i}
+  = (λx⁰. λxⁱ. ⟦b[x]⟧(ρ,(x,{})=x⁰,(x,{i})=xⁱ){i}) a⁰ aⁱ
+  = (λxⁱ. ⟦b[x]⟧(ρ,(x,{})=a⁰,(x,{i})=xⁱ){i}) aⁱ
+  = ⟦b[x]⟧(ρ,(x,{})=a⁰,(x,{i})=aⁱ){i})
+  = ⟦b[x]⟧(ρ,x=a)
+
+Here, aⁱ is the sub-part of the cube a restricted to i.
+So, when we associate the parts in ρ to either parts of x, we reconstruct a.
+
+
+** Example (swap):
 
 assume p : A.i a
 
@@ -46,22 +95,24 @@ evaluate A.i for various χ:
 | ... |            |            |      |
 
 
-| Term      | ρ(a)                                | ρ(p)                      |       |                            |
-|-----------+-------------------------------------+---------------------------+-------+----------------------------|
-| (a,i p).j | (x:A, x¹:A¹x, x²¹:A²¹ x x¹ x², ...) | (y:Aⁱ x, y¹:A¹ⁱ x y x¹  ) | χ     |                            |
-| (a,i p)   | (x:A, xʲ:Aʲx, x¹ʲ:A¹ʲ x xʲ x¹, ...) | (y:Aⁱ x, yʲ:Aʲⁱ x y xʲ )  | χ,j   | apply subst in ρ: j/1; 1/2 |
-| a         | (x:A, xʲ:Aʲx, x¹ʲ:A¹ʲ x xʲ x¹, ...) |                           | χ,j   |                            |
-| p         |                                     | (y:Aⁱ x, yʲ:Aʲⁱ x y xʲ )  | χ-i,j |                            |
+| Term      | ρ(a)                                | ρ(p)                                                    |       |                            |
+|-----------+-------------------------------------+---------------------------------------------------------+-------+----------------------------|
+| (a,i p).j | (x:A, x¹:A¹x, x²¹:A²¹ x x¹ x², ...) | (y:Aⁱ x, y¹:A¹ⁱ x y x¹, y²¹: A²¹ⁱ x y x¹ y¹ x² y² x²¹ ) | χ     |                            |
+| (a,i p)   | (x:A, xʲ:Aʲx, x¹ʲ:A¹ʲ x xʲ x¹, ...) | (y:Aⁱ x, yʲ:Aʲⁱ x y xʲ, y¹ʲ: A¹ʲⁱ x y xʲ yʲ x¹ y¹ x¹ʲ ) | χ,j   | apply subst in ρ: j/1; 1/2 |
+| a         | (x:A, xʲ:Aʲx, x¹ʲ:A¹ʲ x xʲ x¹, ...) |                                                         | χ,j   |                            |
+| p         |                                     | (y:Aⁱ x, yʲ:Aʲⁱ x y xʲ, y )                             | χ-i,j |                            |
 
 
 So, we get the final values:
 
-| χ | value         |
-|---+---------------|
-| ∅ | xʲ:Aʲx        |
-| i | yʲ:Aʲⁱ x y xʲ |
+| χ   | value                         |
+|-----+-------------------------------|
+| ∅   | xʲ:Aʲx                        |
+| i   | yʲ:Aʲⁱ x y xʲ                 |
+| 1   | x¹ʲ:A¹ʲ x xʲ x¹               |
+| 1,i | y¹ʲ: A¹ʲⁱ x y xʲ yʲ x¹ y¹ x¹ʲ |
 
-Which is "well typed".
+Which is a well-formed cube.
 
 Let's repeat the process with the reduct:  (a.j ,i p(η2j))
 (We do only p(η2j), the rest is boring)
@@ -73,8 +124,113 @@ Let's repeat the process with the reduct:  (a.j ,i p(η2j))
 
 --> and we get the same value.
 
-=============================
--- Older, "bad" versions follow
+* Old version: mixed restrictions and access
+
+A[i] can also be written Aⁱ
+
+** A type (over a set of colors {n,...,2,1,i}) is interpreted as
+A : Set
+Aⁱ : A → Set;  A¹ : A → Set; ...  (all sublists of size 1 of {n,...2,1,i})
+A¹ⁱ : (x:A) → Aⁱ x → A¹ x → Set; A²¹ : (x:A) → A¹ x → A² x → Set;  (all sublists of size 2 of {n,...2,1,i})
+...
+
+(the arguments come in the same order as in the syntax)
+
+** A value a : A (over the same set of colors) is interpreted as:
+a : A
+aⁱ : Aⁱ a;  a¹ : A (for all sublists of size 1 ...)
+a¹ⁱ : A¹ⁱ a aⁱ a¹;  a²¹ : A²¹ a a¹ a² (for all sublists of size 2 ...)
+...
+
+** Cube restriction
+
+We define (a/χ)[θ] = a[θ,χ]
+
+** Evaluator
+
+| ⟦x⟧ρχ = ρ(x)/χ                                                                                                 | the cube ρ(x), restricted to χ        |
+| ⟦U⟧ρχ = (for every i ⊂ χ) (for every i ⊂ o) λXᵢ:⟦U⟧ρ. (xᵢ : Xᵢ ∙ xₒ) → U                                       |                                       |
+| ⟦λx:A.t⟧ρχ = (for every o ⊆ χ) λxₒ. ⟦t⟧(ρ,(x,o)↦xₒ)χ                                                           | each xₒ gives a portion of the cube x |
+| ⟦f a⟧ρχ = (for every o ⊆ χ) ⟦f⟧ρχ ⟦f⟧ρo                                                                        |                                       |
+| ⟦∀x:A. B⟧ρχ = (for every o ⊆ χ)(for every i ⊂ χ)(for every p ⊂ o)λfᵢ. ∀xₒ:⟦A⟧ρo ∙ xₚ. ⟦B⟧(ρ,(x,o)↦xₒ)χ (fᵢ xᵢ) |                                       |
+| ⟦t(ηni)⟧ρχ = ⟦t⟧(ρ[i/n])(insertAt n i χ)                                                                       |                                       |
+| ⟦a,ᵢ p⟧ρχ = ⟦a⟧ρχ      if i ∉ χ                                                                                |                                       |
+| ⟦a,ᵢ p⟧ρχ = ⟦p⟧ρ(χ-i)  if i ∈ χ                                                                                |                                       |
+
+Properties of the env:
+
+- The environments contains cubes over {n,...,2,1}+χ That is, we also
+  allow for an extra fresh/anonymous colors (whose name are numbers).
+
+- if x:T ∈ Γ, then ρ(x)[θ] : ⟦T⟧ρ[θ] ∙ ρ(x)[i] (for every i ⊂ θ)  --
+
+** What happens for a redex?
+
+⟦(λx. b[x]) a⟧ρ{}
+  = ⟦(λx. b[x])⟧ρ{} ⟦a⟧ρ{}
+  = (λx⁰. ⟦b[x]⟧(ρ,(x,{})=x⁰){}) a⁰
+  = ⟦b[x]⟧(ρ,(x,{})=a⁰)
+
+NOTE that a⁰ is a cube (where the dimension is the (infinite) set of free vars). So in the (new) env we simply associate x to a⁰.
+
+Let's see what happens with χ = {i}
+
+⟦(λx. b[x]) a⟧ρ{i}
+  = ⟦(λx. b[x])⟧ρ{i} ⟦a⟧ρ{} ⟦a⟧ρ{i}
+  = (λx⁰. λxⁱ. ⟦b[x]⟧(ρ,(x,{})=x⁰,(x,{i})=xⁱ){i}) a⁰ aⁱ
+  = (λxⁱ. ⟦b[x]⟧(ρ,(x,{})=a⁰,(x,{i})=xⁱ){i}) aⁱ
+  = ⟦b[x]⟧(ρ,(x,{})=a⁰,(x,{i})=aⁱ){i})
+  = ⟦b[x]⟧(ρ,x=a)
+
+Here, aⁱ is the sub-part of the cube a restricted to i.
+So, when we associate the parts in ρ to either parts of x, we reconstruct a.
+
+
+** Example (swap):
+
+assume p : A.i a
+
+evaluate A.i for various χ:
+
+| χ   |            |            |      |
+|-----+------------+------------+------|
+| ∅   | ⟦A.i⟧∅     | ⟦A⟧(i)     | Aⁱ   |
+| 1   | ⟦A.i⟧(1)   | ⟦A⟧(1,i)   | A¹ⁱ  |
+| 2   | ⟦A.i⟧(2)   | ⟦A⟧(2,i)   | A²ⁱ  |
+| 2,1 | ⟦A.i⟧(2,1) | ⟦A⟧(2,1,i) | A²¹ⁱ |
+| ... |            |            |      |
+
+
+| Term      | ρ(a)                                | ρ(p)                                                    |       |                            |
+|-----------+-------------------------------------+---------------------------------------------------------+-------+----------------------------|
+| (a,i p).j | (x:A, x¹:A¹x, x²¹:A²¹ x x¹ x², ...) | (y:Aⁱ x, y¹:A¹ⁱ x y x¹, y²¹: A²¹ⁱ x y x¹ y¹ x² y² x²¹ ) | χ     |                            |
+| (a,i p)   | (x:A, xʲ:Aʲx, x¹ʲ:A¹ʲ x xʲ x¹, ...) | (y:Aⁱ x, yʲ:Aʲⁱ x y xʲ, y¹ʲ: A¹ʲⁱ x y xʲ yʲ x¹ y¹ x¹ʲ ) | χ,j   | apply subst in ρ: j/1; 1/2 |
+| a         | (x:A, xʲ:Aʲx, x¹ʲ:A¹ʲ x xʲ x¹, ...) |                                                         | χ,j   |                            |
+| p         |                                     | (y:Aⁱ x, yʲ:Aʲⁱ x y xʲ, y )                             | χ-i,j |                            |
+
+
+So, we get the final values:
+
+| χ   | value                         |
+|-----+-------------------------------|
+| ∅   | xʲ:Aʲx                        |
+| i   | yʲ:Aʲⁱ x y xʲ                 |
+| 1   | x¹ʲ:A¹ʲ x xʲ x¹               |
+| 1,i | y¹ʲ: A¹ʲⁱ x y xʲ yʲ x¹ y¹ x¹ʲ |
+
+Which is a well-formed cube.
+
+Let's repeat the process with the reduct:  (a.j ,i p(η2j))
+(We do only p(η2j), the rest is boring)
+
+| Term   | ρ(p)                                                                 |   |                                 |
+|--------+----------------------------------------------------------------------+---+---------------------------------|
+| p(η2j) | (y:Aⁱ x, y¹:A¹ⁱ x y x¹, y²: A²ⁱ x y x²; y²¹:A²¹ⁱ x y x¹ x² y² x²¹  ) | χ |                                 |
+| p      | (y:Aⁱ x, y¹:A¹ⁱ x y x¹, yʲ: Aʲⁱ x y xʲ; yʲ¹:Aʲ¹ⁱ x y x¹ xʲ yʲ xʲ¹  ) | χ | apply subst in ρ: j/2; 2/3; ... |
+
+--> and we get the same value.
+
+* Older, "bad" versions follow
 
 
 We interpret terms as hypercubes. So values depend on a set of colors
