@@ -23,40 +23,44 @@ aⁱ : Aⁱ a;  a¹ : A (for all sublists of size 1 ...)
 a¹ⁱ : A¹ⁱ a aⁱ a¹;  a²¹ : A²¹ a a¹ a² (for all sublists of size 2 ...)
 ...
 
+** Well-formed condition
+
+a[θ] : A[θ] ∙ a[i] (i ⊂ θ)
+
 ** Cube restriction
 
 We define (a/χ)[θ] = a[θ,χ]
 
-
 ** Evaluator
 
-⟦a⟧ρ[χ] : ⟦T ∋χ ⟦a⟧ρ[i]⟧  (i ⊂ χ)
 
-1. ⟦T ∋χ vᵢ⟧ρ (for every i ⊂ χ) (each vᵢ is itself a cube (infinite))
-2. ⟦a⟧ρ[χ] : a cube (of cubes)
+We define an environment over a list of colors θ.
 
-| ⟦T ∋∅ vᵢ⟧ρ = ⟦T⟧ρ∅                                                   |                                                                                                |
-| ⟦U ∋χ Xᵢ⟧ρ = (for every o ⊂ i) (xᵢ : Xᵢ ∋i xₒ) → U                   |                                                                                                |
-| ⟦∀x:A. B ∋χ fᵢ⟧ρ (for every p ⊂ i) ∀xᵢ:⟦A ∋i xₚ⟧ρ. ⟦B⟧(ρ,x)χ (fᵢ xᵢ) |                                                                                                |
-| ⟦x ∋χ yᵢ⟧ρ = ρ(x)/χ yᵢ                                               | satisfy the predicate ρ(x)[χ] with yᵢ[0], create a predicate from the relation ρ(x)[1,χ], etc. |
+- The environments contains cubes over θ.
+- if x:T ∈ Γ, then each ρ(x) : ⟦T⟧θρ   (the cubes must be well-formed)
+
+We can evaluate a term as a value or a type:
+1. ⟦a⟧ρχ
+2. ⟦T ∋χ vᵢ⟧ρ (for every i ⊂ χ)  -- vᵢ are POINTS
+3. χ ⊆ θ.
+4. θ contains an infinite set of free vars (called n,...,2,1) in the following
+
+And:
+⟦a⟧(ρ,χ) : ⟦T ∋χ ⟦a⟧ρi⟧ρ      (i ⊂ χ)
+
+| ⟦U ∋χ Xᵢ⟧ρ = (for every o ⊂ i) (xᵢ : Xᵢ xₒ) → Set                                        |                                                                                                |
+| ⟦∀x:A. B ∋χ fᵢ⟧ρ = (for every i ⊆ θ) (for every p ⊂ i) ∀xᵢ:⟦A ∋i xₚ⟧ρ. ⟦B⟧(ρ,x)χ (fᵢ xₚ) |                                                                                                |
+| ⟦x ∋χ yᵢ⟧ρ = ρ(x,χ) yᵢ                                                                   | satisfy the predicate ρ(x)[χ] with yᵢ[0], create a predicate from the relation ρ(x)[1,χ], etc. |
 
 
-| ⟦x⟧ρχ = ρ(x)/χ                                       |                                       |
-| ⟦λx:A.t⟧ρχ = (for every o ⊆ χ) λxₒ. ⟦t⟧(ρ,(x,o)↦xₒ)χ | each xₒ gives a portion of the cube x |
-| ⟦f a⟧ρχ = (for every o ⊆ χ) ⟦f⟧ρχ ⟦a⟧ρo              |                                       |
+| ⟦x⟧ρχ = ρ(x,χ)                                       |                                       |
+| ⟦λx:A.t⟧ρχ = (for every o ⊆ θ) λxₒ. ⟦t⟧(ρ,(x,o)↦xₒ)χ | each xₒ gives a portion of the cube x |
+| ⟦f a⟧ρχ = (for every o ⊆ θ) ⟦f⟧ρχ ⟦a⟧ρo              |                                       |
 | ⟦t(ηni)⟧ρχ = ⟦t⟧(ρ[i/n])(insertAt n i χ)             |                                       |
-| ⟦a,ᵢ p⟧ρχ = ⟦a⟧(ρ-i)χ      if i ∉ χ                  |                                       |
-| ⟦a,ᵢ p⟧ρχ = ⟦p⟧(ρ-i)(χ-i)  if i ∈ χ                  |                                       |
+| ⟦a,ᵢ p⟧ρχ = ⟦a⟧χ      if i ∉ χ                       | θ becomes smaller                     |
+| ⟦a,ᵢ p⟧ρχ = ⟦p⟧(χ-i)  if i ∈ χ                       | θ becomes smaller                     |
 | ⟦T⟧ρχ = λxᵢ:⟦T ∋i xₒ⟧. ⟦T ∋χ xᵢ⟧                     |                                       |
 
-
-Properties of the env:
-
-- The environments contains cubes over {n,...,2,1}+χ That is, we also
-  allow for an extra fresh/anonymous colors (whose names are numbers).
-  In fact, we must have those to interpret parametricity.
-
-- if x:T ∈ Γ, then ρ(x)[θ] : ⟦T⟧ρ[θ] ∙ ρ(x)[i] (for every i ⊂ θ)  --
 
 ** What happens for a redex?
 
