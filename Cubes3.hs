@@ -25,6 +25,7 @@ strictSublists = init . sublists
 type Env = [(String,Cub String Val)]
 
 data Term = TU | TPi String Term Term | TLam String Term | TApp Term Term | TVar String | TParam Color Term | TPair Color Term Term
+  deriving Show
 
 class Nominal a where
   swap :: a -> (Color,Color) -> a
@@ -92,6 +93,36 @@ type Natural = Integer
 type Value = Cube Val
 data Val = Var String | Pi Val Val | App Val Val | Lam (Val -> Val) | U
 
+showCols = intercalate ","
+
+vars xs = [[x] | x <- xs] ++ [x:ys | x <- xs, ys <- vars xs] 
+
+freshVars = vars "xyzwαβγδ"
+
+showValue :: Base -> Value -> String
+showValue b v = vcat $ [ showCols is ++" ↦ "++showVal freshVars (v is) | is <- sublists b]
+
+showVals su = hcat . map (showVal1 su)
+hcat = foldr (<+>) " "
+vcat = foldr (</>) ""
+
+
+parens x = "("++x++")"
+showVal1 :: [String] -> Val -> String
+showVal1 _ U          = "U"
+showVal1 _ (Var x)     = x
+showVal1 su u           = parens $ showVal su u
+
+x <+> y = x ++ " " ++ y
+x </> y = x ++ "\n" ++ y
+showVal :: [String] -> Val -> String
+showVal _ U           = "U"
+showVal (s:su) (Lam e)  = '\\' : showVal su x <+> "->" <+> showVal su (e x)
+  where x = Var s
+showVal su (Pi a f)    = "Pi" <+> showVals su [a,f]
+showVal su (App u v)   = showVal su u <+> showVal1 su v
+showVal su (Var x)     = x
+
 apply :: [a] -> Cub a Val -> Cub a Val -> Cub a Val
 apply base f u xs = f xs `apps` map u (sublists base)
 
@@ -114,7 +145,7 @@ eval (next,base) env t0 is = let evalB = eval (next,base) in case t0 of
   TApp f u -> apply base (evalB env f) (evalB env u) is
   TVar x -> case lookup x env of
     Just x' -> x' is
-  TParam i t -> evalB env (swap t (i,freshI)) (is++[freshI])
+  TParam i t -> eval (next+1,base) env (swap t (i,freshI)) (is++[freshI])
     where freshI = base !! next
   TPair i a p -> if i `elem` is
                  then eval (rmCol i (next,base)) env p (is \\ [i])
@@ -134,4 +165,20 @@ evalT next base env t0 excl v =
 -- Testing
   
 absCub :: String -> Value
-absCub x js = Var $ x ++ concat js
+absCub x js = Var $ x ++ "["++showCols js ++"]"
+
+swapExTm :: Term
+swapExTm = TParam "j" (TPair "i" (TVar "a") (TVar "p") )
+
+swapExEnv = [("a",absCub "a"),("p",absCub "p")]
+
+freshBase n = take n $ vars "ijkl"
+
+swapEx = showValue base $ eval (0,base) swapExEnv swapExTm
+   where base = freshBase 2
+
+-- NOTE: The environment must provide enough "freshness" to interpret parametricity.
+-- The freshness MUST NOT clash with the free colors of the term NOR with the colors asked
+-- by the top-level value.
+ex = putStrLn $ showValue ["z"] $ eval (0,base) swapExEnv $ (TParam "w" $ TPair "z" (TVar "a") (TVar "p"))
+   where base = freshBase 2

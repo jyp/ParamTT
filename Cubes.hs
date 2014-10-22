@@ -2,50 +2,51 @@
 
 module Cubes where
 
-import Control.Monad
-import Data.Maybe
-
-data Bit = Zero | One
-  deriving (Eq)
-
-type Natural = Integer
+import Cantor
 
 
-data Val = Var String | Pi Val Val | App Val Val | Lam (Val -> Val) | U
-type Nat = Integer
+-- A sub-part of a cube.
+-- The function is undefined at all prefixes starting with n times One.
+type SubCube {-n-} x = Cube x
 
-type Cube x = [Nat] -> x
-type Value = Cube Val
+access :: Natural -> Bit -> Cube x -> Cube x
+access i b q xs = q (insertCantor i b xs)
 
-sublists' xs0 = case xs0 of
-  [] -> []
-  x:xs -> [x] : do
-    s <- sublists' xs
-    [s,x:s]
-
-sublists xs0 = []:sublists' xs0
-
--- set xs = border xs U
-
-type Env = [(String,Cube Val)]
-
-data Term = TU
-
-data Tele = Nil Val | Cons Val (Val -> Val)
-
-apps f as = foldl App f as
-
-lkCub pos cub = fromJust $ lookup pos cub 
-predic _preds _vars [] = U
-predic preds vars (xs:xss) = Pi (lkCub xs preds `apps` [lkCub x vars | x <- sublists xs]) $
-                       Lam $ \v -> predic preds ((xs,v):vars) xss
-
-lamPred preds [] k = k preds
-lamPred preds (xs:xss) k = Lam $ \t -> lamPred ((xs,t):preds) xss k
+-- | The face of a cube in dimension i.
+face1 :: Natural -> Cube x -> Cube x
+face1 i = access i Zero
 
 
-set :: Value
-set xs = lamPred [] (sublists xs) $ \preds -> predic preds [] (sublists xs)
+-- | The interior of a cube in dimension i
+interior1 :: Natural -> Cube x -> Cube x
+interior1 i = access i One
 
-eval env t = case t of
-  TU -> set
+face0 = face1 0
+interior0 = interior1 0
+
+-- | Apply a functional cube to its argument
+-- (f,g) @ (a,p) = (f a, g a p)
+apply :: Cube x -> Cube x -> Cube x
+apply h u xs = case cview xs of
+  (Zero,xs') -> apply (face0 h) (face0 u) xs'
+  (One,xs')  -> ((interior0 h) @@  (face0 u) @@ (interior0 u)) xs'
+
+(@@) = apply
+
+-- | Take a Cube TYPE of order N; a subcube of order n, and return a satisfaction cube.
+-- [ P R ]  [p  ]  =   [P a  R a q p]
+-- [ A Q ]  [a q]      [     Q a    ]
+sat1 :: {-n:-} Natural -> Cube x -> SubCube {-n-} x -> Cube x
+sat1 0 t _ xs = t xs
+sat1 n r q xs = case cview xs of
+  (Zero,xs') -> sat1 (n-1) (face0 r) (face0 q) xs'
+  (One,xs') -> sat1 (n-1)  ((interior0 r) @@ face0 q) (interior0 q) xs'
+
+
+
+set :: Cube x
+set xs =
+
+
+
+pi as bs fs is = pi as $ 
