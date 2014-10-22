@@ -74,10 +74,8 @@ mkCub = flip lkCub
 interior :: Color -> Cube x -> Cube x
 interior i q is = q (i:is)
 
-predic :: Value -> [(Excl,Val)] -> [(Excl)] -> Val
-predic _typ _vars [] = U
-predic typ vars (xs:xss) = Pi (typ xs `apps` [lkCub x vars | x <- strictSublists xs]) $
-                           Lam $ \v -> predic typ ((xs,v):vars) xss
+predic :: Value -> [(Excl)] -> Val
+predic typ xss = multiPi typ [] xss $ \_ -> U
 
 multiPi :: Value -> [(Excl,Val)] -> [(Excl)] -> (Value -> Val) -> Val
 multiPi _typ vars [] k = k (\xs -> lkCub xs vars)
@@ -139,6 +137,11 @@ rmCol i (f,x:xs) = if i == x
                    then if f > 0 then (f-1,xs) else (f,xs)
                    else let (f',xs') = rmCol i (f-1,xs) in (f'+1,x:xs')
 
+-- NOTE: The environment must provide enough "freshness" to interpret
+-- parametricity (ie. infinitely much).  The fresh colors in the
+-- base (after the next index) MUST NOT clash with the free colors of
+-- the term NOR with the colors of the returned value.
+
 eval :: FreshBase -> Env -> Term -> Value
 eval (next,base) env t0 is = let evalB = eval (next,base) in case t0 of
   TLam x b -> multiLam [] (sublists base) $ \x' -> evalB ((x,x'):env) b is
@@ -151,19 +154,20 @@ eval (next,base) env t0 is = let evalB = eval (next,base) in case t0 of
                  then eval (rmCol i (next,base)) env p (is \\ [i])
                  else eval (rmCol i (next,base)) env a is
   ty -> multiLam [] (strictSublists (base \\ is)) $ \v -> evalT next base env ty is v
+        -- NOTE: we do not put the value bound ('v') in the environment; so it's ok if it is only partial.
 
 evalT :: Int -> Base -> Env -> Term -> Excl -> Value -> Val
 evalT next base env t0 excl v =
   let evalB = eval (next,base)
       evalTB = evalT next base
   in case t0 of
-  TU -> predic v [] (strictSublists (base \\ excl))
+  TU -> predic v (strictSublists (base \\ excl))
   TPi x a b -> multiPi (evalB env a) [] (sublists base) (\x' -> evalTB ((x,x'):env) b excl (apply base v x'))
   _ -> satisfy base excl (evalB env t0) v excl
 
 --------------------------
 -- Testing
-  
+
 absCub :: String -> Value
 absCub x js = Var $ x ++ "["++showCols js ++"]"
 
@@ -177,8 +181,5 @@ freshBase n = take n $ vars "ijkl"
 swapEx = showValue base $ eval (0,base) swapExEnv swapExTm
    where base = freshBase 2
 
--- NOTE: The environment must provide enough "freshness" to interpret parametricity.
--- The freshness MUST NOT clash with the free colors of the term NOR with the colors asked
--- by the top-level value.
 ex = putStrLn $ showValue ["z"] $ eval (0,base) swapExEnv $ (TParam "w" $ TPair "z" (TVar "a") (TVar "p"))
    where base = freshBase 2
