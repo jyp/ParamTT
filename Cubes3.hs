@@ -142,6 +142,11 @@ rmCol i (f,x:xs) = if i == x
 -- base (after the next index) MUST NOT clash with the free colors of
 -- the term NOR with the colors of the returned value.
 
+-- This last condition seems to indicate that the set of fresh colors
+-- need to be split when interpreting the product type/intro/elim:
+
+-- (f a)[fresh=θ++ι,ρ,χ] = f[θ,ρ(θ),χ] a[ι,ρ(ι),ψ] (for ψ ⊆ θ)
+
 eval :: FreshBase -> Env -> Term -> Value
 eval (next,base) env t0 is = let evalB = eval (next,base) in case t0 of
   TLam x b -> multiLam [] (sublists base) $ \x' -> evalB ((x,x'):env) b is
