@@ -23,6 +23,155 @@ aⁱ : Aⁱ a;  a¹ : A (for all sublists of size 1 ...)
 a¹ⁱ : A¹ⁱ a aⁱ a¹;  a²¹ : A²¹ a a¹ a² (for all sublists of size 2 ...)
 ...
 
+** Well-formed condition for a cube:
+
+if a and A are cubes over colors X, we write
+
+a ∷ A
+
+to mean that for each sublist of colors θ ⊆ X:
+
+a[θ] : A[θ] ∙ a[i] (i ⊂ θ)
+
+
+** Evaluator
+
+
+We define an environment over a list of colors θ.
+
+- The environments contains cubes over a set of colors that we divide in two (disjoint) parts:
+  * θ: "free" colors; the contents of ρ may depend non-trivially on these.
+  * φ: "fresh" colors; There must be sufficiently many of those. They will be called n,...,2,1 in the
+    following. ρ must be invariant by renaming of the fresh colors.
+  * We write them as disjoint lists; but they may actually be interleaved when interpreting ηn
+
+- if x:T ∈ Γ, then each ρ(x) ∷ ⟦T⟧ρ   (the cubes must be well-formed)
+
+
+We mutually define an evaluator for values and types.
+1. ⟦a⟧ρχ
+
+2. ⟦T ∋χ v⟧ρ
+
+  v is a PARTIAL cube (a value): it is not defined for sublists which contain χ
+
+3. In both cases *χ ⊆ θ*. In particular we must have: χ ∩ φ = ∅
+
+4. The evaluator for types is a convenience only:
+    ⟦T ∋χ v⟧ρ = ⟦T⟧ρχ v[i] (i ⊂ θ-χ,φ)
+
+5. The evaluator provides well formed cubes :
+   - if a : T then ⟦a⟧ρ ∷ ⟦T⟧ρ
+   - ie : ⟦a⟧ρ[χ] : ⟦T⟧ρ (⟦a⟧ρ[i])   (i ⊂ χ)
+   - ie : ⟦a⟧ρχ : ⟦T ∋χ ⟦a⟧ρ⟧ρ      (i ⊂ χ)
+
+6. Body:
+Note: when we mention ψ, the list of free variables is cut into two lists (φ,ψ)
+
+| ⟦U ∋χ X⟧ρ = (xᵢ : Xᵢ xₒ) → Set                            | i ⊂ χ, o ⊂ i      |
+| ⟦∀x:A. B ∋χ f⟧ρ =  ∀xᵢ:⟦A ∋i xₚ⟧ρ. ⟦B⟧(ρ(θ,ψ),x)χ (fᵢ xᵢ) | (i ⊆ θ,ψ) (p ⊂ i) |
+| ⟦n ∋χ z⟧ρ = ⟦n⟧ρχ zᵢ                                      | i ⊂ χ             |
+
+
+| ⟦x⟧ρχ = ρ(x,χ)                           |                                                                        |
+| ⟦λx:A.t⟧ρχ = λxᵢ. ⟦t⟧(ρ(θ,ψ),(x,i)↦xᵢ)χ  | (i ⊆ θ,ψ)                                                              |
+| ⟦f a⟧ρχ = ⟦f⟧ρχ ⟦a⟧ρi                    | (i ⊆ θ,ψ)                                                              |
+| ⟦t(ηni)⟧ρχ = ⟦t⟧(ρ[i/n])(insertAt n i χ) | !is there interleaving of θ and ρ?!                                    |
+| ⟦a,ᵢ p⟧ρχ = ⟦a⟧χ      if i ∉ χ           | θ becomes smaller                                                      |
+| ⟦a,ᵢ p⟧ρχ = ⟦p⟧(χ-i)  if i ∈ χ           | θ becomes smaller                                                      |
+| ⟦T⟧ρχ = λxᵢ:⟦T ∋i xₒ⟧ρ. ⟦T ∋χ x⟧ρ        | (i ⊂ χ) (o ⊂ i) ρ does not change here: we have a "semantic" predicate |
+
+
+** What happens for a redex?
+
+⟦(λx. b[x]) a⟧ρ{}
+  = ⟦(λx. b[x])⟧ρ{} ⟦a⟧ρ{}
+  = (λx⁰. ⟦b[x]⟧(ρ,(x,{})=x⁰){}) a⁰
+  = ⟦b[x]⟧(ρ,(x,{})=a⁰)
+
+NOTE that a⁰ is a cube (where the dimension is the (infinite) set of free vars). So in the (new) env we simply associate x to a⁰.
+
+Let's see what happens with χ = {i}
+
+⟦(λx. b[x]) a⟧ρ{i}
+  = ⟦(λx. b[x])⟧ρ{i} ⟦a⟧ρ{} ⟦a⟧ρ{i}
+  = (λx⁰. λxⁱ. ⟦b[x]⟧(ρ,(x,{})=x⁰,(x,{i})=xⁱ){i}) a⁰ aⁱ
+  = (λxⁱ. ⟦b[x]⟧(ρ,(x,{})=a⁰,(x,{i})=xⁱ){i}) aⁱ
+  = ⟦b[x]⟧(ρ,(x,{})=a⁰,(x,{i})=aⁱ){i})
+  = ⟦b[x]⟧(ρ,x=a)
+
+Here, aⁱ is the sub-part of the cube a restricted to i.
+So, when we associate the parts in ρ to either parts of x, we reconstruct a.
+
+
+** Example (swap):
+
+assume p : A.i a
+
+evaluate A.i for various χ:
+
+| χ   |            |            |      |
+|-----+------------+------------+------|
+| ∅   | ⟦A.i⟧∅     | ⟦A⟧(i)     | Aⁱ   |
+| 1   | ⟦A.i⟧(1)   | ⟦A⟧(1,i)   | A¹ⁱ  |
+| 2   | ⟦A.i⟧(2)   | ⟦A⟧(2,i)   | A²ⁱ  |
+| 2,1 | ⟦A.i⟧(2,1) | ⟦A⟧(2,1,i) | A²¹ⁱ |
+| ... |            |            |      |
+
+
+| Term      | ρ(a)                                | ρ(p)                                                    |       |                            |
+|-----------+-------------------------------------+---------------------------------------------------------+-------+----------------------------|
+| (a,i p).j | (x:A, x¹:A¹x, x²¹:A²¹ x x¹ x², ...) | (y:Aⁱ x, y¹:A¹ⁱ x y x¹, y²¹: A²¹ⁱ x y x¹ y¹ x² y² x²¹ ) | χ     |                            |
+| (a,i p)   | (x:A, xʲ:Aʲx, x¹ʲ:A¹ʲ x xʲ x¹, ...) | (y:Aⁱ x, yʲ:Aʲⁱ x y xʲ, y¹ʲ: A¹ʲⁱ x y xʲ yʲ x¹ y¹ x¹ʲ ) | χ,j   | apply subst in ρ: j/1; 1/2 |
+| a         | (x:A, xʲ:Aʲx, x¹ʲ:A¹ʲ x xʲ x¹, ...) |                                                         | χ,j   |                            |
+| p         |                                     | (y:Aⁱ x, yʲ:Aʲⁱ x y xʲ, y )                             | χ-i,j |                            |
+
+
+So, we get the final values:
+
+| χ   | value                         |
+|-----+-------------------------------|
+| ∅   | xʲ:Aʲx                        |
+| i   | yʲ:Aʲⁱ x y xʲ                 |
+| 1   | x¹ʲ:A¹ʲ x xʲ x¹               |
+| 1,i | y¹ʲ: A¹ʲⁱ x y xʲ yʲ x¹ y¹ x¹ʲ |
+
+Which is a well-formed cube.
+
+Let's repeat the process with the reduct:  (a.j ,i p(η2j))
+(We do only p(η2j), the rest is boring)
+
+| Term   | ρ(p)                                                                 |   |                                 |
+|--------+----------------------------------------------------------------------+---+---------------------------------|
+| p(η2j) | (y:Aⁱ x, y¹:A¹ⁱ x y x¹, y²: A²ⁱ x y x²; y²¹:A²¹ⁱ x y x¹ x² y² x²¹  ) | χ |                                 |
+| p      | (y:Aⁱ x, y¹:A¹ⁱ x y x¹, yʲ: Aʲⁱ x y xʲ; yʲ¹:Aʲ¹ⁱ x y x¹ xʲ yʲ xʲ¹  ) | χ | apply subst in ρ: j/2; 2/3; ... |
+
+--> and we get the same value.
+
+* Mismatch between cubes/values; incorrect use of fresh colors in Pi
+
+A[i] can also be written Aⁱ
+
+** Universe
+
+U0 = Set
+U1 A = A → Set
+U2 A A1 A2 = ...
+
+** A type (over a set of colors {n,...,2,1,i}) is interpreted as
+A : Set
+Aⁱ : A → Set;  A¹ : A → Set; ...  (all sublists of size 1 of {n,...2,1,i})
+A¹ⁱ : (x:A) → Aⁱ x → A¹ x → Set; A²¹ : (x:A) → A¹ x → A² x → Set;  (all sublists of size 2 of {n,...2,1,i})
+...
+
+(the arguments come in the same order as in the syntax)
+
+** A value a : A (over the same set of colors) is interpreted as:
+a : A
+aⁱ : Aⁱ a;  a¹ : A (for all sublists of size 1 ...)
+a¹ⁱ : A¹ⁱ a aⁱ a¹;  a²¹ : A²¹ a a¹ a² (for all sublists of size 2 ...)
+...
+
 ** Well-formed condition
 
 a[θ] : A[θ] ∙ a[i] (i ⊂ θ)

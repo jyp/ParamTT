@@ -121,11 +121,17 @@ showVal su (Pi a f)    = "Pi" <+> showVals su [a,f]
 showVal su (App u v)   = showVal su u <+> showVal1 su v
 showVal su (Var x)     = x
 
-apply :: [a] -> Cub a Val -> Cub a Val -> Cub a Val
-apply base f u xs = f xs `apps` map u (sublists base)
+apply :: [a] -> Val -> Cub a Val -> Val
+apply base f u = f `apps` map u (sublists base)
 
-satisfy :: Eq a => [a] -> [a] -> Cub a Val -> Cub a Val -> Cub a Val
-satisfy base excl typ u xs = typ xs `apps` map u (sublists (base \\ excl))
+sat :: [a] -> Val -> Cub a Val -> Val
+sat base f u = f `apps` map u (strictSublists base)
+
+appCub :: [a] -> Cub a Val -> Cub a Val -> Cub a Val
+appCub base f u is = apply base (f is) u
+
+-- satisfy :: Eq a => [a] -> [a] -> Cub a Val -> Cub a Val -> Cub a Val
+-- satisfy base excl typ u xs = typ xs `apps` map u (sublists (base \\ excl))
 
 type Base = [Color]
 type Excl = [Color]
@@ -138,9 +144,9 @@ rmCol i (f,x:xs) = if i == x
                    else let (f',xs') = rmCol i (f-1,xs) in (f'+1,x:xs')
 
 -- NOTE: The environment must provide enough "freshness" to interpret
--- parametricity (ie. infinitely much).  The fresh colors in the
--- base (after the next index) MUST NOT clash with the free colors of
--- the term NOR with the colors of the returned value.
+-- parametricity (ie. very much).  The fresh colors in the base (after
+-- the next index) MUST NOT clash with the free colors of the term NOR
+-- with the colors of the returned value.
 
 -- This last condition seems to indicate that the set of fresh colors
 -- need to be split when interpreting the product type/intro/elim:
@@ -150,7 +156,7 @@ rmCol i (f,x:xs) = if i == x
 eval :: FreshBase -> Env -> Term -> Value
 eval (next,base) env t0 is = let evalB = eval (next,base) in case t0 of
   TLam x b -> multiLam [] (sublists base) $ \x' -> evalB ((x,x'):env) b is
-  TApp f u -> apply base (evalB env f) (evalB env u) is
+  TApp f u -> apply base (evalB env f is) (evalB env u)
   TVar x -> case lookup x env of
     Just x' -> x' is
   TParam i t -> eval (next+1,base) env (swap t (i,freshI)) (is++[freshI])
@@ -158,7 +164,7 @@ eval (next,base) env t0 is = let evalB = eval (next,base) in case t0 of
   TPair i a p -> if i `elem` is
                  then eval (rmCol i (next,base)) env p (is \\ [i])
                  else eval (rmCol i (next,base)) env a is
-  ty -> multiLam [] (strictSublists (base \\ is)) $ \v -> evalT next base env ty is v
+  ty -> multiLam [] (strictSublists is) $ \v -> evalT next base env ty is v
         -- NOTE: we do not put the value bound ('v') in the environment; so it's ok if it is only partial.
 
 evalT :: Int -> Base -> Env -> Term -> Excl -> Value -> Val
@@ -166,9 +172,9 @@ evalT next base env t0 excl v =
   let evalB = eval (next,base)
       evalTB = evalT next base
   in case t0 of
-  TU -> predic v (strictSublists (base \\ excl))
-  TPi x a b -> multiPi (evalB env a) [] (sublists base) (\x' -> evalTB ((x,x'):env) b excl (apply base v x'))
-  _ -> satisfy base excl (evalB env t0) v excl
+  TU -> predic v (strictSublists excl)
+  TPi x a b -> multiPi (evalB env a) [] (sublists base) (\x' -> evalTB ((x,x'):env) b excl (appCub base v x'))
+  _ -> apply excl (evalB env t0 excl) v
 
 --------------------------
 -- Testing
