@@ -10,21 +10,24 @@ type Cube a = Cub Color a
 type SubCube {-n-} a = Cube a
 
 
-sublists' xs0 = case xs0 of
-  [] -> []
-  x:xs -> [x] : do
-    s <- sublists' xs
-    [s,x:s]
+-- sublists' xs0 = case xs0 of
+--   [] -> []
+--   x:xs -> [x] : do
+--     s <- sublists' xs
+--     [s,x:s]
 
-sublists xs0 = []:sublists' xs0
+-- sublists xs0 = []:sublists' xs0
 
 strictSublists = init . sublists
 
--- set xs = border xs U
+-- -- set xs = border xs U
+
+sublists [] = [[]]
+sublists (x:xs) = sublists xs ++ map (x:) (sublists xs)
 
 type Env = [(String,Cub String Val)]
 
-data Term = TU | TPi String Term Term | TLam String Term | TApp Term Term | TVar String | TParam Color Term | TPair Color Term Term
+data Term = TU | TPi String Term Term | TLam String Term | TApp Term Term | TVar String | TParam Color Term | TPair Color Term Term | TParamIn Color Term Term
   deriving Show
 
 class Nominal a where
@@ -65,8 +68,10 @@ instance Nominal Term where
 apps :: Val -> [Val] -> Val
 apps f as = foldl App f as
 
-lkCub :: Eq a1 => a1 -> [(a1, a)] -> a
-lkCub pos cub = fromJust $ lookup pos cub 
+lkCub :: (Show a1, Eq a1) => a1 -> [(a1, a)] -> a
+lkCub pos cub = case lookup pos cub of
+  Just x -> x
+  Nothing -> error $ "ColorSet not found: " ++ show pos
 
 mkCub :: [([Color],a)] -> Cube a
 mkCub = flip lkCub
@@ -95,7 +100,7 @@ showCols = intercalate ","
 
 vars xs = [[x] | x <- xs] ++ [x:ys | x <- xs, ys <- vars xs] 
 
-freshVars = vars "xyzwαβγδ"
+freshVars = vars "xyzwstuv"
 
 showValue :: Base -> Value -> String
 showValue b v = vcat $ [ showCols is ++" ↦ "++showVal freshVars (v is) | is <- sublists b]
@@ -174,7 +179,11 @@ evalT next base env t0 excl v =
   in case t0 of
   TU -> predic v (strictSublists excl)
   TPi x a b -> multiPi (evalB env a) [] (sublists base) (\x' -> evalTB ((x,x'):env) b excl (appCub base v x'))
-  _ -> apply excl (evalB env t0 excl) v
+  TParamIn i t arg ->
+      evalT (next+1) base env (swap t (i,freshI)) (excl++[freshI]) (\cs -> if freshI `elem` cs then v (cs \\ [freshI]) else evalB env arg cs)
+      -- apply excl (evalB env (TParam i t) excl) (\cs -> if i `elem` cs then v (cs \\ [i]) else evalB env arg cs)
+    where freshI = base !! next
+  _ -> sat excl (evalB env t0 excl) v
 
 --------------------------
 -- Testing
@@ -185,12 +194,23 @@ absCub x js = Var $ x ++ "["++showCols js ++"]"
 swapExTm :: Term
 swapExTm = TParam "j" (TPair "i" (TVar "a") (TVar "p") )
 
-swapExEnv = [("a",absCub "a"),("p",absCub "p")]
+swapExEnv = [("a",absCub "a"),("p",absCub "p"),("A",absCub "A")]
 
-freshBase n = take n $ vars "ijkl"
+freshBase n = take n $ vars "αβγδε"
 
 swapEx = showValue base $ eval (0,base) swapExEnv swapExTm
    where base = freshBase 2
 
-ex = putStrLn $ showValue ["z"] $ eval (0,base) swapExEnv $ (TParam "w" $ TPair "z" (TVar "a") (TVar "p"))
-   where base = freshBase 2
+exU = putStrLn $ showValue boundBase $ eval base swapExEnv $ TU
+   where base = (length boundBase, boundBase ++ freshBase 1)
+         boundBase = ["i","j"]
+
+exTy = putStrLn $ showValue boundBase $ eval base swapExEnv $
+       (TParamIn "i" (TVar "A")  (TVar "a"))
+       -- TParam "i" (TVar "A")
+   where base = (length boundBase, boundBase ++ freshBase 1)
+         boundBase = ["j"]
+
+ex = putStrLn $ showValue boundBase $ eval base swapExEnv $ (TParam "j" $ TPair "i" (TVar "a") (TVar "p"))
+   where base = (length boundBase, boundBase ++ freshBase 2)
+         boundBase = ["i","k"]
