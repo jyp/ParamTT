@@ -1,14 +1,11 @@
 {-# LANGUAGE TypeSynonymInstances, FlexibleInstances, FlexibleContexts #-}
 module Cubes3 where
 
-import Data.Maybe
 import Data.List
 
 type Cub a b = [a] -> b
 type Color = String
 type Cube a = Cub Color a
-type SubCube {-n-} a = Cube a
-
 
 -- sublists' xs0 = case xs0 of
 --   [] -> []
@@ -96,35 +93,6 @@ type Natural = Integer
 type Value = Cube Val
 data Val = Var String | Pi Val Val | App Val Val | Lam (Val -> Val) | U
 
-showCols = intercalate ","
-
-vars xs = [[x] | x <- xs] ++ [x:ys | x <- xs, ys <- vars xs] 
-
-freshVars = vars "xyzwstuv"
-
-showValue :: Base -> Value -> String
-showValue b v = vcat $ [ showCols is ++" ↦ "++showVal freshVars (v is) | is <- sublists b]
-
-showVals su = hcat . map (showVal1 su)
-hcat = foldr (<+>) " "
-vcat = foldr (</>) ""
-
-
-parens x = "("++x++")"
-showVal1 :: [String] -> Val -> String
-showVal1 _ U          = "U"
-showVal1 _ (Var x)     = x
-showVal1 su u           = parens $ showVal su u
-
-x <+> y = x ++ " " ++ y
-x </> y = x ++ "\n" ++ y
-showVal :: [String] -> Val -> String
-showVal _ U           = "U"
-showVal (s:su) (Lam e)  = '\\' : showVal su x <+> "->" <+> showVal su (e x)
-  where x = Var s
-showVal su (Pi a f)    = "Pi" <+> showVals su [a,f]
-showVal su (App u v)   = showVal su u <+> showVal1 su v
-showVal su (Var x)     = x
 
 apply :: [a] -> Val -> Cub a Val -> Val
 apply base f u = f `apps` map u (sublists base)
@@ -134,9 +102,6 @@ sat base f u = f `apps` map u (strictSublists base)
 
 appCub :: [a] -> Cub a Val -> Cub a Val -> Cub a Val
 appCub base f u is = apply base (f is) u
-
--- satisfy :: Eq a => [a] -> [a] -> Cub a Val -> Cub a Val -> Cub a Val
--- satisfy base excl typ u xs = typ xs `apps` map u (sublists (base \\ excl))
 
 type Base = [Color]
 type Excl = [Color]
@@ -181,9 +146,42 @@ evalT next base env t0 excl v =
   TPi x a b -> multiPi (evalB env a) [] (sublists base) (\x' -> evalTB ((x,x'):env) b excl (appCub base v x'))
   TParamIn i t arg ->
       evalT (next+1) base env (swap t (i,freshI)) (excl++[freshI]) (\cs -> if freshI `elem` cs then v (cs \\ [freshI]) else evalB env arg cs)
-      -- apply excl (evalB env (TParam i t) excl) (\cs -> if i `elem` cs then v (cs \\ [i]) else evalB env arg cs)
     where freshI = base !! next
   _ -> sat excl (evalB env t0 excl) v
+
+
+-------------------------
+-- Pretty
+
+showCols = intercalate ","
+
+vars xs = [[x] ++ (if i > 0 then show i else "") | i <- [0..], x <- xs] 
+
+freshVars = vars "xyzwstuv"
+
+showValue :: Base -> Value -> String
+showValue b v = vcat $ [ showCols is ++" ↦ "++showVal freshVars (v is) | is <- sublists b]
+
+showVals su = hcat . map (showVal1 su)
+hcat = foldr (<+>) " "
+vcat = foldr (</>) ""
+
+
+parens x = "("++x++")"
+showVal1 :: [String] -> Val -> String
+showVal1 _ U          = "U"
+showVal1 _ (Var x)     = x
+showVal1 su u           = parens $ showVal su u
+
+x <+> y = x ++ " " ++ y
+x </> y = x ++ "\n" ++ y
+showVal :: [String] -> Val -> String
+showVal _ U           = "U"
+showVal (s:su) (Lam e)  = '\\' : showVal su x <+> "->" <+> showVal su (e x)
+  where x = Var s
+showVal su (Pi a f)    = "Pi" <+> showVals su [a,f]
+showVal su (App u v)   = showVal su u <+> showVal1 su v
+showVal su (Var x)     = x
 
 --------------------------
 -- Testing
@@ -209,7 +207,7 @@ exTy = putStrLn $ showValue boundBase $ eval base swapExEnv $
        (TParamIn "i" (TVar "A")  (TVar "a"))
        -- TParam "i" (TVar "A")
    where base = (length boundBase, boundBase ++ freshBase 1)
-         boundBase = ["j"]
+         boundBase = ["j","k"]
 
 ex = putStrLn $ showValue boundBase $ eval base swapExEnv $ (TParam "j" $ TPair "i" (TVar "a") (TVar "p"))
    where base = (length boundBase, boundBase ++ freshBase 2)
