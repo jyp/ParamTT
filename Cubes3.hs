@@ -2,6 +2,7 @@
 module Cubes3 where
 
 import Data.List
+import Data.Monoid
 
 type Cub a b = [a] -> b
 type Color = String
@@ -22,26 +23,21 @@ strictSublists = init . sublists
 sublists [] = [[]]
 sublists (x:xs) = sublists xs ++ map (x:) (sublists xs)
 
+-- product :: [[a]] -> [[a]] -> [[a]]
+-- product xs ys = do
+--   x <- xs
+--   y <- ys
+--   return (x++y)
+
 type Env = [(String,Cub String Val)]
 
-data Term = TU | TPi String Term Term | TLam String Term | TApp Term Term | TVar String | TParam Color Term | TPair Color Term Term | TParamIn Color Term Term
+data Term = TU | TPi String Term Term | TLam String Term | TApp Term Term | TVar String | TParam Color Term | TPair Color Term Term
+          | PApp Term Term
   deriving Show
 
 class Nominal a where
   swap :: a -> (Color,Color) -> a
   support :: a -> [Color]
-
-fresh :: Nominal a => a -> Color
-fresh = gensym . support
-
-freshs :: Nominal a => a -> [Color]
-freshs = gensyms . support
-
-gensym :: [Color] -> Color
-gensym xs = head $ (map show [(0::Integer)..]) \\ xs
-
-gensyms :: [Color] -> [Color]
-gensyms d = let x = gensym d in x : gensyms (x : d)
 
 instance Nominal Color where
   swap k (i,j) | k == i = j
@@ -62,13 +58,17 @@ instance Nominal Term where
       TParam k t -> TParam (sw k) (sw t)
       TPair k a p -> TPair (sw k) (sw a) (sw p)
 
+app (Lam f) x = f x
+app n x = App n x
+
 apps :: Val -> [Val] -> Val
-apps f as = foldl App f as
+apps f as = foldl app f as
 
 lkCub :: (Show a1, Eq a1) => a1 -> [(a1, a)] -> a
 lkCub pos cub = case lookup pos cub of
   Just x -> x
-  Nothing -> error $ "ColorSet not found: " ++ show pos
+  Nothing -> error $ "ColorSet not found: " ++ show pos ++ "\n" ++
+                     "Have: " ++ show (map fst cub)
 
 mkCub :: [([Color],a)] -> Cube a
 mkCub = flip lkCub
@@ -76,77 +76,78 @@ mkCub = flip lkCub
 interior :: Color -> Cube x -> Cube x
 interior i q is = q (i:is)
 
-predic :: Value -> [(Excl)] -> Val
-predic typ xss = multiPi typ [] xss $ \_ -> U
+predic :: Colors -> Value -> [(Colors)] -> Val
+predic base typ xss = multiPi base typ [] xss $ \_ -> U
 
-multiPi :: Value -> [(Excl,Val)] -> [(Excl)] -> (Value -> Val) -> Val
-multiPi _typ vars [] k = k (\xs -> lkCub xs vars)
-multiPi typ vars (xs:xss) k = Pi (typ xs `apps` [lkCub x vars | x <- strictSublists xs]) $
-                              Lam $ \v -> multiPi typ ((xs,v):vars) xss k
+prime f fresh excl = f (excl ++ fresh) excl
 
-multiLam :: [(Excl,Val)] -> [(Excl)] -> (Value -> Val) -> Val
+multiPi :: Colors -> Value -> [(Colors,Val)] -> [(Colors)] -> (Value -> Val) -> Val
+multiPi base _typ vars [] k = k (mkCub vars)
+multiPi base typ vars (xs:xss) k = Pi (typ xs `apps` [lkCub x vars | x <- strictSublists xs]) $
+                                   Lam $ \v -> multiPi base typ ((xs,v):vars) xss k
+
+multiLam :: [(Colors,Val)] -> [(Colors)] -> (Value -> Val) -> Val
 multiLam vars [] k = k (mkCub vars)
 multiLam vars (xs:xss) k = Lam $ \v -> multiLam ((xs,v):vars) xss k
-
 
 type Natural = Integer
 type Value = Cube Val
 data Val = Var String | Pi Val Val | App Val Val | Lam (Val -> Val) | U
 
-
 apply :: [a] -> Val -> Cub a Val -> Val
 apply base f u = f `apps` map u (sublists base)
 
-sat :: [a] -> Val -> Cub a Val -> Val
-sat base f u = f `apps` map u (strictSublists base)
-
 appCub :: [a] -> Cub a Val -> Cub a Val -> Cub a Val
-appCub base f u is = apply base (f is) u
+appCub base f u is = (f is) `apps` map u (strictSublists base)
 
-type Base = [Color]
-type Excl = [Color]
 
-type FreshBase = (Int,Base)
+sat excl pred v = pred `apps` map v (strictSublists excl)
 
-rmCol :: Color -> FreshBase -> FreshBase
-rmCol i (f,x:xs) = if i == x
-                   then if f > 0 then (f-1,xs) else (f,xs)
-                   else let (f',xs') = rmCol i (f-1,xs) in (f'+1,x:xs')
+type Colors = [Color]
 
 -- NOTE: The environment must provide enough "freshness" to interpret
 -- parametricity (ie. very much).  The fresh colors in the base (after
 -- the next index) MUST NOT clash with the free colors of the term NOR
 -- with the colors of the returned value.
 
--- This last condition seems to indicate that the set of fresh colors
--- need to be split when interpreting the product type/intro/elim:
+xs `contains` ys = null (ys \\ xs)
 
--- (f a)[fresh=θ++ι,ρ,χ] = f[θ,ρ(θ),χ] a[ι,ρ(ι),ψ] (for ψ ⊆ θ)
+sublistsExcl :: Eq a => [a] -> [a] -> [[a]]
+sublistsExcl base excl = filter (not . (`contains` excl)) $ sublists base
 
-eval :: FreshBase -> Env -> Term -> Value
-eval (next,base) env t0 is = let evalB = eval (next,base) in case t0 of
-  TLam x b -> multiLam [] (sublists base) $ \x' -> evalB ((x,x'):env) b is
-  TApp f u -> apply base (evalB env f is) (evalB env u)
+splitSupply [] = ([],[])
+splitSupply [x] = ([x],[])
+splitSupply (x1:x2:xs) = (x1:xs1,x2:xs2)
+  where (xs1,xs2) = splitSupply xs
+
+eval :: Colors -> Env -> Term -> Value
+eval fresh env t0 is =
+  let (fresh1,fresh2) = splitSupply fresh
+      (fresh0:freshs) = fresh
+  in case t0 of
+  TLam x b -> multiLam [] (sublists (is++fresh2)) $ \x' -> eval fresh2 ((x,x'):env) b is
+  TApp f u -> apply (is++fresh2) (eval fresh2 env f is) (eval fresh1 env u)
+  PApp p a -> sat is (eval fresh2 env p is) (eval fresh1 env a)
   TVar x -> case lookup x env of
     Just x' -> x' is
-  TParam i t -> eval (next+1,base) env (swap t (i,freshI)) (is++[freshI])
-    where freshI = base !! next
+  TParam i t -> eval freshs env (swap t (i,fresh0)) (is++[fresh0])
   TPair i a p -> if i `elem` is
-                 then eval (rmCol i (next,base)) env p (is \\ [i])
-                 else eval (rmCol i (next,base)) env a is
-  ty -> multiLam [] (strictSublists is) $ \v -> evalT next base env ty is v
+                 then eval fresh env p (is \\ [i])
+                 else eval fresh env a is
+  ty -> multiLam [] (strictSublists is) $ \v -> evalT fresh env ty is v
         -- NOTE: we do not put the value bound ('v') in the environment; so it's ok if it is only partial.
 
-evalT :: Int -> Base -> Env -> Term -> Excl -> Value -> Val
-evalT next base env t0 excl v =
-  let evalB = eval (next,base)
-      evalTB = evalT next base
+evalT :: Colors -> Env -> Term -> Colors -> Value -> Val
+evalT fresh env t0 excl v =
+  let evalB = eval fresh
+      (fresh1,fresh2) = splitSupply fresh
   in case t0 of
-  TU -> predic v (strictSublists excl)
-  TPi x a b -> multiPi (evalB env a) [] (sublists base) (\x' -> evalTB ((x,x'):env) b excl (appCub base v x'))
-  TParamIn i t arg ->
-      evalT (next+1) base env (swap t (i,freshI)) (excl++[freshI]) (\cs -> if freshI `elem` cs then v (cs \\ [freshI]) else evalB env arg cs)
-    where freshI = base !! next
+  TU -> predic excl v (strictSublists excl)
+  TPi x a b -> multiPi (excl ++ fresh2) (eval fresh1 env a) [] (sublists (excl ++ fresh2)) $ \x' ->
+                       evalT fresh2 ((x,x'):env) b excl (appCub excl v x')
+  -- TParamIn i t arg ->
+  --     evalT (next+1) base env (swap t (i,freshI)) (excl++[freshI]) (\cs -> if freshI `elem` cs then v (cs \\ [freshI]) else evalB env arg cs)
+    -- where freshI = base !! next
   _ -> sat excl (evalB env t0 excl) v
 
 
@@ -159,7 +160,7 @@ vars xs = [[x] ++ (if i > 0 then show i else "") | i <- [0..], x <- xs]
 
 freshVars = vars "xyzwstuv"
 
-showValue :: Base -> Value -> String
+showValue :: Colors -> Value -> String
 showValue b v = vcat $ [ showCols is ++" ↦ "++showVal freshVars (v is) | is <- sublists b]
 
 showVals su = hcat . map (showVal1 su)
@@ -179,12 +180,15 @@ showVal :: [String] -> Val -> String
 showVal _ U           = "U"
 showVal (s:su) (Lam e)  = '\\' : showVal su x <+> "->" <+> showVal su (e x)
   where x = Var s
-showVal su (Pi a f)    = "Pi" <+> showVals su [a,f]
+showVal (s:su) (Pi a f)    = "Π(" <> s <+> ":" <+> showVal su a <> ")." <+> showVal su (app f x)
+  where x = Var s
 showVal su (App u v)   = showVal su u <+> showVal1 su v
 showVal su (Var x)     = x
 
 --------------------------
 -- Testing
+
+test b fb env term = putStrLn $ showValue b $ eval fb env term
 
 absCub :: String -> Value
 absCub x js = Var $ x ++ "["++showCols js ++"]"
@@ -192,23 +196,39 @@ absCub x js = Var $ x ++ "["++showCols js ++"]"
 swapExTm :: Term
 swapExTm = TParam "j" (TPair "i" (TVar "a") (TVar "p") )
 
-swapExEnv = [("a",absCub "a"),("p",absCub "p"),("A",absCub "A")]
+swapExEnv = [("a",absCub "a"),("p",absCub "p"),("A",absCub "A"),("x",absCub "x"),("P", absCub "P")]
 
-freshBase n = take n $ vars "αβγδε"
+freshBase n = take n $ map (:[]) "αβγδε"
 
-swapEx = showValue base $ eval (0,base) swapExEnv swapExTm
-   where base = freshBase 2
+swapEx = test base fb swapExEnv swapExTm
+   where fb = freshBase 2
+         base = ["i"]
 
-exU = putStrLn $ showValue boundBase $ eval base swapExEnv $ TU
-   where base = (length boundBase, boundBase ++ freshBase 1)
+exU = test boundBase fb swapExEnv TU
+   where fb = freshBase 0
          boundBase = ["i","j"]
 
-exTy = putStrLn $ showValue boundBase $ eval base swapExEnv $
-       (TParamIn "i" (TVar "A")  (TVar "a"))
-       -- TParam "i" (TVar "A")
-   where base = (length boundBase, boundBase ++ freshBase 1)
+exApp = test boundBase fb swapExEnv (PApp (TVar "P") (TVar "x"))
+   where fb = freshBase 2
+         boundBase = ["i","j"]
+
+exUi = test boundBase fb swapExEnv (TParam "i" TU)
+   where fb = freshBase 1
+         boundBase = ["j"]
+
+exPredFun = test boundBase fb swapExEnv (TPi "x" (TVar "A") $ TU)
+   where fb = freshBase 2
+         boundBase = ["i"]
+
+exPredParam = test boundBase fb swapExEnv (TParam "i" TU `PApp` TVar "A")
+   where fb = freshBase 2
+         boundBase = ["i"]
+
+exTy = test boundBase fb swapExEnv $
+       TParam "i" (TVar "A")
+   where fb = freshBase 1
          boundBase = ["j","k"]
 
-ex = putStrLn $ showValue boundBase $ eval base swapExEnv $ (TParam "j" $ TPair "i" (TVar "a") (TVar "p"))
-   where base = (length boundBase, boundBase ++ freshBase 2)
+ex = test boundBase fb swapExEnv $ (TParam "j" $ TPair "i" (TVar "a") (TVar "p"))
+   where fb = freshBase 2
          boundBase = ["i","k"]

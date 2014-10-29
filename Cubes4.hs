@@ -1,7 +1,8 @@
 {-# LANGUAGE TypeSynonymInstances, FlexibleInstances, FlexibleContexts #-}
-module Cubes3 where
+module Cubes4 where
 
 import Data.List
+import Data.Monoid
 
 type Cub a b = [a] -> b
 type Color = String
@@ -22,15 +23,16 @@ strictSublists = init . sublists
 sublists [] = [[]]
 sublists (x:xs) = sublists xs ++ map (x:) (sublists xs)
 
--- product :: [[a]] -> [[a]] -> [[a]]
--- product xs ys = do
---   x <- xs
---   y <- ys
---   return (x++y)
+cart :: [[a]] -> [[a]] -> [[a]]
+cart xs ys = do
+  x <- xs
+  y <- ys
+  return (x++y)
 
 type Env = [(String,Cub String Val)]
 
-data Term = TU | TPi String Term Term | TLam String Term | TApp Term Term | TVar String | TParam Color Term | TPair Color Term Term | TParamIn Color Term Term
+data Term = TU | TPi String Term Term | TLam String Term | TApp Term Term | TVar String | TParam Color Term | TPair Color Term Term
+          | PApp Term Term
   deriving Show
 
 class Nominal a where
@@ -78,6 +80,7 @@ predic :: Colors -> Value -> [(Colors)] -> Val
 predic base typ xss = multiPi base typ [] xss $ \_ -> U
 
 prime f fresh excl = f (excl ++ fresh) excl
+
 multiPi :: Colors -> Value -> [(Colors,Val)] -> [(Colors)] -> (Value -> Val) -> Val
 multiPi base _typ vars [] k = k (mkCub vars)
 multiPi base typ vars (xs:xss) k = Pi (typ xs `apps` [lkCub x vars | x <- strictSublists xs]) $
@@ -94,8 +97,8 @@ data Val = Var String | Pi Val Val | App Val Val | Lam (Val -> Val) | U
 apply :: [a] -> Val -> Cub a Val -> Val
 apply base f u = f `apps` map u (sublists base)
 
-appCub :: [a] -> Cub a Val -> Cub a Val -> Cub a Val
-appCub base f u is = apply base (f is) u
+-- appCub :: [a] -> [a] -> Cub a Val -> Cub a Val -> Cub a Val
+appCub base excl f u is = sat base excl (f is) u
 
 
 sat base excl pred v = pred `apps` map v (sublistsExcl base excl)
@@ -110,7 +113,9 @@ type Colors = [Color]
 xs `contains` ys = null (ys \\ xs)
 
 sublistsExcl :: Eq a => [a] -> [a] -> [[a]]
-sublistsExcl base excl = filter (not . (`contains` excl)) $ sublists base
+-- sublistsExcl base excl = filter (not . (`contains` excl)) $ sublists base
+sublistsExcl base excl = cart (strictSublists excl) (sublists base)
+
 
 splitSupply [] = ([],[])
 splitSupply [x] = ([x],[])
@@ -124,6 +129,7 @@ eval fresh env t0 is =
   in case t0 of
   TLam x b -> multiLam [] (sublists fresh2) $ \x' -> eval fresh2 ((x,x'):env) b is
   TApp f u -> apply (is++fresh2) (eval fresh2 env f is) (eval fresh1 env u)
+  PApp p a -> prime sat fresh2 is (eval fresh2 env p is) (eval fresh1 env a)
   TVar x -> case lookup x env of
     Just x' -> x' is
   TParam i t -> eval freshs env (swap t (i,fresh0)) (is++[fresh0])
@@ -140,7 +146,7 @@ evalT fresh env t0 excl v =
   in case t0 of
   TU -> predic (excl ++ fresh) v (prime sublistsExcl fresh excl)
   TPi x a b -> multiPi (excl ++ fresh2) (eval fresh1 env a) [] (sublists (excl ++ fresh2)) $ \x' ->
-                       evalT fresh2 ((x,x'):env) b excl (appCub (excl ++ fresh2) v x')
+                       evalT fresh2 ((x,x'):env) b excl (prime appCub fresh2 excl v x')
   -- TParamIn i t arg ->
   --     evalT (next+1) base env (swap t (i,freshI)) (excl++[freshI]) (\cs -> if freshI `elem` cs then v (cs \\ [freshI]) else evalB env arg cs)
     -- where freshI = base !! next
@@ -176,7 +182,8 @@ showVal :: [String] -> Val -> String
 showVal _ U           = "U"
 showVal (s:su) (Lam e)  = '\\' : showVal su x <+> "->" <+> showVal su (e x)
   where x = Var s
-showVal su (Pi a f)    = "Pi" <+> showVals su [a,f]
+showVal (s:su) (Pi a f)    = "Π(" <> s <+> ":" <+> showVal su a <> ")." <+> showVal su (app f x)
+  where x = Var s
 showVal su (App u v)   = showVal su u <+> showVal1 su v
 showVal su (Var x)     = x
 
@@ -203,7 +210,7 @@ exU = test boundBase fb swapExEnv TU
    where fb = freshBase 0
          boundBase = ["i","j"]
 
-exApp = test boundBase fb swapExEnv (TApp (TVar "P") (TVar "x"))
+exApp = test boundBase fb swapExEnv (PApp (TVar "P") (TVar "x"))
    where fb = freshBase 2
          boundBase = ["i","j"]
 
@@ -212,12 +219,12 @@ exUi = test boundBase fb swapExEnv (TParam "i" TU)
          boundBase = ["j"]
 
 exPredFun = test boundBase fb swapExEnv (TPi "x" (TVar "A") $ TU)
-   where fb = freshBase 0
-         boundBase = ["i"]
-
-exPredParam = test boundBase fb swapExEnv (TParam "i" TU `TApp` TVar "A")
    where fb = freshBase 2
-         boundBase = ["i"]
+         boundBase = ["j"]
+
+exPredParam = test boundBase fb swapExEnv (TParam "i" TU `PApp` TVar "A")
+   where fb = freshBase 2
+         boundBase = ["j"]
 
 exTy = test boundBase fb swapExEnv $
        TParam "i" (TVar "A")
