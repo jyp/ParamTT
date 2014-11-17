@@ -38,7 +38,7 @@ instance Nominal Term where
 
 type Env = [(String,Cube Val)]
 
-data Dim = Incl [Colors] | Excl [Colors] [Colors]
+data Dim = Incl Colors | Excl Colors Colors
 
 incl is fresh = Incl (is ++ fresh)
 
@@ -101,6 +101,7 @@ strictSublists = init . sublists
 sublists [] = [[]]
 sublists (x:xs) = sublists xs ++ map (x:) (sublists xs)
 
+showCols :: [Color] -> Doc
 showCols [] = "∅"
 showCols xs = hcat . map text $ xs
 
@@ -119,6 +120,10 @@ cart xs ys = do
   y <- ys
   return (x++y)
 
+showDim (Incl xs) = braces $ align $ showCols xs
+showDim (Excl is xs) = braces $ align $ (showCols is <> "/" <> showCols xs)
+
+dimLists :: Dim -> [[Color]]
 dimLists (Incl xs) = sublists xs
 dimLists (Excl is xs) = cart (strictSublists is) (sublists xs)
 
@@ -138,23 +143,24 @@ xs `contains` ys = null (ys \\ xs)
 
 showVal :: [String] -> Val -> Doc
 showVal _ Set           = "Set"
-showVal (s:su) (Lam excl e)
+showVal (s:su) (Lam dim e)
   -- | null base =  showVal base su (e emptyCub)
-  | otherwise = "\\" <> text s <> showColss (limit base excl) <+> "->" <+> showVal base su (e x)
+  | otherwise = "\\" <> text s <> showDim dim <+> "->" <+> showVal su (e x)
   where x = absCub s
-showVal base (s:su) (Pi excl a f)
-  -- | null base =  showVal base su (app excl f emptyCub)
-  | otherwise =  "Π(" <> text s <+> ":" <+> showPartialCube base excl su a <> ")." <+> showVal1 base su (app excl f x)
+showVal (s:su) (Pi dim a f)
+  -- | null =  showVal su (app dim f emptyCub)
+  | otherwise =  "Π(" <> text s <+> ":" <+> showCube dim su a <> ")." <+> showVal1 su (app dim f x)
   where x = absCub s
-showVal base su (App excl u v)
-  -- | null base =  showVal base su u
-  | otherwise = showVal base su u <+> showPartialCube base excl su v
-showVal base su (Var x)     = text x
+showVal su (App dim u v)
+  -- | null =  showVal su u
+  | otherwise = showVal su u <+> showCube dim su v
+showVal su (Var x)     = text x
 
 --------------------------
 -- Testing
 
-test b fb env term = putStrLn $ show $ showCube (sublists $ b ++ fb) freshVars $ eval fb env term
+test :: Colors -> Colors -> Env -> Term -> IO ()
+test b fb env term = putStrLn $ show $ showCube (incl b fb) freshVars $ eval fb env term
 
 absCub :: String -> Cube Val
 absCub x js = Var $ x ++ show (showCols js)
