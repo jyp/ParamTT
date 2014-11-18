@@ -1,7 +1,14 @@
 {-# LANGUAGE TypeSynonymInstances, FlexibleInstances, FlexibleContexts, OverloadedStrings #-}
 import Data.List
-import Text.PrettyPrint
+
+import Text.PrettyPrint.Compact
+import Data.Monoid
+
+
+-- import Text.PrettyPrint.Leijen
 -- import Data.String
+-- instance IsString Doc where
+--   fromString = text
 
 type Color = String
 type Colors = [Color]
@@ -108,11 +115,14 @@ vars xs = [[x] ++ (if i > 0 then show i else "") | i <- [0..], x <- xs]
 
 freshVars = vars "xyzwstuv"
 
+
+showCubeCommon iss su v = parens $ align $ cat $ punctuate ";" $ [showCols is <+> "↦" <+> showVal is su (v is) | is <- iss]
+  
 showCube :: Colors -> [String] -> Cube Val -> Doc
-showCube base su v = parens $ vcat $ [showCols is <+> "↦" <+> showVal is su (v is) | is <- sublists base]
+showCube base = showCubeCommon (sublists base)
 
 showPartialCube :: Colors -> Colors -> [String] -> Cube Val -> Doc
-showPartialCube base excl su v = parens $ vcat $ [showCols is <+> "↦" <+> showVal is su (v is) | is <- strictSublists excl `cart` sublists (base \\ excl)]
+showPartialCube base excl = showCubeCommon $ strictSublists excl `cart` sublists (base \\ excl)
 
 -- showVals su = hcat . map (showVal1 su)
 
@@ -142,10 +152,10 @@ showVal base su (Var x)     = text x
 --------------------------
 -- Testing
 
-test b fb env term = putStrLn $ render $ showCube b freshVars $ eval fb env term
+test b fb env term = putStrLn $ show $ showCube b freshVars $ eval fb env term
 
 absCub :: String -> Cube Val
-absCub x js = Var $ x ++ render (showCols js)
+absCub x js = Var $ x ++ show (showCols js)
 
 swapExTm :: Term
 swapExTm = TParam "j" (TPair "i" (TVar "a") (TVar "p") )
