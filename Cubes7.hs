@@ -68,8 +68,8 @@ eval fresh env t0 is =
   let (fresh1,fresh2) = splitSupply fresh
       (fresh0:freshs) = fresh
   in case t0 of
-  TLam x b -> Lam (incl is fresh) $ \x' -> eval fresh2 ((x,x'):env) b is
-  TApp f u -> app (incl is fresh) (eval fresh2 env f is) (eval fresh1 env u)
+  TLam x b -> Lam (incl is fresh2) $ \x' -> eval fresh2 ((x,x'):env) b is
+  TApp f u -> app (incl is fresh2) (eval fresh2 env f is) (eval fresh1 env u)
   TVar x -> case lookup x env of
     Just x' -> x' is
   TParam i t -> eval freshs env (swap t (i,fresh0)) (is++[fresh0])
@@ -85,10 +85,10 @@ evalT fresh env t0 excl v =
       (fresh1,fresh2) = splitSupply fresh
   in case t0 of
   TU -> π (Excl excl fresh) v $ \_ -> Set
-  -- TPsi i a p -> if i `elem` excl
-  --               then appCub (Face [i]) (appCub (Face [i]) (eval fresh env p) (face i v)) (interior i v) (excl \\ [i])
-  --               else evalT fresh env a excl v -- Fixme: freshness
-
+  TPsi i a p -> if i `elem` excl
+                then app (Excl xi fresh) (app (incl xi fresh) (eval fresh env p xi) (face i v)) (interior i v) -- FIXME: fresh
+                else evalT fresh env a excl v -- Fixme: freshness
+    where xi = excl \\ [i]
   TPi x a b -> π (incl excl fresh2) (eval fresh1 env a) $ \x' ->
                evalT fresh2 ((x,x'):env) b excl (appCub v x')
   _ -> app (Excl excl fresh) (evalB env t0 excl) v
@@ -160,7 +160,7 @@ showVal su (Var x)     = text x
 -- Testing
 
 test :: Colors -> Colors -> Env -> Term -> IO ()
-test b fb env term = putStrLn $ show $ showCube (incl b fb) freshVars $ eval fb env term
+test b fb env term = putStrLn $ show $ showCube (Incl b) freshVars $ eval fb env term
 
 absCub :: String -> Cube Val
 absCub x js = Var $ x ++ show (showCols js)
@@ -182,6 +182,10 @@ exU = test boundBase fb swapExEnv TU
 
 exApp = test boundBase fb swapExEnv (TApp (TVar "P") (TVar "x"))
    where fb = freshBase 2
+         boundBase = ["i","j"]
+
+exxi = test boundBase fb swapExEnv (TParam "k" $ TVar "x")
+   where fb = freshBase 1
          boundBase = ["i","j"]
 
 exUi = test boundBase fb swapExEnv (TParam "k" TU)
