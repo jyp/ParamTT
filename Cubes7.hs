@@ -104,8 +104,8 @@ evalT φ ρ t0 χ v =
   in case t0 of
   TU -> π (Excl χ φ) v $ \_ -> Set
   TPsi i a p -> if i `elem` χ
-                then app (Excl xi φ) (app (incl xi φ) (eval φ ρ p xi) (face i v)) (interior i v) -- FIXME: φ
-                else evalT φ ρ a χ v -- Fixme: freshness
+                then app (Excl xi φ1) (app (incl xi φ1) (eval φ1 ρ p xi) (face i v)) (interior i v) -- FIXME: φ
+                else evalT φ2 ρ a χ v -- Fixme: freshness
     where xi = χ \\ [i]
   TPi x a b -> π (incl χ φ2) (eval φ1 ρ a) $ \x' ->
                evalT φ2 ((x,x'):ρ) b χ (appCub v x')
@@ -210,7 +210,7 @@ exPsiInv = test boundBase fb absEnv $ TInParam "i" (TPsi "i" (TVar "A") (TVar "P
    where fb = freshBase 1
          boundBase = ["j"]
 
--- We should have :: (Ψi P A).i ∋ x = P x
+-- We should have :: (Ψi A P).i ∋ x = P x
 
 exPredParam = test boundBase fb absEnv (TParam "k" TU `TApp` TVar "A")
    where fb = freshBase 2
