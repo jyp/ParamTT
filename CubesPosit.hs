@@ -46,11 +46,14 @@ instance Nominal Term where
       TPair k a p -> TPair (sw k) (sw a) (sw p)
       TPsi k a p -> TPsi (sw k) (sw a) (sw p)
 
-newtype Env = Env {fromEnv :: [(String,Cube Val)]}
+type Env = [(String,Cube Val)]
 
-instance Nominal Env where
-  swap (Env xs) ij = let sw t = swap t ij
-               in Env [(x,\k -> c (sw k)) | (x,c) <- xs]
+allocEnv :: Color -> Env -> Env
+allocEnv i xs = [(x,c . map lift) | (x,c) <- xs]
+  where lift k = case k of
+          _ | k == i -> Right 0
+          Left j -> Left j
+          Right n -> Right (n+1)
 
 data Dim = Incl Colors | Excl Colors
 
@@ -93,15 +96,15 @@ splitSupply (x1:x2:xs) = (x1:xs1,x2:xs2)
 π :: Dim -> Cube Val -> (Cube Val -> Val) -> Val
 π dim typ f = Pi dim typ $ Lam dim f
 
-x ◂ Env ρ = Env (x:ρ)
+x ◂ ρ = (x:ρ)
 
 eval :: Env -> Term -> Cube Val
 eval ρ t0 χ = case t0 of
   TLam x b -> Lam (incl χ) $ \x' -> eval ((x,x') ◂ ρ) b χ
   TApp f u -> app (incl χ) (eval ρ f χ) (eval ρ u)
-  TVar x -> case lookup x $ fromEnv ρ of
+  TVar x -> case lookup x $ ρ of
     Just x' -> x' χ
-  TParam i t -> eval (swap ρ (i,Right 0)) t (χ++[i]) -- FIXME: i must be fresh for chi
+  TParam i t -> eval (allocEnv i ρ) t (χ++[i]) -- FIXME: i must be fresh for chi
   TPair i a p -> if i `elem` χ
                  then eval ρ p (χ \\ [i])
                  else eval ρ a χ
@@ -117,7 +120,7 @@ evalT ρ t0 χ v = case t0 of
     where xi = χ \\ [i]
   TPi x a b -> π (incl χ) (eval ρ a) $ \x' ->
                evalT ((x,x') ◂ ρ) b χ (appCub v x')
-  TInParam i p a -> evalT (swap ρ (i, Right 0)) p (χ++[i]) -- FIXME: i fresh for chi
+  TInParam i p a -> evalT (allocEnv i ρ) p (χ++[i]) -- FIXME: i fresh for chi
                     (\xi -> if i `elem` xi
                             then v (xi \\ [i])
                             else eval ρ a xi)
@@ -183,7 +186,7 @@ test b fb env term = putStrLn $ show $ showCube (Incl b) freshVars $ eval env te
 absCub :: String -> Cube Val
 absCub x js = Var $ x ++ show (showCols js)
 
-absEnv = Env [("a",absCub "a"),("p",absCub "p"),("A",absCub "A"),("x",absCub "x"),("P", absCub "P")]
+absEnv = [("a",absCub "a"),("p",absCub "p"),("A",absCub "A"),("x",absCub "x"),("P", absCub "P")]
 
 freshBase n = take n $ map (:[]) "αβγδε"
 
