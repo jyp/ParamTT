@@ -61,7 +61,7 @@ Types:
 
     \inferrule[Out]{Γ ⊢_I T : U \\ Γ ⊢_I a : T}{Γ ⊢_I T \op i  a : U}
 
-    \inferrule[In-Pred]{Γ ⊢_{I} P : A → U}{Γ ⊢_{I,i} \ip i A P : U}
+    \inferrule[In-Pred]{Γ ⊢_{I} A : U \\ Γ ⊢_{I} P : A → U}{Γ ⊢_{I,i} \ip i A P : U}
 
  \end{mathpar}
 
@@ -77,7 +77,7 @@ Terms:
  
     \inferrule[App]{Γ ⊢_I t : (x:A) → B[x] \\ Γ ⊢_I u : A}{Γ ⊢_I t u: B[u]}
 
-    \\\inferrule[In-Abs]{Γ ⊢_I a : T \\Γ ⊢_I p : T \op i a}{Γ ⊢_{I,i} \CP i a p : T}
+    \\\inferrule[In-Abs]{Γ ⊢_I a : \proj i T \\Γ ⊢_I p : T \op i a}{Γ ⊢_{I,i} \CP i a p : T}
 
     \inferrule[In-Fun]
         {Γ ⊢_I f : (x:A) → P x\\\\
@@ -94,9 +94,11 @@ Terms:
   \begin{align*}
   \proj i {\fp i f g} & = f \\
   \proj i {(a,_i p)} &= a \\
-  \proj i {(\ip i A P)} &= A
+  \proj i {\ip i A P} &= A \\
+  \proj i {T \op i a} &= \proj i T
 \end{align*}
 
++ congruences.
 \end{definition}
 
 
@@ -113,7 +115,8 @@ Swaps:
   a \param i \param j &= a \param j \param i \\
   T \op i \CP j a b \op j c &= T \op j \CP i a c \op i b
 \end{align*}
-Note: the above rule show why ${} \param i {}$ is different from $\op i {}$
+Note: the above rule shows why ${} \param i {}$ is different from $\op i {}$.
+$T$ must be of the form $(\ip {i₀} A P) \op {i₁} {a₁} … \op {i_n} {a_n}$
 
 Pair-like things:
 \begin{align*}
@@ -129,7 +132,7 @@ Note: the param-witness construction is bootstrapped by the last rule.
 Confluence implies other equalities, such as:
 \begin{align*}
   {(a,_j p)} \param i  &= (a \param i ,_j p \param i) \\
-  {(\ip j A P)} \op i a &= \ip j X {(λy. P \CP i {\proj i a} y \op i {a \param j})}
+  {(\ip j A P)} \op i a &= \ip j {(A \op i {\proj i a})} {(λy. P \, \CP i {\proj i a} y \op i {(a \param j)})}
 \end{align*}
 
 \begin{definition}[Conversion]
