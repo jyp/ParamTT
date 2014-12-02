@@ -73,7 +73,7 @@ dimLists (Excl xs) = strictSublists xs
 
 incl is = Incl is
 
-data Val = Var String | Pi Dim (Cube Val) Val | App Dim Val (Cube Val) | Lam Dim (Cube Val -> Val) | Set
+data Val = Var String | Pi Dim (Cube Val) Val | App Dim Val (Cube Val) | Lam Dim (Cube Val -> Val) | CubSet
 
 interior :: Color -> Cube x -> Cube x
 interior i q is = q (i:is) -- FIXME: this is not correctly inserted (sort?)
@@ -113,7 +113,7 @@ eval ρ t0 χ = case t0 of
 
 evalT :: Env -> Term -> Colors -> Cube Val -> Val
 evalT ρ t0 χ v = case t0 of
-  TU -> π (Excl χ) v $ \_ -> Set
+  TU -> π (Excl χ) v $ \_ -> CubSet
   TPsi i a p -> if i `elem` χ
                 then app (Excl xi) (app (incl xi) (eval ρ p xi) (face i v)) (interior i v)
                 else evalT ρ a χ v
@@ -154,7 +154,7 @@ showCube dim su v = parens $ align $ cat $ punctuate ";" $
 -- showVals su = hcat . map (showVal1 su)
 
 showVal1 :: [String] -> Val -> Doc
-showVal1 _ Set          = "Set"
+showVal1 _ CubSet          = "CubSet"
 showVal1 _ (Var x)      = text x
 showVal1 su u           = parens $ showVal su u
 
@@ -163,7 +163,7 @@ xs `contains` ys = null (ys \\ xs)
 
 noShowNull = True
 showVal :: [String] -> Val -> Doc
-showVal _ Set           = "Set"
+showVal _ CubSet           = "CubSet"
 showVal (s:su) (Lam dim e)
   | noShowNull, null (dimLists dim) =  showVal su (e emptyCub)
   | otherwise = "\\" <> text s <> showDim dim <+> "->" <+> showVal su (e x)
@@ -192,7 +192,7 @@ freshBase n = take n $ map (:[]) "αβγδε"
 
 exSwap = test base fb absEnv $ TParam "j" (TPair "i" (TVar "a") (TVar "p") )
    where fb = freshBase 2
-         base = ["i","k"]
+         base = ["i"] --,"k"
 
 exU = test boundBase fb absEnv TU
    where fb = freshBase 0

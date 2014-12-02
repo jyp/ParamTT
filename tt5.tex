@@ -62,7 +62,7 @@ Types:
 
     \inferrule[Out]{Γ ⊢ T : U \\ Γ ⊢ a : T}{Γ ⊢ T \op i  a : U}
 
-    \inferrule[In-Pred]{Γ ⊢_{I} P : A → U}{Γ ⊢_{I,i} \ip i A P : U}
+    \inferrule[In-Pred]{Γ ⊢_{I} A : U \\ Γ ⊢_{I} P : A → U}{Γ ⊢_{I,i} \ip i A P : U}
 
  \end{mathpar}
 
@@ -80,13 +80,15 @@ Terms:
  
     \inferrule[App]{Γ ⊢ t : (x:A) → B[x] \\ Γ ⊢ u : A}{Γ ⊢ t u: B[u]}
 
-    \\\inferrule[In-Abs]{Γ,I ⊢ a : T \\Γ,I ⊢ p : T \op i a}{Γ,I,i ⊢ \CP i a p : T}
+    \\\inferrule[In-Pair]{Γ ⊢_I a : A \\Γ ⊢_I p : P a}{Γ ⊢_{I,i} \CP i a p : \ip i A P}
 
     \inferrule[In-Fun]
-        {Γ ⊢ f : (x:A) → P x\\\\
-        Γ ⊢ g : (x:A) → (x':A \op i x) → P \CP i x {x'} \op i f x}{Γ,i ⊢ \fp i f g : (x:A) → P x}
+        {Γ ⊢ Q : (x:A) → P x → B[x] → U\\\\
+        Γ ⊢ f : (x:A) → B[x]\\\\
+        Γ ⊢ g : (x:A) → (x':P x) → Q x x' (f x)}
+        {Γ,i ⊢ \fp i f g : (x: \ip i A P) → \ip i {B[x]} {Q x }}
 
-    \inferrule[Color-elim]{Γ,I,i ⊢ a : T}{Γ,I ⊢ a \param i : T \op i  a (i0)}
+    \inferrule[Color-elim]{Γ,I,i ⊢ a : \ip i A P}{Γ,I ⊢ a \param i : P  a (i0)}
 
 
   \end{mathpar}
