@@ -18,6 +18,7 @@
 \newcommand\op[1]{∋_{#1}}
 \newcommand\ip[3]{Σ^{#1} {#2}\,{#3}}
 \newcommand\fp[3]{⟨#2 ,_{#1} #3⟩}
+\newcommand\proj[2]{⌊{#2}⌋_{#1}}
 
 
 \input{unicodedefs}
@@ -82,17 +83,18 @@ Terms:
         {Γ ⊢_I f : (x:A) → P x\\\\
         Γ ⊢_I g : (x:A) → (x':A \op i x) → P \CP i x {x'} \op i f x}{Γ ⊢_{I,i} \fp i f g : (x:A) → P x}
 
-    \inferrule[Color-elim]{Γ ⊢_{I,i} a : T}{Γ ⊢_I a \param i : T \op i  a (i0)}
+    \inferrule[Color-elim]{Γ ⊢_{I,i} a : T}{Γ ⊢_I a \param i : T \op i {\proj i a}}
 
 
   \end{mathpar}
 \end{definition}
 
 \begin{definition}[Projection]~
+  $\proj i \cdot$ is a (partial) meta-operation on the raw syntax.
   \begin{align*}
-  \fp i f g(i0) & = f \\
-  (a,_i p)  (i0) &= a \\
-  \ip i A P (i0) &= A
+  \proj i {\fp i f g} & = f \\
+  \proj i {(a,_i p)} &= a \\
+  \proj i {(\ip i A P)} &= A
 \end{align*}
 
 \end{definition}
@@ -111,13 +113,13 @@ Swaps:
   a \param i \param j &= a \param j \param i \\
   T \op i \CP j a b \op j c &= T \op j \CP i a c \op i b
 \end{align*}
-Note: the above rule show why .i is different from ∋i
+Note: the above rule show why ${} \param i {}$ is different from $\op i {}$
 
 Pair-like things:
 \begin{align*}
-  \fp i f g a & = (f a(i0) ,_i g a(i0) a \param i) \\
-  (a,_i p) \param i  &= p \\
-  \ip i A P \op i a &= P a
+  {\fp i f g} \, a & = (f\,{\proj i a} ,_i g\,{\proj i a}\,{(a \param i)}) \\
+  {(a,_i p)} \param i  &= p \\
+  {(\ip i A P)} \op i a &= P\,a
 \end{align*}
 
 Note: the param-witness construction is bootstrapped by the last rule.
@@ -126,15 +128,15 @@ Note: the param-witness construction is bootstrapped by the last rule.
 
 Confluence implies other equalities, such as:
 \begin{align*}
-  (a,_j p) \param i  &= (a \param i ,_j p \param i) \\
-  \ip j A P \op i a &= \ip j X {(λy. P \CP i {a(i0)} y \op i a \param j)}
+  {(a,_j p)} \param i  &= (a \param i ,_j p \param i) \\
+  {(\ip j A P)} \op i a &= \ip j X {(λy. P \CP i {\proj i a} y \op i {a \param j})}
 \end{align*}
 
 \begin{definition}[Conversion]
   \begin{mathpar}
     \inferrule{t x = u} {t = λ x:A.u}
 
-    \inferrule{t (i0) = a \\ t.i = p} {t = \CP i a p }
+    \inferrule{\proj i t = a \\ t \param i = p} {t = \CP i a p }
   \end{mathpar}
 + congruences.
 \end{definition}
