@@ -37,7 +37,7 @@
     t,u,A,B & ::= x ~|~ U ~|~ λx:A. t      ~|~ t u ~|~ (x:A) → B \\
             & ~|~ \CP i t u  ~|~ \ip i A B  ~|~ \fp i t u \\
             & ~|~ A \op i u ~|~ t \param i  \\
-    \Gamma,\Delta & ::= () ~|~ \Gamma,x:A ~|~ \Gamma,I
+    \Gamma,\Delta & ::= () ~|~ \Gamma,x:A
   \end{align*}
 \end{definition}
 
@@ -48,19 +48,17 @@ Contexts:
   \begin{mathpar}
     \inferrule[Empty]{~}{() ⊢ }
 
-    \inferrule[NewVar]{Γ⊢ \\ Γ ⊢ A }{ Γ,x:A ⊢ }
-
-    \inferrule[NewColor]{Γ⊢}{ Γ,I ⊢ }
+    \inferrule[NewVar]{Γ⊢ \\ Γ ⊢_I A : U }{ Γ,x:A ⊢ }
 
   \end{mathpar}
  
 Types:
  \begin{mathpar}
-    \inferrule[Universe]{Γ ⊢}{Γ ⊢ U : U}
+    \inferrule[Universe]{Γ ⊢}{Γ ⊢_I U : U}
 
-    \inferrule[Pi]{Γ ⊢ A : U \\ Γ,x:A ⊢ B : U}{Γ ⊢ (x:A) → B : U}
+    \inferrule[Pi]{Γ ⊢_I A : U \\ Γ,x:A ⊢_I B : U}{Γ ⊢_I (x:A) → B : U}
 
-    \inferrule[Out]{Γ ⊢ T : U \\ Γ ⊢ a : T}{Γ ⊢ T \op i  a : U}
+    \inferrule[Out]{Γ ⊢_I T : U \\ Γ ⊢_I a : T}{Γ ⊢_I T \op i  a : U}
 
     \inferrule[In-Pred]{Γ ⊢_{I} P : A → U}{Γ ⊢_{I,i} \ip i A P : U}
 
@@ -68,25 +66,23 @@ Types:
 
 Terms:
   \begin{mathpar}
-    \inferrule[Conv]{Γ ⊢ t:A \\ A = B}{Γ ⊢ t : B}
+    \inferrule[Conv]{Γ ⊢_I t:A \\ A = B}{Γ ⊢_I t : B}
 
-    \inferrule[Var]{Γ ⊢ A}{Γ,x:A ⊢ x : A}
+    \inferrule[Var]{Γ ⊢_I A : U}{Γ,x:A ⊢_I x : A}
 
-    \inferrule[Wk]{Γ ⊢ A \\Γ ⊢ t : T}{Γ,x:A ⊢ t : T}
+    \inferrule[Wk]{Γ ⊢_I A \\Γ ⊢_I t : T}{Γ,x:A ⊢_I t : T}
 
-    \inferrule[CWk]{Γ ⊢ t : T}{Γ,I ⊢ t : T}
-
-    \\\inferrule[Lam]{Γ,x:A ⊢ B}{Γ ⊢ λx:A.b : (x:A) → B}
+    \\\inferrule[Lam]{Γ,x:A ⊢_I B}{Γ ⊢_I λx:A.b : (x:A) → B}
  
-    \inferrule[App]{Γ ⊢ t : (x:A) → B[x] \\ Γ ⊢ u : A}{Γ ⊢ t u: B[u]}
+    \inferrule[App]{Γ ⊢_I t : (x:A) → B[x] \\ Γ ⊢_I u : A}{Γ ⊢_I t u: B[u]}
 
-    \\\inferrule[In-Abs]{Γ,I ⊢ a : T \\Γ,I ⊢ p : T \op i a}{Γ,I,i ⊢ \CP i a p : T}
+    \\\inferrule[In-Abs]{Γ ⊢_I a : T \\Γ ⊢_I p : T \op i a}{Γ ⊢_{I,i} \CP i a p : T}
 
     \inferrule[In-Fun]
-        {Γ ⊢ f : (x:A) → P x\\\\
-        Γ ⊢ g : (x:A) → (x':A \op i x) → P \CP i x {x'} \op i f x}{Γ,i ⊢ \fp i f g : (x:A) → P x}
+        {Γ ⊢_I f : (x:A) → P x\\\\
+        Γ ⊢_I g : (x:A) → (x':A \op i x) → P \CP i x {x'} \op i f x}{Γ ⊢_{I,i} \fp i f g : (x:A) → P x}
 
-    \inferrule[Color-elim]{Γ,I,i ⊢ a : T}{Γ,I ⊢ a \param i : T \op i  a (i0)}
+    \inferrule[Color-elim]{Γ ⊢_{I,i} a : T}{Γ ⊢_I a \param i : T \op i  a (i0)}
 
 
   \end{mathpar}
