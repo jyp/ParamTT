@@ -80,7 +80,7 @@ Terms:
  
     \inferrule[App]{Γ ⊢ t : (x:A) → B[x] \\ Γ ⊢ u : A}{Γ ⊢ t u: B[u]}
 
-    \\\inferrule[In-Abs]{Γ,I ⊢ a : T \\Γ,I ⊢ p : T \op i a}{Γ,I,i ⊢ \CP i a p : T}
+    \\\inferrule[In-Abs]{Γ,I ⊢ a : T(i0) \\Γ,I ⊢ p : T \op i a}{Γ,I,i ⊢ \CP i a p : T}
 
     \inferrule[In-Fun]
         {Γ ⊢ f : (x:A) → P x\\\\
