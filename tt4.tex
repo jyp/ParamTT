@@ -59,7 +59,7 @@ Types:
 
     \inferrule[Pi]{Γ ⊢_I A : U \\ Γ,x:A ⊢_I B : U}{Γ ⊢_I (x:A) → B : U}
 
-    \inferrule[Out]{Γ ⊢_I T : U \\ Γ ⊢_I a : T}{Γ ⊢_I T \op i  a : U}
+    \inferrule[Out]{Γ ⊢_{I,i} T : U \\ Γ ⊢_I a : \proj i T}{Γ ⊢_I T \op i  a : U}
 
     \inferrule[In-Pred]{Γ ⊢_{I} A : U \\ Γ ⊢_{I} P : A → U}{Γ ⊢_{I,i} \ip i A P : U}
 
@@ -80,8 +80,8 @@ Terms:
     \\\inferrule[In-Abs]{Γ ⊢_I a : \proj i T \\Γ ⊢_I p : T \op i a}{Γ ⊢_{I,i} \CP i a p : T}
 
     \inferrule[In-Fun]
-        {Γ ⊢_I f : (x:A) → P x\\\\
-        Γ ⊢_I g : (x:A) → (x':A \op i x) → P \CP i x {x'} \op i f x}{Γ ⊢_{I,i} \fp i f g : (x:A) → P x}
+        {Γ ⊢_I f : \proj i {(x:A) → P x}\\\\
+        Γ ⊢_I g : (x:\proj i A) → (x':A \op i x) → P \CP i x {x'} \op i f x}{Γ ⊢_{I,i} \fp i f g : (x:A) → P x}
 
     \inferrule[Color-elim]{Γ ⊢_{I,i} a : T}{Γ ⊢_I a \param i : T \op i {\proj i a}}
 
@@ -90,7 +90,7 @@ Terms:
 \end{definition}
 
 \begin{definition}[Projection]~
-  $\proj i \cdot$ is a (partial) meta-operation on the raw syntax.
+  $\proj i \cdot$ is defined by induction on the syntax.
   \begin{align*}
   \proj i {\fp i f g} & = f \\
   \proj i {(a,_i p)} &= a \\
