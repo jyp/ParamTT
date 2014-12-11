@@ -91,14 +91,15 @@ Terms:
 
 \begin{definition}[Projection]~
   $\proj i \cdot$ is defined by induction on the syntax.
-  \begin{align*}
-  \proj i {\fp i f g} & = f \\
+\begin{align*}
+    \proj i {\fp i f g} & = f \\
   \proj i {(a,_i p)} &= a \\
-  \proj i {\ip i A P} &= A \\
-  \proj i {T \op i a} &= \proj i T
+  \proj i {\ip i A P} &= A
 \end{align*}
-
-+ congruences.
++ congruences, such as
+\begin{align*}
+  \proj i {T \op j a} &= {\proj i T \op j \proj i a}
+\end{align*}
 \end{definition}
 
 
