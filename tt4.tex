@@ -1,6 +1,7 @@
 \documentclass[10pt,a4paper]{article}
 \usepackage[utf8]{inputenc}
 \usepackage{amssymb,amstext,amsmath}
+\usepackage{mathtools}
 \usepackage{mathpartir}
 \usepackage{mytheorems}
 \usepackage[a4paper,margin=1.8cm]{geometry}
@@ -33,15 +34,15 @@
 
 
 \begin{definition}[Syntax of terms and contexts]
-  
   \begin{align*}
-    t,u,A,B & ::= x ~|~ U ~|~ λx:A. t      ~|~ t u ~|~ (x:A) → B \\
-            & ~|~ \CP i t u  ~|~ \ip i A B  ~|~ \fp i t u \\
-            & ~|~ A \op i u ~|~ t \param i  \\
-    \Gamma,\Delta & ::= () ~|~ \Gamma,x:A
+    t,u,A,B & \coloneqq x \mid U \mid λx:A. t      \mid t u \mid (x:A) → B \\
+            & \mid \CP i t u  \mid \ip i A B  \mid \fp i t u \\
+            & \mid A \op i u \mid t \param i  \\
+    \Gamma,\Delta & \coloneqq () \mid \Gamma,x:A
   \end{align*}
 \end{definition}
 
+We consider a total order $\preccurlyeq$ on colours.
 We use $I,J,…$ for finite {\em sets} of colours (order does not matter).
 
 \begin{definition}[Typing relation]
@@ -103,8 +104,19 @@ Terms:
 \end{definition}
 
 
+\begin{definition}[Normal forms and neutral terms]~
+  \begin{align*}
+    \mathsf{Nf} ∋ u,v,A,B & \coloneqq
+      U \mid λx:A. t \mid (x:A) → B \\
+      & \mid \CP i u v \mid \fp i u v \\
+      & \mid {(\ip {i₀} A B)} \op {i₁} {u_1 \cdots} \op {i_n} {u_n} &\quad \text{($i₀ \prec i₁ \prec \ldots \prec i_n$)} \\
+      & \mid s \param {i₀} \cdots \param {i_{n-1}}                  &\quad \text{($i₀ \prec   < \ldots \prec i_{n-1}$)}
+    \\
+    \mathsf{Ne} ∋ s & \coloneqq x \mid s \, u
+  \end{align*}
+\end{definition}
 
-\begin{definition}[Reduction]~
+\begin{definition}[Untyped reduction]~
 
 β:
 \begin{align*}
@@ -117,7 +129,6 @@ Swaps:
   T \op i \CP j a b \op j c &= T \op j \CP i a c \op i b
 \end{align*}
 Note: the above rule shows why ${} \param i {}$ is different from $\op i {}$.
-$T$ must be of the form $(\ip {i₀} A P) \op {i₁} {a₁} … \op {i_n} {a_n}$
 
 Pair-like things:
 \begin{align*}
