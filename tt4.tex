@@ -1,6 +1,7 @@
 \documentclass[10pt,a4paper]{article}
 \usepackage[utf8]{inputenc}
 \usepackage{amssymb,amstext,amsmath}
+\usepackage{mathtools}
 \usepackage{mathpartir}
 \usepackage{mytheorems}
 \usepackage[a4paper,margin=1.8cm]{geometry}
@@ -18,6 +19,7 @@
 \newcommand\op[1]{∋_{#1}}
 \newcommand\ip[3]{Σ^{#1} {#2}\,{#3}}
 \newcommand\fp[3]{⟨#2 ,_{#1} #3⟩}
+\newcommand\proj[2]{⌊{#2}⌋_{#1}}
 
 
 \input{unicodedefs}
@@ -32,15 +34,16 @@
 
 
 \begin{definition}[Syntax of terms and contexts]
-  
   \begin{align*}
-    t,u,A,B & ::= x ~|~ U ~|~ λx:A. t      ~|~ t u ~|~ (x:A) → B \\
-            & ~|~ \CP i t u  ~|~ \ip i A B  ~|~ \fp i t u \\
-            & ~|~ A \op i u ~|~ t \param i  \\
-    \Gamma,\Delta & ::= () ~|~ \Gamma,x:A ~|~ \Gamma,I
+    t,u,A,B & \coloneqq x \mid U \mid λx:A. t      \mid t u \mid (x:A) → B \\
+            & \mid \CP i t u  \mid \ip i A B  \mid \fp i t u \\
+            & \mid A \op i u \mid t \param i  \\
+    \Gamma,\Delta & \coloneqq () \mid \Gamma,x:A
   \end{align*}
 \end{definition}
 
+We consider a total order $\preccurlyeq$ on colours (for uniqueness of
+normal forms).
 We use $I,J,…$ for finite {\em sets} of colours (order does not matter).
 
 \begin{definition}[Typing relation]
@@ -48,80 +51,91 @@ Contexts:
   \begin{mathpar}
     \inferrule[Empty]{~}{() ⊢ }
 
-    \inferrule[NewVar]{Γ⊢ \\ Γ ⊢ A }{ Γ,x:A ⊢ }
-
-    \inferrule[NewColor]{Γ⊢}{ Γ,I ⊢ }
+    \inferrule[NewVar]{Γ⊢ \\ Γ ⊢_I A : U }{ Γ,x:A ⊢ }
 
   \end{mathpar}
  
 Types:
  \begin{mathpar}
-    \inferrule[Universe]{Γ ⊢}{Γ ⊢ U : U}
+    \inferrule[Universe]{Γ ⊢}{Γ ⊢_I U : U}
 
-    \inferrule[Pi]{Γ ⊢ A : U \\ Γ,x:A ⊢ B : U}{Γ ⊢ (x:A) → B : U}
+    \inferrule[Pi]{Γ ⊢_I A : U \\ Γ,x:A ⊢_I B : U}{Γ ⊢_I (x:A) → B : U}
 
-    \inferrule[Out]{Γ ⊢ T : U \\ Γ ⊢ a : T}{Γ ⊢ T \op i  a : U}
+    \inferrule[Out]{Γ ⊢_{I,i} T : U \\ Γ ⊢_I a : \proj i T}{Γ ⊢_I T \op i  a : U}
 
-    \inferrule[In-Pred]{Γ ⊢_{I} P : A → U}{Γ ⊢_{I,i} \ip i A P : U}
+    \inferrule[In-Pred]{Γ ⊢_{I} A : U \\ Γ ⊢_{I} P : A → U}{Γ ⊢_{I,i} \ip i A P : U}
 
  \end{mathpar}
 
 Terms:
   \begin{mathpar}
-    \inferrule[Conv]{Γ ⊢ t:A \\ A = B}{Γ ⊢ t : B}
+    \inferrule[Conv]{Γ ⊢_I t:A \\ A = B}{Γ ⊢_I t : B}
 
-    \inferrule[Var]{Γ ⊢ A}{Γ,x:A ⊢ x : A}
+    \inferrule[Var]{Γ ⊢_I A : U}{Γ,x:A ⊢_I x : A}
 
-    \inferrule[Wk]{Γ ⊢ A \\Γ ⊢ t : T}{Γ,x:A ⊢ t : T}
+    \inferrule[Wk]{Γ ⊢_I A \\Γ ⊢_I t : T}{Γ,x:A ⊢_I t : T}
 
-    \inferrule[CWk]{Γ ⊢ t : T}{Γ,I ⊢ t : T}
-
-    \\\inferrule[Lam]{Γ,x:A ⊢ B}{Γ ⊢ λx:A.b : (x:A) → B}
+    \\\inferrule[Lam]{Γ,x:A ⊢_I B}{Γ ⊢_I λx:A.b : (x:A) → B}
  
-    \inferrule[App]{Γ ⊢ t : (x:A) → B[x] \\ Γ ⊢ u : A}{Γ ⊢ t u: B[u]}
+    \inferrule[App]{Γ ⊢_I t : (x:A) → B[x] \\ Γ ⊢_I u : A}{Γ ⊢_I t u: B[u]}
 
-    \\\inferrule[In-Abs]{Γ,I ⊢ a : T(i0) \\Γ,I ⊢ p : T \op i a}{Γ,I,i ⊢ \CP i a p : T}
+    \\\inferrule[In-Abs]{Γ ⊢_I a : \proj i T \\Γ ⊢_I p : T \op i a}{Γ ⊢_{I,i} \CP i a p : T}
 
     \inferrule[In-Fun]
-        {Γ ⊢ f : (x:A) → P x\\\\
-        Γ ⊢ g : (x:A) → (x':A \op i x) → P \CP i x {x'} \op i f x}{Γ,i ⊢ \fp i f g : (x:A) → P x}
+        {Γ ⊢_I f : \proj i {(x:A) → P x}\\\\
+        Γ ⊢_I g : (x:\proj i A) → (x':A \op i x) → P \CP i x {x'} \op i f x}{Γ ⊢_{I,i} \fp i f g : (x:A) → P x}
 
-    \inferrule[Color-elim]{Γ,I,i ⊢ a : T}{Γ,I ⊢ a \param i : T \op i  a (i0)}
+    \inferrule[Color-elim]{Γ ⊢_{I,i} a : T}{Γ ⊢_I a \param i : T \op i {\proj i a}}
 
 
   \end{mathpar}
 \end{definition}
 
 \begin{definition}[Projection]~
-  \begin{align*}
-  \fp i f g(i0) & = f \\
-  (a,_i p)  (i0) &= a \\
-  \ip i A P (i0) &= A
+  $\proj i \cdot$ is defined by induction on the syntax.
+\begin{align*}
+    \proj i {\fp i f g} & = f \\
+  \proj i {(a,_i p)} &= a \\
+  \proj i {\ip i A P} &= A
 \end{align*}
-
++ congruences, such as
+\begin{align*}
+  \proj i {T \op j a} &= {\proj i T \op j \proj i a}
+\end{align*}
 \end{definition}
 
 
+\begin{definition}[Normal forms and neutral terms]~
+  \begin{align*}
+    \mathsf{Nf} ∋ u,v,A,B & \coloneqq
+      U \mid λx:A. t \mid (x:A) → B \\
+      & \mid \CP i u v \mid \fp i u v \\
+      & \mid {(\ip {i₀} A B)} \op {i₁} {u_1 \cdots} \op {i_n} {u_n} &\quad \text{($i₀ \prec i₁ \prec \ldots \prec i_n$)} \\
+      & \mid s \param {i₀} \cdots \param {i_{n-1}}                  &\quad \text{($i₀ \prec   < \ldots \prec i_{n-1}$)}
+    \\
+    \mathsf{Ne} ∋ s & \coloneqq x \mid s \, u
+  \end{align*}
+\end{definition}
 
-\begin{definition}[Reduction]~
+\begin{definition}[Untyped reduction]~
 
 β:
 \begin{align*}
-  (λx:A. u[x]) t &= u[t]
+  (λx:A. u[x]) t &→ u[t]
 \end{align*}
 
 Swaps:
 \begin{align*}
-  a \param i \param j &= a \param j \param i \\
-  T \op i \CP j a b \op j c &= T \op j \CP i a c \op i b
+  a \param j \param i &→ a \param i \param j             &\text{($i \prec j$)} \\
+  T \op j \CP i a c \op i b &→ T \op i \CP j a b \op j c &\text{($i \prec j$)}
 \end{align*}
-Note: the above rule show why .i is different from ∋i
+Note: the above rule shows why ${} \param i {}$ is different from $\op i {}$.
 
 Pair-like things:
 \begin{align*}
-  \fp i f g a & = (f a(i0) ,_i g a(i0) a \param i) \\
-  (a,_i p) \param i  &= p \\
-  \ip i A P \op i a &= P a
+  {\fp i f g} \, a      &→ (f\,{\proj i a} ,_i g\,{\proj i a}\,{(a \param i)}) \\
+  {(a,_i p)} \param i   &→ p \\
+  {(\ip i A P)} \op i a &→ P\,a
 \end{align*}
 
 Note: the param-witness construction is bootstrapped by the last rule.
@@ -130,17 +144,21 @@ Note: the param-witness construction is bootstrapped by the last rule.
 
 Confluence implies other equalities, such as:
 \begin{align*}
-  (a,_j p) \param i  &= (a \param i ,_j p \param i) \\
-  \ip j A P \op i a &= \ip j X {(λy. P \CP i {a(i0)} y \op i a \param j)}
+  {(a,_j p)} \param i &→ (a \param i ,_j p \param i)\\
+  \ip j {(A \op i {\proj i a})} {(λy. P \, \CP i {\proj i a} y \op i {(a \param j)})} &→ {(\ip j A P)} \op i a &\text{($i \prec j$)}
 \end{align*}
 
-\begin{definition}[Conversion]
-  \begin{mathpar}
-    \inferrule{t x = u} {t = λ x:A.u}
-
-    \inferrule{t (i0) = a \\ t.i = p} {t = \CP i a p }
-  \end{mathpar}
 + congruences.
+
+\begin{definition}[Conversion]
+  Let $↔^★$ be the reflexive symmetric transitive closure of $→$.
+  \begin{mathpar}
+    \inferrule{t ↔^★ u} {t = u}
+    \and
+    \inferrule{t x = u} {t = λ x:A.u}
+    \and
+    \inferrule{\proj i t = a \\ t \param i = p} {t = \CP i a p }
+  \end{mathpar}
 \end{definition}
 
 
