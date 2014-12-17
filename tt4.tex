@@ -51,7 +51,7 @@ Contexts:
   \begin{mathpar}
     \inferrule[Empty]{~}{() ⊢ }
 
-    \inferrule[NewVar]{Γ⊢ \\ Γ ⊢_I A : U }{ Γ,x:A ⊢ }
+    \inferrule[NewVar]{Γ⊢ \\ Γ ⊢ A : U }{ Γ,x:A ⊢ }
 
   \end{mathpar}
  
@@ -71,9 +71,8 @@ Terms:
   \begin{mathpar}
     \inferrule[Conv]{Γ ⊢_I t:A \\ A = B}{Γ ⊢_I t : B}
 
-    \inferrule[Var]{Γ ⊢_I A : U}{Γ,x:A ⊢_I x : A}
+    \inferrule[Var]{Γ ⊢ \\ x : A ∈ Γ}{Γ ⊢_I x : A}
 
-    \inferrule[Wk]{Γ ⊢_I A \\Γ ⊢_I t : T}{Γ,x:A ⊢_I t : T}
 
     \\\inferrule[Lam]{Γ,x:A ⊢_I B}{Γ ⊢_I λx:A.b : (x:A) → B}
  
