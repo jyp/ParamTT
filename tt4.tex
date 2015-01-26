@@ -195,7 +195,7 @@ q x &= x\param i\param j
 \section{Link with "Old" parametricity}
 \begin{definition}
   \begin{align*}
-    ⟦A → B⟧ f & = (x:A) → ⟦A⟧ x → ⟦B⟧ (f x)\\
+    ⟦A → B⟧ f & = (x:\proj i A) → ⟦A⟧ x → ⟦B⟧ (f x)\\
     ⟦U⟧ A & = A → U\\
     ⟦A \op j a ⟧ b &= ⟦A⟧ \CP j {\proj i a} b \op j a \param i \\
     ⟦\ip i A P⟧ x & = P x\\
@@ -219,10 +219,15 @@ Let us call $\TO A$ the conversion from $A \op i x$ to $⟦A⟧ x$; and $\FROM A
     \item $f : A → B$
     \item $p : (A → B) \op i f$
     \end{itemize}
-    We prove $q : (x:A) → ⟦A⟧ x → ⟦B⟧ (f x)$ with $q x x' = \TO B ((\CP i f
+    We prove $q : (x:A) → ⟦A⟧ x → ⟦B⟧ (f x)$ with $q x x' = \TO {B'} ((\CP i f
     p \CP i x {\FROM A x'}) \param i)$.
 
-    Right to left: $p = (\fp i f {(\FROM B ∘ q ∘ \TO A)}) \param i $
+    Where $B' = B[\CP i x {\FROM A x'}]$
+
+    (No need to carry around an environment; the proof given by the user "x'" is properly passed to the function. )
+
+
+    Right to left: $p = (\fp i f {λx. λx'. \FROM B (q x (\TO A x'))}) \param i $
 
   \item Universe.
 
@@ -246,11 +251,13 @@ Let us call $\TO A$ the conversion from $A \op i x$ to $⟦A⟧ x$; and $\FROM A
     \item $b : A\op j a$
     \item $p : A \op j a \op i b $
     \end{itemize}
-    We prove $q : A \op i \CP j {\proj j a} b \op j a \param i  $ with $\CP i a {\CP j b p} \param j \param i$.
+    We prove $q' : A \op i \CP j {\proj j a} b \op j a \param i  $ with $\CP i a {\CP j b p} \param j \param i$.
+    The result is given by $\TO A q'$.
 
     Right to left: same principle.
   \end{itemize}
   \item Variable.
     By def.
 \end{proof}
+
 \end{document}
