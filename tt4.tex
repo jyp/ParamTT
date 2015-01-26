@@ -1,5 +1,6 @@
 \documentclass[10pt,a4paper]{article}
 \usepackage[utf8]{inputenc}
+\usepackage{stmaryrd}
 \usepackage{amssymb,amstext,amsmath}
 \usepackage{mathtools}
 \usepackage{mathpartir}
@@ -20,8 +21,6 @@
 \newcommand\ip[3]{Σ^{#1} {#2}\,{#3}}
 \newcommand\fp[3]{⟨#2 ,_{#1} #3⟩}
 \newcommand\proj[2]{⌊{#2}⌋_{#1}}
-
-
 \input{unicodedefs}
 
 \title{A parametric Type theory}
@@ -161,5 +160,87 @@ Confluence implies other equalities, such as:
 \end{definition}
 
 
+\section{Examples}
 
+\subsection{Naturals}
+Let $N = ∀X. X → (X → X) → X$.
+
+Assume:
+\begin{itemize}
+\item $f : N$
+\item $A : U$
+\item $P : A → U$
+\item $z : A$
+\item $z' : P z$
+\item $s : A → A$
+\item $s' : (x:A) → P x → P (s x)$
+\end{itemize}
+
+We can prove $P (f A z s)$ with the term
+
+\[
+(f (\ip i A P) \CP i z {z'} \fp i s {s'}) \param i
+\]
+
+\subsection{Iterating Parametricity}
+For any type $A$ (which may depend on colors $i,j$), we have
+\begin{align*}
+p &: (x:A) → A \op i x\\
+p x &= x\param i\\
+q &: (x:A) → (A \op i x) \op j x \param  i\\
+  &: (x:A) → (A \op j \CP i x {x \param j}) \op j x \param  i\\
+q x &= x\param i\param j
+\end{align*}
+
+\section{Link with "Old" parametricity}
+\begin{definition}
+  \begin{align*}
+    ⟦A → B⟧ f & = (x:A) → ⟦A⟧ x → ⟦B⟧ (f x)\\
+    ⟦U⟧ A & = A → U\\
+    ⟦A \op j a ⟧ b &= ⟦A⟧ \CP j {\proj i a} y \op j a \param i \\
+    ⟦x⟧ a & = x \op i a
+  \end{align*}
+\end{definition}
+
+
+\begin{theorem}
+For each type $A$, if $A \op i x$ is provable, then so is $⟦A⟧ x$.
+\end{theorem}
+\begin{proof}
+  By structural induction on $A$. Key cases:
+
+
+  \begin{itemize}
+  \item Pi.
+
+    Assume:
+    \begin{itemize}
+    \item $f : A → B$
+    \item $p : (A → B) \op i f$
+    \end{itemize}
+    We prove $q : (x:A) → A \op i x → B \op i (f x)$ with $q x x' = (\CP i f
+    p \CP i x {x'}) \param i$.
+
+
+  \item Universe.
+
+    Assume:
+    \begin{itemize}
+    \item $A : U$
+    \item $P : U \op i A $
+    \end{itemize}
+    We prove $Q : A → U$ with $Q x = (\ip i A P) \op i x$.
+
+
+  \item Param.
+
+    Assume:
+    \begin{itemize}
+    \item $a : A$
+    \item $b : A\op j a$
+    \item $p : A \op j a \op i b $
+    \end{itemize}
+    We prove $q : A \op i \CP j {\proj j a} b \op j a \param i  $ with $\CP i a {\CP j b p} \param j \param i$.
+  \end{itemize}
+\end{proof}
 \end{document}
