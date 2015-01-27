@@ -160,29 +160,9 @@ Confluence implies other equalities, such as:
 \end{definition}
 
 
-\section{Examples}
 
-\subsection{Naturals}
-Let $N = ∀X. X → (X → X) → X$.
 
-Assume:
-\begin{itemize}
-\item $f : N$
-\item $A : U$
-\item $P : A → U$
-\item $z : A$
-\item $z' : P z$
-\item $s : A → A$
-\item $s' : (x:A) → P x → P (s x)$
-\end{itemize}
-
-We can prove $P (f A z s)$ with the term
-
-\[
-(f (\ip i A P) \CP i z {z'} \fp i s {s'}) \param i
-\]
-
-\subsection{Iterating Parametricity}
+\section{Iterating Parametricity}
 For any type $A$ (which may depend on colors $i,j$), we have
 \begin{align*}
 p &: (x:A) → A \op i x\\
@@ -193,7 +173,13 @@ q x &= x\param i\param j
 \end{align*}
 
 \section{Link with "Old" parametricity}
+We define a (unary) relational interpretation of types $⟦A⟧$. This
+interpretation coincides with the usual relational interpretation of types.
+We show that, if $⟦·⟧$ and $∋_i$ are equivalent for free type variables,
+then they are equivalent for every type in normal form.
+
 \begin{definition}
+We define $⟦A⟧$ by structural induction on $A$.
   \begin{align*}
     ⟦A → B⟧ f & = (x:\proj i A) → ⟦A⟧ x → ⟦B⟧ (f x)\\
     ⟦U⟧ A & = A → U\\
@@ -219,15 +205,13 @@ Let us call $\TO A$ the conversion from $A \op i x$ to $⟦A⟧ x$; and $\FROM A
     \item $f : A → B$
     \item $p : (A → B) \op i f$
     \end{itemize}
-    We prove $q : (x:A) → ⟦A⟧ x → ⟦B⟧ (f x)$ with $q x x' = \TO {B'} ((\CP i f
+    We prove $q : (x:A) → ⟦A⟧ x → ⟦B⟧ (f x)$ with $q x x' = \TO {B[\CP i x {\FROM A x'}]} ((\CP i f
     p \CP i x {\FROM A x'}) \param i)$.
 
-    Where $B' = B[\CP i x {\FROM A x'}]$
+    (No need to carry around an environment; the proof given by the
+    user ($x'$) is substituted in terms)
 
-    (No need to carry around an environment; the proof given by the user "x'" is properly passed to the function. )
-
-
-    Right to left: $p = (\fp i f {λx. λx'. \FROM B (q x (\TO A x'))}) \param i $
+    Right to left: $p = (\fp i f {λx. λx'. \FROM {B[\CP i x {x'}]} (q x (\TO A x'))}) \param i $
 
   \item Universe.
 
@@ -259,5 +243,25 @@ Let us call $\TO A$ the conversion from $A \op i x$ to $⟦A⟧ x$; and $\FROM A
   \item Variable.
     By def.
 \end{proof}
+
+\subsection{Example: naturals}
+Let $N = ∀X. X → (X → X) → X$.
+Proving (unary) parametricity for $N$ means that, assuming
+\begin{itemize}
+\item $f : N$
+\item $A : U$
+\item $P : A → U$
+\item $z : A$
+\item $z' : P z$
+\item $s : A → A$
+\item $s' : (x:A) → P x → P (s x)$
+\end{itemize}
+we can prove $P (f A z s)$.
+
+Indeed, a proof term is the following:
+
+\[
+(f (\ip i A P) \CP i z {z'} \fp i s {s'}) \param i
+\]
 
 \end{document}
