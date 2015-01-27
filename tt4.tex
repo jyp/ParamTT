@@ -89,6 +89,23 @@ Terms:
   \end{mathpar}
 \end{definition}
 
+Notes:
+
+\begin{itemize}
+\item We collapse the universe hierarchy for conciseness, but
+  supporting it is orthogonal to the specific features of this system.
+\item We cannot have colored types in the environment.
+\item If one wishes to define a function depending on a colored type
+  one must therefore use the {\sc In-Fun} rule.
+\item For example, the function $f = λx:A.b(x)$ is equivalent to $\fp
+  i {proj i f} {λ(x:\proj i A). λ(x':A \op i x). (b \CP i x
+    {x'}) \param i}$.
+\item TODO: This means that the above is not strictly correct, we
+  either need to define the Pi type as having an explicit function as
+  its second argument, or have a special former corresponding to {\sc
+    In-Fun}.
+\end{itemize}
+
 \begin{definition}[Projection]~
   $\proj i \cdot$ is defined by induction on the syntax.
 \begin{align*}
@@ -156,6 +173,10 @@ Confluence implies other equalities, such as:
     \inferrule{t x = u} {t = λ x:A.u}
     \and
     \inferrule{\proj i t = a \\ t \param i = p} {t = \CP i a p }
+    \and
+    \inferrule{\proj i t = f \\ (t \CP i x y) \param i = g x y} {t = \fp i f g }
+    \and
+    \inferrule{\proj i T = A \\ T \op i x = P x} {T = \CSig i A P }
   \end{mathpar}
 \end{definition}
 
@@ -163,7 +184,7 @@ Confluence implies other equalities, such as:
 
 
 \section{Iterating Parametricity}
-For any type $A$ (which may depend on colors $i,j$), we have
+For any type $A$ (which may not depend on any color), we have
 \begin{align*}
 p &: (x:A) → A \op i x\\
 p x &= x\param i\\
@@ -171,6 +192,11 @@ q &: (x:A) → (A \op i x) \op j x \param  i\\
   &: (x:A) → (A \op j \CP i x {x \param j}) \op j x \param  i\\
 q x &= x\param i\param j
 \end{align*}
+
+If $A$ were to depend on a color, the types would not be well-formed:
+types put in an environment must have no free color ({\sc New-Var}).
+
+
 
 \section{Link with "Old" parametricity}
 We define a (unary) relational interpretation of types $⟦A⟧$. This
@@ -205,13 +231,14 @@ Let us call $\TO A$ the conversion from $A \op i x$ to $⟦A⟧ x$; and $\FROM A
     \item $f : A → B$
     \item $p : (A → B) \op i f$
     \end{itemize}
-    We prove $q : (x:A) → ⟦A⟧ x → ⟦B⟧ (f x)$ with $q x x' = \TO {B[\CP i x {\FROM A x'}]} ((\CP i f
+    We prove $q : (x:\proj i A) → ⟦A⟧ x → ⟦B⟧ (f x)$ with $q x x' = \TO {B[\CP i x {\FROM A x'}]} ((\CP i f
     p \CP i x {\FROM A x'}) \param i)$.
 
-    (No need to carry around an environment; the proof given by the
-    user ($x'$) is substituted in terms)
-
     Right to left: $p = (\fp i f {λx. λx'. \FROM {B[\CP i x {x'}]} (q x (\TO A x'))}) \param i $
+
+    (No need to carry around an environment; the proof given by the
+    user ($x'$) is substituted in terms --- the substitutions are
+    well-typed, given the {\sc In-Abs} rule.)
 
   \item Universe.
 
