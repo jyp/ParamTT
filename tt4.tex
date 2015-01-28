@@ -182,7 +182,7 @@ Confluence implies other equalities, such as:
 
 \paragraph{Consequences}
 \begin{corollary}
-  $T = \CSig i {\proj i T} {( x. T \op i x)}$
+  $T = \CSig i {\proj i T} {(λx. T \op i x)}$
 \end{corollary}
 
 \section{Iterating Parametricity}
@@ -314,5 +314,36 @@ Indeed, a proof term is the following:
 \[
 (f (\ip i A P) \CP i z {z'} \fp i s {s'}) \param i
 \]
+
+\section{Related Work}
+
+
+Parametric Models of Type-Theory vs Parametric Type-Theories
+
+Two pieces of work propose parametric models of type-theory (...), without
+integrating parametricity in the syntax of the calculus. This means
+that, while certain consequences of parametricity can be made
+available to the programmer via constants valid in the model,
+parametricity itself is not generically available, as it is in our
+calculus our previous work [tt in color].
+
+
+Various kinds of models.
+
+Our previous work did not offer a denotational semantics, but only
+operational ones.  Krishnaswami and Dreyer propose a model based on
+Q-PER.  Atkey et al. propose a model based on reflexive graphs.
+
+
+
+N. R. Krishnaswami and D. Dreyer. Internalizing relational parametric-
+ity in the extensional calculus of constructions. In
+CSL
+, pages 432–
+451, 2013.
+
+
+B. Atkey, N. Ghani, and P. Johann. A relationally parametric model of
+dependent type theory. 2014
 
 \end{document}
