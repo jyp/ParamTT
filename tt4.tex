@@ -66,9 +66,8 @@ parametric type-theory, as well as the equality judgement.
   \end{align*}
 \end{definition}
 
-We consider a total order $\preccurlyeq$ on colours (for uniqueness of
-normal forms).
-We use $I,J,…$ for finite {\em sets} of colours (order does not matter).
+%We consider a total order $\preccurlyeq$ on colours (for uniqueness of normal forms).
+We use $I,J,…$ for finite sets of colours.
 
 \begin{definition}[Typing relation]
 Contexts:
@@ -174,44 +173,23 @@ Notes:
   \end{align*}
 \end{definition}
 }
-\begin{definition}[Untyped reduction]~
+\begin{definition}[Conversion]~
 
 β:
 \begin{align*}
-  (λx:A. u[x]) t &→ u[t]
+  (λx:A. u[x]) t &= u[t]
 \end{align*}
-
-Swaps:
-\begin{align*}
-  a \param j \param i &→ a \param i \param j             &\text{($i \prec j$)} \\
-  T \op j \CP i a c \op i b &→ T \op i \CP j a b \op j c &\text{($i \prec j$)}
-\end{align*}
-Note: the above rule shows why ${} \param i {}$ is different from $\op i {}$.
 
 Pair-like things:
 \begin{align*}
-  {\fp i f g} \, a      &→ (f\,{\proj i a} ,_i g\,{\proj i a}\,{(a \param i)}) \\
-  {(a,_i p)} \param i   &→ p \\
-  {(\ip i A P)} \op i a &→ P\,a
+  {\fp i f g} \, a      &= (f\,{\proj i a} ,_i g\,{\proj i a}\,{(a \param i)}) \\
+  {(a,_i p)} \param i   &= p \\
+  {(\ip i A P)} \op i a &= P\,a
 \end{align*}
 
 Note: the param-witness construction is bootstrapped by the last rule.
 
-\end{definition}
-
-Confluence implies other equalities, such as:
-\begin{align*}
-  {(a,_j p)} \param i &→ (a \param i ,_j p \param i)\\
-  \ip j {(A \op i {\proj i a})} {(λy. P \, \CP i {\proj i a} y \op i {(a \param j)})} &→ {(\ip j A P)} \op i a &\text{($i \prec j$)}
-\end{align*}
-
-+ congruences.
-
-\begin{definition}[Conversion]
-  Let $↔^★$ be the reflexive symmetric transitive closure of $→$.
   \begin{mathpar}
-    \inferrule{t ↔^★ u} {t = u}
-    \and
     \inferrule{t x = u} {t = λ x:A.u}
     \and
     \inferrule{\proj i t = a \\ t \param i = p} {t = \CP i a p }
@@ -219,7 +197,14 @@ Confluence implies other equalities, such as:
     \inferrule{\proj i t = f \\ (t \CP i x y) \param i = g x y} {t = \fp i f g }
     \and
     \inferrule{\proj i T = A \\ T \op i x = P x} {T = \CSig i A P }
+    \and
+    \inferrule{~}{a = a}
+    \and
+    \inferrule{a = b}{b = a}
+    \and
+    \inferrule{a = b \\ b = c}{a = c}
   \end{mathpar}
+  + congruences
 \end{definition}
 
 \paragraph{Consequences}
