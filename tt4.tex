@@ -414,13 +414,26 @@ $ρ ∈ Γf$ and $u ∈ A(f,ρ)$.
 \begin{description}
   \item[\sc Universe.]
     Let $f : I → J$, $ρ : Γf$.  $A(f,ρ) : U(f,ρ)$ is
-    defined as a $J$-element isomorphic to the naive interpretation,
-    a family of sets indexed by
+    defined as a $J$-element $u$ isomorphic to the naive interpretation,
+    a family $ω$ of sets indexed by
     $g : J \stackrel{α}{→} J_α \stackrel {h}{↣} K$:
     $\left(ωg\right)_{g : J → K} ≅ \left(\left(ω(αh)\right)_{h : J_α ↣ K}\right)_{J_α ⊆ J}$,
     where $ωg = A(fg,ρg)$.
-    We define the $K$-element $u g$ as
+    For $g : J → K$, we define the $K$-element $u g$ as
     $\left(\left(ω(gαh)\right)_{h : K_α ↣ L}\right)_{K_α ⊆ K}$.
+
+    The restriction maps are defined by induction on $I$.
+    For $I = ∅$ we have $U(∅) = (Af)_{f:∅ ↣ J}$ and we take the map
+    $u ↦ uf$, $A(∅) → A(J)$.
+    For $I,ι$ we have $U(I,ι) = \left(\left(A(αh)\right)_{h : I_α ↣ J}\right)_{I_α ⊆ I,ι}
+    = \left(\left(A(α_1h)\right)_{h : I_α ↣ J}\right)_{I_α ⊆ I} ∪
+      \left(\left(A(α_2h)\right)_{h : I_α,ι ↣ J}\right)_{I_α ⊆ I}$
+    where $α_1 : I,ι → I_α$ and $α_2 : I,ι → I_α,ι$ are the projections
+    maps.
+    The map $u ↦ uf$, $A(I,ι) → A(J)$ is
+    that from $A(I) → A(J)$ if $f$ is not defined on $ι$; otherwise
+    we have $κ = fι$ and $g : I→J$ such that $(ι\,0)g = f(κ\,0)$, and we
+    take $u ↦ ug$.
 
     Consider the map $u ↦ uβ$, $U(f,ρ) → U(fβ,ρβ)$.  Let
     $K ⊆ J_β$, and $γ : J \stackrel{β}{→} J_β \stackrel{α}{→} K$ the projection map.
