@@ -95,7 +95,7 @@ Terms:
   \begin{mathpar}
     \inferrule[Conv]{Γ ⊢_I t:A \\ A = B}{Γ ⊢_I t : B}
 
-    \inferrule[Var]{Γ ⊢ \\ x : A ∈ Γ}{Γ ⊢_I x : A}
+    \inferrule[Var]{Γ ⊢_I \\ x : A ∈ Γ}{Γ ⊢_I x : A}
 
 
     \\\inferrule[Lam]{Γ,x:A ⊢_I B}{Γ ⊢_I λx:A.b : (x:A) → B}
