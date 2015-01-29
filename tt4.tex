@@ -123,17 +123,41 @@ Notes:
   need to use the {\sc In-Fun} rule.
 \end{itemize}
 
-\begin{definition}[Projection]~
-  $\proj i \cdot$ is defined by induction on the syntax.
+\begin{definition}[Morphism application]~
+  We consider partial injections $f : I → J$ and for any $I$-term $a$,
+  we define the $J$-term $af$ by structural induction on $a$.
+  We note $(ι\,0) : I,ι → I$ the partial identity.
 \begin{align*}
-    \proj i {\fp i f g} & = f \\
-  \proj i {(a,_i p)} &= a \\
-  \projp i {\ip i A P} &= A
+  x f & = x \\
+  U f & = U \\
+  (λ(x:A).t) f &= λ(x:Af).tf \\
+  (t\,u) f &= (tf) \, (uf) \\
+  ((x:A)→B) f &= (x:Af)→(Bf) \\
+  \CP {ι} a p f &= \CP {κ} {ag} {pg}
+    & \text{if $fι = κ$, $g : I→J_κ$ such that $(ι\,0)g = f(κ\,0) : I,ι → J_κ$} \\
+                &= ag
+    & \text{if $∃g : I→J$ such that $f = (ι\,0)g : I,ι → J$} \\
+  (\ip {ι} A P) f &= \ip {κ} {(Ag)} {(Pg)}
+    & \text{if $fι = κ$, $g : I→J_κ$ such that $(ι\,0)g = f(κ\,0) : I,ι → J_κ$} \\
+                &= Ag
+    & \text{if $∃g : I→J$ such that $f = (ι\,0)g : I,ι → J$} \\
+  \fp {ι} u v f &= \fp {κ} {ug} {vg}
+    & \text{if $fι = κ$, $g : I→J_κ$ such that $(ι\,0)g = f(κ\,0) : I,ι → J_κ$} \\
+                &= ug
+    & \text{if $∃g : I→J$ such that $f = (ι\,0)g : I,ι → J$} \\
+  A \op {ι} a &= (Ag) \op {κ} (af)
+    & \text{where $κ = \fresh J$ and $g:I,ι → J,κ$ satisfies $(ι\,0)f = g(κ\,0)$} \\
+  (a · ι) f &= (ag) · κ
+    & \text{where $κ = \fresh J$ and $g:I,ι → J,κ$ satisfies $(ι\,0)f = g(κ\,0)$}
 \end{align*}
-+ congruences, such as
-\begin{align*}
-  \proj i {T \op j a} &= {\proj i T \op j \proj i a}
-\end{align*}
+  (We remark that for any $f : I,ι → J,κ$ with $fι=κ$, there is a
+  unique $g : I → J$ such that $(ι\,0)g = f(κ\,0) : I,ι → J$;
+  and that for any $f : I,ι → J$ which is not defined on $ι$, there is
+  a unique $g : I → J$ such that $(ι\,0)g = f$.)
+
+  We have $a1 = a$ and $(af)g = a(fg)$ for any $g : J → K$.
+  Furthermore, if $Γ ⊢_I a : A$ then $Γ f ⊢_J af : Af$ (proof by
+  induction on the typing judgement).
 \end{definition}
 
 
