@@ -1,5 +1,6 @@
 \documentclass[english]{PaperTools/latex/lipics}
 \graphicspath{{PaperTools/latex/}}
+\usepackage{natbib}
 \usepackage[utf8]{inputenc}
 \usepackage{stmaryrd}
 \usepackage{amssymb,amstext,amsmath}
@@ -519,7 +520,7 @@ $ρ ∈ Γf$ and $u ∈ A(f,ρ)$.
 
 Parametric Models of Type-Theory vs Parametric Type-Theories
 
-Two pieces of work propose parametric models of type-theory (...), without
+Two pieces of work propose parametric models of type-theory \citep{atkey_relationally_2014,krishnaswami_internalizing_2013}, without
 integrating parametricity in the syntax of the calculus. This means
 that, while certain consequences of parametricity can be made
 available to the programmer via constants valid in the model,
@@ -533,16 +534,7 @@ Our previous work did not offer a denotational semantics, but only
 operational ones.  Krishnaswami and Dreyer propose a model based on
 Q-PER.  Atkey et al. propose a model based on reflexive graphs.
 
-
-
-N. R. Krishnaswami and D. Dreyer. Internalizing relational parametric-
-ity in the extensional calculus of constructions. In
-CSL
-, pages 432–
-451, 2013.
-
-
-B. Atkey, N. Ghani, and P. Johann. A relationally parametric model of
-dependent type theory. 2014
+\bibliographystyle{abbrvnat}
+\bibliography{PaperTools/bibtex/jp}
 
 \end{document}

@@ -15,3 +15,7 @@ cabal-dev
 .cabal-sandbox/
 cabal.sandbox.config
 cabal.config
+/tt4.bbl
+/tt4.blg
+/tt4.out
+/tt4.vtc
