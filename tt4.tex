@@ -33,13 +33,22 @@
 \def\ie{\textit{i.e.}}
 \def\app#1#2{\mathsf{app}(#1,#2)}
 
-\title{A parametric Type theory}
+\title{A presheaf model of parametric type-theory}
 
 \author{}
 \date{\today}
 
 \begin{document}
 \maketitle
+
+\begin{abstract}
+  We propose a new intentional type-theory with internalized
+  parametricity. Compared to previous similar proposals, this version
+  comes with a denotational semantics, which is a refinement of the
+  standard presheaf semantics for categories with families.
+  This calculus also introduces few syntatic constructs elements, making
+  it a better candidate for the core of a proof assistant.
+\end{abstract}
 
 
 \begin{definition}[Syntax of terms and contexts]
