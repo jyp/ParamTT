@@ -522,18 +522,37 @@ $ρ ∈ Γf$ and $u ∈ A(f,ρ)$.
 
 \begin{theorem}
   If $Γ ⊢_I a : A$, $f : I → J$, $ρ ∈ Γf$, then $a(f,ρ) ∈ A(f,ρ)$.
+  Furthermore $af(1,ρ) = a(f,ρ)$ (using the interpretation of
+  $Γf ⊢_J af : Af$).
 \end{theorem}
 
 \begin{theorem}
   If $Γ ⊢_I a : A$ and $Γ ⊢_I b : A$ with $a = b$, then
   $a(f,ρ) = b(f,ρ)$ for any $f : I → J$ and $ρ : Γf$.
-\end{theorem}
-\begin{proof}~
-  [TODO]
+  In particular,
   \begin{itemize}
-    \item $\app{λt}{u} = t[u]$
-    \item $({(\ip i A P)} \op i a)(f,ρ) = (P\,a)(f,ρ)$
+    \item $\app{λt}{u}(f,ρ) = t[u](f,ρ)$,
+      where $[u]$ is the map $[u]ρ ↦ ⟨ρ,uρ⟩$, $Γ → Γ.A$
+    \item $({(\ip {ι} A P)} \op {ι} a)(f,ρ) = (P\,a)(f,ρ)$
   \end{itemize}
+\end{theorem}
+\begin{proof}
+  Let $f : I → J$, $ι ∉ I$, $κ = \fresh J$, $g : I,ι → J,κ$ such that
+  $(ι\,0)f = g(κ\,0)$.
+  We have
+  \begin{align*}
+    ({(\ip {ι} A P)} \op {ι} a)f
+    &= \left\{ v \mid (af ,_κ v) ∈ (\ip {ι} A P)g \right\}
+    \\
+    &= \left\{ v \mid (af ,_κ v) ∈ \left\{ (x ,_κ y) \mid x ∈ Af, y ∈ \app{Pf} x \right\} \right\}
+    \\
+    &= \left\{ v \mid v ∈ \app{Pf}{af} \right\}
+    \\
+    &= \app{Pf}{af}
+    \\
+    &= \app{P}{a}f
+  \qedhere
+  \end{align*}
 \end{proof}
 
 
