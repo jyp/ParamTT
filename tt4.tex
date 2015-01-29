@@ -8,6 +8,9 @@
 \usepackage[a4paper,margin=1.8cm]{geometry}
 \usepackage{fancyref}
 
+\usepackage{tikz}
+\usetikzlibrary{arrows}
+
 \newcommand\CC[4]{(#2,_{#1} #3)}
 \newcommand\CP[3]{(#2,_{#1} #3)}
 \newcommand\CSig[1]{\Sigma^{#1}}
@@ -20,8 +23,15 @@
 \newcommand\op[1]{∋_{#1}}
 \newcommand\ip[3]{Σ^{#1} {#2}\,{#3}}
 \newcommand\fp[3]{⟨#2 ,_{#1} #3⟩}
-\newcommand\proj[2]{⌊{#2}⌋_{#1}}
+\newcommand\mor[2]{{#1}\,{#2}}
+\newcommand\proj[2]{\mor{#2}{(#1\,0)}}
 \input{unicodedefs}
+
+\def\pI{\ensuremath{\mathbf{pI}}}
+\def\fresh#1{\mathsf{fresh}(#1)}
+\def\Hom#1#2{\mathbf{Hom}(#1,#2)}
+\def\ie{\textit{i.e.}}
+\def\app#1#2{\mathsf{app}(#1,#2)}
 
 \title{A parametric Type theory}
 
@@ -314,6 +324,184 @@ Indeed, a proof term is the following:
 \[
 (f (\ip i A P) \CP i z {z'} \fp i s {s'}) \param i
 \]
+
+\section{Presheaf model}
+
+Let \pI{} be the category of finite set of names $I,J,K,…$ and injective
+partial function.  (Any morphism $f : I → J$ has a unique decomposition
+into a projection map $α : I → I_α$, which is not defined anywhere, and
+an injection map $h : I_α ↣ J$.)  For any object $I$ and $ι ∉ I$, we note
+$(ι \, 0) : I,ι → I$ the partial identity on $I$.
+
+\begin{tikzpicture}[node distance=4\baselineskip]
+  \node              (I)  {$I$};
+  \node[below of=I]  (Ia) {$I_α$};
+  \node[right of=Ia] (J)  {$J$};
+
+  \draw[->] (I) to node[left] {$α$} (Ia);
+  \draw[->] (I) to node[above right] {$f$} (J);
+  \draw[to reversed->] (Ia) to node[below] {$h$} (J);
+\end{tikzpicture}
+
+For any object $I$, let $\fresh{I}$ be a fresh name: $\fresh{I} ∉ I$.
+
+\bigskip
+We call $I$-element any tuple indexed by the subsets of $I$: $(u_J)_{J ⊆ I}$.
+An $I$-set is a set of $I$-elements.  For instance, the elements of a
+$\{ι,κ\}$-set are of the form $u = (u_∅,u_ι,u_κ,u_{ι,κ})$.
+%
+If $a,b$ are $I$-elements and $κ ∉ I$, we define the $(I,κ)$-element
+$(a ,_κ b)$ as $(a ,_κ b)_J ≔ a_J$ if $κ ∉ J$ and $(a ,_κ b)_{J,κ} ≔ b_J$.
+%
+Any $(I,ι)$-element can be written $u = (u_J)_{J ⊆ \{I,ι\}} = (u_J)_{J ⊆ I} ∪ (u_{J,ι})_{J ⊆ I}$;
+We can therefore define the $I$-elements $u (ι\,0) ≔ (u_J)_{J ⊆ I}$ and $u · ι ≔ (u_{J,ι})_{J ⊆ I}$.
+(Hence $u = (u (ι\,0) ,_ι u · ι)$.)
+
+\bigskip
+We take the the usual presheaf model of type theory on \pI{} with the
+following restrictions:
+\begin{enumerate}
+  \item for any $I ∈ \pI$, $F(I)$ is a $I$-set, and
+  \item for any projection map $α : I → I_α$, the
+    map $u ↦ uα$, $F(I) → F(I_α)$ is the projection operation, \ie,
+    $uα_J = u_J$ for any $J ⊆ I$.
+\end{enumerate}
+
+\bigskip
+A context $Γ ⊢_I$ is given by a $J$-set $Γf$ for each map $f : I → J$.
+Furthermore the map $ρ ↦ ρα$, $Γf → Γ(fα)$ is the projection operation,
+and if $g : J → K$ then the map $ρ ↦ ρg$, $Γf → Γ(fg)$ is such that
+$ρ1 = ρ$ and $(ρg)h = ρ(gh)$ for any $h : K → L$.
+
+\medskip
+A type $Γ ⊢_I A$ is given by a $J$-set $A(f,ρ)$ for each $f : I → J$ and
+$ρ : Γf$.
+Furthermore the map $u ↦ uα$, $A(f,ρ) → A(fα,ρα)$ is the projection operation,
+and if $g : J → K$ then the map $u ↦ ug$, $A(f,ρ) → A(fg,ρg)$ is such that
+$u1 = u$ and $(ug)h = u(gh)$ for any $h : K → L$.
+
+\medskip
+A term $Γ ⊢_I a : A$ is given by a family $a(f,ρ) : A(f,ρ)$ such that
+$a(f,ρ)g = a(fg,ρg)$ for any $f : I → J$, $ρ : Γf$ and $g : J → K$.
+
+\medskip
+If $Γ ⊢_I A$ and $f : I → J$, we define $⟨ρ,u⟩ : (Γ.A)f$ to mean
+$ρ ∈ Γf$ and $u ∈ A(f,ρ)$.
+
+
+\bigskip
+\begin{description}
+  \item[\sc Universe.]
+    Let $f : I → J$, $ρ : Γf$.  $A(f,ρ) : U(f,ρ)$ is
+    defined as a $J$-element isomorphic to the naive interpretation,
+    a family of sets indexed by
+    $g : J \stackrel{α}{→} J_α \stackrel {h}{↣} K$:
+    $\left(ωg\right)_{g : J → K} ≅ \left(\left(ω(αh)\right)_{h : J_α ↣ K}\right)_{J_α ⊆ J}$,
+    where $ωg = A(fg,ρg)$.
+    We define the $K$-element $u g$ as
+    $\left(\left(ω(gαh)\right)_{h : K_α ↣ L}\right)_{K_α ⊆ K}$.
+
+    Consider the map $u ↦ uβ$, $U(f,ρ) → U(fβ,ρβ)$.  Let
+    $K ⊆ J_β$, and $γ : J \stackrel{β}{→} J_β \stackrel{α}{→} K$ the projection map.
+    We have that
+    $u_K = \left(ω(γh)\right)_{h : K ↣ L}
+         = \left(ω(βαh)\right)_{h : K ↣ L}
+         = uβ_K$.
+
+  \item[\sc Pi.]
+    Let $f : I → J$, $ρ : Γf$.  An element $w$ of $(Π A B)(f,ρ)$ is
+    defined as a $J$-element isomorphic to the naive interpretation, a
+    family $λ$ of functions indexed by
+    $g : J \stackrel{α}{→} J_α \stackrel {h}{↣} K$:
+    $\left(λg\right)_{g : J → K} ≅ \left(\left(λ(αh)\right)_{h : J_α ↣ K}\right)_{J_α ⊆ J}$,
+    where
+    $$λ g = \prod_{u : A(fg,ρg)} B(fg,⟨ρg,u⟩) $$
+    and such that
+    $\app{λg} u h = \app{λ(gh)}{uh}$ for $g : J → K$ and $h : K → L$.
+    We define the $K$-element $w g$ as
+    $\left(\left(λ(gαh)\right)_{h : K_α ↣ L}\right)_{K_α ⊆ K}$.
+
+    Consider the map $w ↦ wβ$, $(Π A B)(f,ρ) → (Π A B)(fβ,ρβ)$.  Let
+    $K ⊆ J_β$, and $γ : J \stackrel{β}{→} J_β \stackrel{α}{→} K$ the projection map.
+    We have that
+    $w_K = \left(λ(γh)\right)_{h : K ↣ L}
+         = \left(λ(βαh)\right)_{h : K ↣ L}
+         = wβ_K$.
+
+%    Taking $ρ : Γ(ι\,0)$, we get by induction that
+%    that the ($I$-)elements of $(Π A B)((ι\,0),ρ)$
+%    are those of $(Π (A(ι\,0)) (B(ι\,0)))(1,ρ)$, \ie, of $(Π A B)(ι\,0)(1,ρ)$:
+%    $$ \left(\left(\prod_{u : A((ι\,0)αh,ραh)} B((ι\,0)αh,⟨ραh,u⟩)\right)_{h : I_α ↣ K}\right)_{I_α ⊆ I}
+%      = \left(\left(\prod_{u : A(ι\,0)(αh,ραh)} B(ι\,0)(αh,⟨ραh,u⟩)\right)_{h : I_α ↣ K}\right)_{I_α ⊆ I}
+%    $$
+%    If $g : J \stackrel{α}{→} J_α \stackrel {h}{↣} K$, we note $wg$ the
+%    function $$\prod_{u : A(fαh,ραh)} B(fαh,⟨ραh,u⟩)$$.
+
+  \item[\sc Out.]
+    Let $f : I → J$, $ρ : Γf$.  We need to define the $J$-set $(P \op {ι} a)(f,ρ)$.
+    Let $κ = \fresh J$ and $f' : I,ι → J,κ$ such that the following
+    diagram commutes:
+
+    \begin{tikzpicture}[node distance=4\baselineskip]
+      \node              (Ii) {$I,ι$};
+      \node[below of=Ii] (I)  {$I$};
+      \node[right of=Ii] (Jk) {$J,κ$};
+      \node[below of=Jk] (J)  {$J$};
+
+      \draw[->] (Ii) to node[left]  {$(ι\,0)$} (I);
+      \draw[->] (Ii) to node[above] {$f'$}     (Jk);
+      \draw[->] (Jk) to node[right] {$(κ\,0)$} (J);
+      \draw[->] (I)  to node[below] {$f$}      (J);
+    \end{tikzpicture}
+
+    By construction $P(ρ',f')$ is a $(J,κ)$-set for the extension $ρ' ∈ Γf'$ of $ρ$,
+    and $af ∈ P(ι\,0)(f,ρ)$ is a $J$-element.
+    We define $(P \op {ι} a)(f,ρ) ≔ \{ v \mid (af ,_κ v) ∈ P(ρ,f')\}$.
+
+  \item[\sc In-Pred.]
+    Let $f : I,ι → J$, $ρ : Γf$.  We need to define the $J$-set $(\ip {ι} A P)(f,ρ)$.
+
+    \begin{itemize}
+      \item If $f$ is not defined on $ι$, we have $f : I,ι \stackrel{(ι\,0)}{→} I \stackrel{g}{→} J$
+        and we define $(\ip {ι} A P)(f,ρ) ≔ A(ρ',g)$
+        where $ρ' ∈ Γg$ is the restriction of $ρ ∈ Γf$.
+
+      \item Otherwise, there is a $κ ∈ J$ and $g : I → J_κ$ such that
+        the following diagram commutes
+
+        \begin{tikzpicture}[node distance=4\baselineskip]
+          \node              (Ii) {$I,ι$};
+          \node[below of=Ii] (I)  {$I$};
+          \node[right of=Ii] (Jk) {$J$};
+          \node[below of=Jk] (J)  {$J_κ$};
+
+          \draw[->] (Ii) to node[left]  {$(ι\,0)$} (I);
+          \draw[->] (Ii) to node[above] {$f$}      (Jk);
+          \draw[->] (Jk) to node[right] {$(κ\,0)$} (J);
+          \draw[->] (I)  to node[below] {$g$}      (J);
+        \end{tikzpicture}
+
+        We define $(\ip {ι} A P)(f,ρ) ≔ \{ (u ,_κ v) \mid u ∈ A(ρ',g), v ∈ \app{P(ρ',g)}u\}$
+        where $ρ' ∈ Γg$ is the restriction of $ρ ∈ Γf$.
+    \end{itemize}
+\end{description}
+
+\begin{theorem}
+  If $Γ ⊢_I a : A$, $f : I → J$, $ρ ∈ Γf$, then $a(f,ρ) ∈ A(f,ρ)$.
+\end{theorem}
+
+\begin{theorem}
+  If $Γ ⊢_I a : A$ and $Γ ⊢_I b : A$ with $a = b$, then
+  $a(f,ρ) = b(f,ρ)$ for any $f : I → J$ and $ρ : Γf$.
+\end{theorem}
+\begin{proof}~
+  [TODO]
+  \begin{itemize}
+    \item $\app{λt}{u} = t[u]$
+    \item $({(\ip i A P)} \op i a)(f,ρ) = (P\,a)(f,ρ)$
+  \end{itemize}
+\end{proof}
+
 
 \section{Related Work}
 
