@@ -357,36 +357,39 @@ Indeed, a proof term is the following:
 
 \section{Presheaf model}
 
-Let \pI{} be the category of finite set of names $I,J,K,…$ and injective
-partial function \cite[ex.~9.7 p.~176]{PittsAM:nomsns}.
-(Any morphism $f : I → J$ has a unique decomposition into a projection map
-$α : I → I_α$, which is not defined anywhere, and an injection map $h : I_α ↣ J$.)
-For any object $I$ and $ι ∉ I$, we note $(ι \, 0) : I,ι → I$ the partial
-identity on $I$.
+\begin{definition}
+  Let \pI{} be the category of finite set of names $I,J,K,…$ and injective
+  partial function \cite[ex.~9.7 p.~176]{PittsAM:nomsns}.
+  (Any morphism $f : I → J$ has a unique decomposition into a projection map
+  $α : I → I_α$, which is not defined anywhere, and an injection map $h : I_α ↣ J$.)
+  For any object $I$ and $ι ∉ I$, we note $(ι \, 0) : I,ι → I$ the partial
+  identity on $I$.
 
-\begin{tikzpicture}[node distance=4\baselineskip]
-  \node              (I)  {$I$};
-  \node[below of=I]  (Ia) {$I_α$};
-  \node[right of=Ia] (J)  {$J$};
+  \begin{tikzpicture}[node distance=4\baselineskip]
+    \node              (I)  {$I$};
+    \node[below of=I]  (Ia) {$I_α$};
+    \node[right of=Ia] (J)  {$J$};
 
-  \draw[->] (I) to node[left] {$α$} (Ia);
-  \draw[->] (I) to node[above right] {$f$} (J);
-  \draw[to reversed->] (Ia) to node[below] {$h$} (J);
-\end{tikzpicture}
+    \draw[->] (I) to node[left] {$α$} (Ia);
+    \draw[->] (I) to node[above right] {$f$} (J);
+    \draw[to reversed->] (Ia) to node[below] {$h$} (J);
+  \end{tikzpicture}
 
-For any object $I$, let $\fresh{I}$ be a fresh name: $\fresh{I} ∉ I$.
+  For any object $I$, let $\fresh{I}$ be a fresh name: $\fresh{I} ∉ I$.
+\end{definition}
 
-\bigskip
-We call $I$-element any tuple indexed by the subsets of $I$: $(u_J)_{J ⊆ I}$.
-An $I$-set is a set of $I$-elements.  For instance, the elements of a
-$\{ι,κ\}$-set are of the form $u = (u_∅,u_ι,u_κ,u_{ι,κ})$.
-%
-If $a,b$ are $I$-elements and $κ ∉ I$, we define the $(I,κ)$-element
-$(a ,_κ b)$ as $(a ,_κ b)_J ≔ a_J$ if $κ ∉ J$ and $(a ,_κ b)_{J,κ} ≔ b_J$.
-%
-Any $(I,ι)$-element can be written $u = (u_J)_{J ⊆ \{I,ι\}} = (u_J)_{J ⊆ I} ∪ (u_{J,ι})_{J ⊆ I}$;
-We can therefore define the $I$-elements $u (ι\,0) ≔ (u_J)_{J ⊆ I}$ and $u · ι ≔ (u_{J,ι})_{J ⊆ I}$.
-(Hence $u = (u (ι\,0) ,_ι u · ι)$.)
+\begin{definition}
+  We call $I$-element any tuple indexed by the subsets of $I$: $(u_J)_{J ⊆ I}$.
+  An $I$-set is a set of $I$-elements.  For instance, the elements of a
+  $\{ι,κ\}$-set are of the form $u = (u_∅,u_ι,u_κ,u_{ι,κ})$.
+  %
+  If $a,b$ are $I$-elements and $κ ∉ I$, we define the $(I,κ)$-element
+  $(a ,_κ b)$ as $(a ,_κ b)_J ≔ a_J$ if $κ ∉ J$ and $(a ,_κ b)_{J,κ} ≔ b_J$.
+  %
+  Any $(I,ι)$-element can be written $u = (u_J)_{J ⊆ \{I,ι\}} = (u_J)_{J ⊆ I} ∪ (u_{J,ι})_{J ⊆ I}$;
+  We can therefore define the $I$-elements $u (ι\,0) ≔ (u_J)_{J ⊆ I}$ and $u · ι ≔ (u_{J,ι})_{J ⊆ I}$.
+  (Hence by definition $u = (u (ι\,0) ,_ι u · ι)$.)
+\end{definition}
 
 \bigskip
 We take the the usual presheaf model of type theory on \pI{} with the
@@ -423,11 +426,8 @@ $ρ ∈ Γf$ and $u ∈ A(f,ρ)$.
 \bigskip
 \begin{description}
   \item[\sc Universe.]
-    Let $f : I → J$, $ρ : Γf$.  $A(f,ρ) : U(f,ρ)$ is
-    defined as a $J$-element $u$ isomorphic to the naive interpretation,
-    a family $ω$ of sets indexed by
-    $g : J \stackrel{α}{→} J_α \stackrel {h}{↣} K$:
-    $\left(ωg\right)_{g : J → K} ≅ \left(\left(ω(αh)\right)_{h : J_α ↣ K}\right)_{J_α ⊆ J}$,
+    Let $f : I → J$, $ρ : Γf$.  We interpret $A(f,ρ) : U(f,ρ)$ as the
+    $J$-element $u = \left(\left(ω(αh)\right)_{h : J_α ↣ K}\right)_{J_α ⊆ J}$,
     where $ωg = A(fg,ρg)$.
     For $g : J → K$, we define the $K$-element $u g$ as
     $\left(\left(ω(gαh)\right)_{h : K_α ↣ L}\right)_{K_α ⊆ K}$.
@@ -445,6 +445,11 @@ $ρ ∈ Γf$ and $u ∈ A(f,ρ)$.
     we have $κ = fι$ and $g : I→J$ such that $(ι\,0)g = f(κ\,0)$, and we
     take $u ↦ ug$.
 
+    Note that the $J$-element $u$ is isomorphic to the usual interpretation of
+    $U(f,ρ)$, the family $ω$ indexed by $g : J \stackrel{α}{→} J_α \stackrel {h}{↣} K$.
+    Indeed repartitioning $ω$ gives
+    $\left(ωg\right)_{g : J → K} ≅ \left(\left(ω(gαh)\right)_{h : K_α ↣ L}\right)_{K_α ⊆ K}$.
+
     Consider the map $u ↦ uβ$, $U(f,ρ) → U(fβ,ρβ)$.  Let
     $K ⊆ J_β$, and $γ : J \stackrel{β}{→} J_β \stackrel{α}{→} K$ the projection map.
     We have that
@@ -453,17 +458,19 @@ $ρ ∈ Γf$ and $u ∈ A(f,ρ)$.
          = uβ_K$.
 
   \item[\sc Pi.]
-    Let $f : I → J$, $ρ : Γf$.  An element $w$ of $(Π A B)(f,ρ)$ is
-    defined as a $J$-element isomorphic to the naive interpretation, a
-    family $λ$ of functions indexed by
-    $g : J \stackrel{α}{→} J_α \stackrel {h}{↣} K$:
-    $\left(λg\right)_{g : J → K} ≅ \left(\left(λ(αh)\right)_{h : J_α ↣ K}\right)_{J_α ⊆ J}$,
+    Let $f : I → J$, $ρ : Γf$.  A ($J$-)element $(Π A B)(f,ρ)$ is defined as
+    $w = \left(\left(λ(αh)\right)_{h : J_α ↣ K}\right)_{J_α ⊆ J}$,
     where
-    $$λ g = \prod_{u : A(fg,ρg)} B(fg,⟨ρg,u⟩) $$
-    and such that
+    $$λ g = \prod_{u : A(fg,ρg)} B(fg,⟨ρg,u⟩) \quad\text{for $g : J → K$}$$
+    such that
     $\app{λg} u h = \app{λ(gh)}{uh}$ for $g : J → K$ and $h : K → L$.
     We define the $K$-element $w g$ as
-    $\left(\left(λ(gαh)\right)_{h : K_α ↣ L}\right)_{K_α ⊆ K}$.
+    $\left(\left(λ(gαh)\right)_{h : K_α ↣ L}\right)_{K_α ⊆ K}$ for any $g : J → K$.
+
+    Note that the $J$-element $w$ is isomorphic to the usual interpretation
+    of $(ΠAB)(f,ρ)$, a family $λ$ of functions indexed by
+    $g : J \stackrel{α}{→} J_α \stackrel {h}{↣} K$.  Indeed repartitioning $λ$ gives
+    $\left(λg\right)_{g : J → K} ≅ \left(\left(λ(αh)\right)_{h : J_α ↣ K}\right)_{J_α ⊆ J}$.
 
     Consider the map $w ↦ wβ$, $(Π A B)(f,ρ) → (Π A B)(fβ,ρβ)$.  Let
     $K ⊆ J_β$, and $γ : J \stackrel{β}{→} J_β \stackrel{α}{→} K$ the projection map.
