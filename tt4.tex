@@ -35,6 +35,7 @@
 \def\Hom#1#2{\mathbf{Hom}(#1,#2)}
 \def\ie{\textit{i.e.}}
 \def\app#1#2{\mathsf{app}(#1,#2)}
+\def\El#1{\mathrm{El}(#1)}
 
 \title{A presheaf model of parametric type-theory}
 
@@ -72,25 +73,30 @@ parametric type-theory, as well as the equality judgement.
 %We consider a total order $\preccurlyeq$ on colours (for uniqueness of normal forms).
 We use $I,J,…$ for finite sets of colours.
 
-\begin{definition}[Typing relation]
+\begin{definition}[Typing judgements — à la Tarski]
 Contexts:
   \begin{mathpar}
     \inferrule[Empty]{~}{() ⊢_I }
 
-    \inferrule[NewVar]{Γ⊢_I \\ Γ ⊢_I A : U }{ Γ,x:A ⊢_I }
+    \inferrule[NewVar]{Γ⊢_I \\ Γ ⊢_I A }{ Γ,x:A ⊢_I }
 
   \end{mathpar}
  
 Types:
  \begin{mathpar}
-    \inferrule[Universe]{Γ ⊢}{Γ ⊢_I U : U}
+    \inferrule{Γ ⊢_I \text{$A$ small} }{Γ ⊢_I |A| : U}
 
-    \inferrule[Pi]{Γ ⊢_I A : U \\ Γ,x:A ⊢_I B : U}{Γ ⊢_I (x:A) → B : U}
+    \inferrule{Γ ⊢_I A : U}{Γ ⊢_I \El{A}}
 
-    \inferrule[Out]{Γ ⊢_{I,i} T : U \\ Γ ⊢_I a : \proj i T}{Γ ⊢_I T \op i  a : U}
+    \El{|A|} = A
 
-    \inferrule[In-Pred]{Γ ⊢_{I} A : U \\ Γ ⊢_{I} P : A → U}{Γ ⊢_{I,i} \ip i A P : U}
+    |\El{A}| = A
+    \\
+    \inferrule[Pi]{Γ ⊢_I A \\ Γ,x:A ⊢_I B}{Γ ⊢_I (x:A) → B}
 
+    \inferrule[Out]{Γ ⊢_{I,i} T \\ Γ ⊢_I a : \proj i T}{Γ ⊢_I T \op i  a}
+
+    \inferrule[In-Pred]{Γ ⊢_{I} A \\ Γ,x:A ⊢_{I} P}{Γ ⊢_{I,i} \ip i {(x:A)} P}
  \end{mathpar}
 
 Terms:
@@ -119,8 +125,8 @@ Terms:
 Notes:
 
 \begin{itemize}
-\item We collapse the universe hierarchy for conciseness, but
-  supporting it is orthogonal to the specific features of this system.
+  \item The composition of the coding function with $\El{·}$ is the
+    identity: $\El{|A|} = A$ and $|\El{A}| = A$.
 \item If one wishes to define a function depending usefully on a colored type
   need to use the {\sc In-Fun} rule.
 \end{itemize}
