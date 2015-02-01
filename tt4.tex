@@ -23,8 +23,8 @@
 \newcommand\op[1]{∋_{#1}}
 \newcommand\ip[3]{Σ^{#1} {#2}\,{#3}}
 \newcommand\fp[3]{⟨#2 ,_{#1} #3⟩}
-\newcommand\mor[2]{{#1}\,{#2}}
-\newcommand\proj[2]{\mor{#2}{(#1\,0)}}
+\newcommand\mor[2]{({#1}\,{#2})}
+\newcommand\proj[2]{{#2}\,\mor{#1}0}
 \newcommand\projp[2]{\proj{#1}{(#2)}}
 
 \newcommand\comment[1]{}
@@ -56,10 +56,19 @@
   with internalized parametricity.
 \end{abstract}
 
+\section{Introduction}
+
+% Line of work
+
+% Niche/Gap
+
+% Aim and achievements
+
 \section{Syntax}
 In the following section we define the syntax and typing-rules of our
 parametric type-theory, as well as the equality judgement.
 
+We assume a set of symbols, called \emph{colors}.
 The metasyntactic variables $i,j,\ldots$ range over colors, while
 $I,J,…$ range over finite sets of colours.
 
@@ -72,14 +81,17 @@ $I,J,…$ range over finite sets of colours.
   \end{align*}
 \end{definition}
 
-The crucial additions to the syntax are the following:
-\begin{itemize}
+Compared to intuitionistic type-theory, the main innovation of the
+type-theory presented here is that terms may depend on (a finite
+number of) colors. 
 
+\begin{itemize}
+\item Each color $i$ may be erased from a term $a$ to obtain a realiser $\proj i a$.
 \item the type $A \op i u$, which expresses that $u$ satisfies the
   parametricity predicate associated with the type $A$ on color $i$.
-\item the term $a \param i$, which yields proofs of parametricity for
-  the type $A$.
-\item the forms $\CP i t u$, $\ip i A B$ and $\fp i t u$ allow to locally override associate spefic parametricity proofs.
+\item the term $a \param i$, which yields a proof of $A \op i \proj i a$.
+\item the forms $\CP i t u$, $\ip i A B$ and $\fp i t u$ allow to
+  locally associate parametricity proofs with a given realizer.
 \end{itemize}
 
 
@@ -141,7 +153,12 @@ Notes:
   need to use the {\sc In-Fun} rule.
 \end{itemize}
 
-\begin{definition}[Morphism application]~
+\begin{definition}[$I$-term]
+TODO
+\end{definition}
+
+% 'Morphism' means something only in the context of a category; hence Morphism application ==> Color substitution
+\begin{definition}[Color substitution]~
   We consider partial injections $f : I → J$ and for any $I$-term $a$,
   we define the $J$-term $af$ by structural induction on $a$.
   We note $(ι\,0) : I,ι → I$ the partial identity.
@@ -178,6 +195,10 @@ Notes:
   induction on the typing judgement).
 \end{definition}
 
+\begin{definition}[Color erasure]
+We define $\proj i a$ as the application of the substitution $\mor i
+0$ on the term $a$.
+\end{definition}
 
 \comment{
 \begin{definition}[Normal forms and neutral terms]~
@@ -595,6 +616,24 @@ parametricity with dependent types
 \citep{bernardy_proofs_2012,bernardy_computational_2012,bernardy_type-theory_2013}. Compared to our 2013 publication, the present work offers two improvements:
 1. a denotational semantics, and
 2. a much simplified syntax, suitable as the basis of a proof assistant.
+
+The simplification of syntax is allowed by foregoing the preservation
+of functions by parametricity. We call preservation of functions by
+parametricity the property that if $f$ were a function, then the
+canonical proof that $f$ is parametric (denoted $f \param i$ here) is
+also a function. To our knowledge, all parametric \emph{models} of parametricity,
+starting with \citet{reynolds_types_1983}, have this property.
+However, having this property in the \emph{syntax} implies that
+certain function arguments must be swapped when performing the
+substitution of beta reduction, as identified by
+\citet{bernardy_computational_2012}.  In the present system, the
+parametric interpretation of functions is instead merely isomorphic to
+a function, thanks to the {\sc In-Fun} rule (TODO: ref theorem). This
+isomorphism (rather than equality) means on the one hand that the
+swapping of arguments is handled by the usual rules of logic, instead
+of special-purpose ones. On the other hand, obtaining the classical
+parametric interpretation of types requires some purely mechanical
+work by the user of the logic.
 
 \paragraph{Parametric Models of Type-Theory vs Parametric Type-Theories}
 
