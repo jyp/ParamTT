@@ -1,0 +1,72 @@
+\section{Link with "Old" parametricity (2)}
+We define a (unary) relational interpretation of types $⟦A⟧$. This
+interpretation coincides with the usual relational interpretation of types.
+We show that, if $⟦·⟧$ and $∋_i$ are equivalent for free type variables,
+then they are equivalent for every type in normal form.
+
+\begin{definition}
+We define $⟦A⟧$ by structural induction on $A$.
+  \begin{align*}
+    ⟦A → B⟧ f & = (x:\proj i A) → ⟦A⟧ x → ⟦B⟧ (f x)\\
+    ⟦U⟧ A & = A → U\\
+    ⟦A \op j a ⟧ b &= ⟦A⟧ \CP j {\proj i a} b \op j a \param i \\
+    ⟦\ip i A P⟧ x & = P x\\
+    ⟦x⟧ a & = x \op i a
+  \end{align*}
+\end{definition}
+
+\providecommand\TO{\overrightarrow}
+\providecommand\FROM{\overleftarrow}
+
+\begin{theorem}
+For every type $A$, $A \op i x$ is provable iff. $⟦A⟧ x$ is provable.
+\end{theorem}
+Let us call $\TO A$ the conversion from $A \op i x$ to $⟦A⟧ x$; and $\FROM A$ the other direction.
+\begin{proof}
+  By structural induction on $A$. Key cases:
+  \begin{itemize}
+  \item Pi.
+    Assume:
+    \begin{itemize}
+    \item $f : A → B$
+    \item $p : (A → B) \op i f$
+    \end{itemize}
+    We prove $q : (x:\proj i A) → ⟦A⟧ x → ⟦B⟧ (f x)$ with $q x x' = \TO {B[\CP i x {\FROM A x'}]} ((\CP i f
+    p \CP i x {\FROM A x'}) \param i)$.
+
+    Right to left: $p = (\fp i f {λx. λx'. \FROM {B[\CP i x {x'}]} (q x (\TO A x'))}) \param i $
+
+    (No need to carry around an environment; the proof given by the
+    user ($x'$) is substituted in terms --- the substitutions are
+    well-typed, given the {\sc In-Abs} rule.)
+
+  \item Universe.
+
+    Left to right. Assume:
+    \begin{itemize}
+    \item $A : U$
+    \item $P : U \op i A $
+    \end{itemize}
+    We prove $Q : A → U$ with $Q x = \CP i A P \op i x$.
+ 
+
+    Right to left: $P = (\ip i A Q) \param i $
+
+  \item Sigma.
+    By def.
+  \item Param.
+
+    Left to right. Assume:
+    \begin{itemize}
+    \item $a : A$
+    \item $b : A\op j a$
+    \item $p : A \op j a \op i b $
+    \end{itemize}
+    We prove $q' : A \op i \CP j {\proj j a} b \op j a \param i  $ with $\CP i a {\CP j b p} \param j \param i$.
+    The result is given by $\TO A q'$.
+
+    Right to left: same principle.
+  \end{itemize}
+  \item Variable.
+    By def.
+\end{proof}

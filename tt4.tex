@@ -156,6 +156,9 @@ Notes:
 \begin{definition}[$I$-term]
 TODO
 \end{definition}
+\begin{definition}[$\fresh I$]
+TODO
+\end{definition}
 
 % 'Morphism' means something only in the context of a category; hence Morphism application ==> Color substitution
 \begin{definition}[Color substitution]~
@@ -248,7 +251,6 @@ Note: the param-witness construction is bootstrapped by the last rule.
   + congruences
 \end{definition}
 
-\paragraph{Consequences}
 \begin{corollary}~
   \begin{itemize}
   \item $a = \CP i {\proj i a} {a \param i}$
@@ -257,20 +259,20 @@ Note: the param-witness construction is bootstrapped by the last rule.
   \end{itemize}
 \end{corollary}
 
-\section{Iterating Parametricity}
-For any type $A$ (which may not depend on any color), we have
-\begin{align*}
-p &: (x:A) → A \op i x\\
-p x &= x\param i\\
-q &: (x:A) → (A \op i x) \op j x \param  i\\
-  &: (x:A) → (A \op j \CP i x {x \param j}) \op j x \param  i\\
-q x &= x\param i\param j
-\end{align*}
+\subsection{Parametricity}
 
-If $A$ were to depend on a color, the types would not be well-formed:
-types put in an environment must have no free color ({\sc New-Var}).
+Contrary to previous systems with parametricity and dependent types
+\citep{bernardy_proofs_2012, bernardy_computational_2012,
+  bernardy_type-theory_2013}, the system presented here lacks equalities
+which allow to compute parametricity types, namely:
+$$U \op i A = A → U$$
+and
+$$((x:A) → B[x]) \op i f = (x:A) → (x' : A \op i x) → B[\CP i x {x'}] \op i (f x).$$
 
-\section{Isomorphisms}
+\subsubsection{Isomorphisms}
+Instead, we provide the above relationships as isomorphisms. The
+existence of these isomorphisms ensure that all parametricity theorems
+hold in the present system.
 
 We say that two types are definitionally isomorphic iff. they are
 isomorphic and that the equalities use the conversion relation
@@ -297,80 +299,13 @@ $((x:A) → B[x]) \op i f$ is definitionally isomorphic to $(x:A) → (x' : A \o
   \item Check 1: $(\CP i f {\fp i f p \param i} \CP i x x') \param i = ({\fp i f p} \CP i x {x'}) \param i = \CP i {f x} {p x x'} \param i = p x x' $
   \item Check 2: $\fp i f {λx x'. (\CP i f q \CP i x {x'}) \param i} \param i$ iff $\fp i f {λx x'. (\CP i f q \CP i x {x'}) \param i} = \CP i f q$, which is true by conversion of function pairing.
 \end{proof}
-\section{Link with "Old" parametricity (2)}
-We define a (unary) relational interpretation of types $⟦A⟧$. This
-interpretation coincides with the usual relational interpretation of types.
-We show that, if $⟦·⟧$ and $∋_i$ are equivalent for free type variables,
-then they are equivalent for every type in normal form.
 
-\begin{definition}
-We define $⟦A⟧$ by structural induction on $A$.
-  \begin{align*}
-    ⟦A → B⟧ f & = (x:\proj i A) → ⟦A⟧ x → ⟦B⟧ (f x)\\
-    ⟦U⟧ A & = A → U\\
-    ⟦A \op j a ⟧ b &= ⟦A⟧ \CP j {\proj i a} b \op j a \param i \\
-    ⟦\ip i A P⟧ x & = P x\\
-    ⟦x⟧ a & = x \op i a
-  \end{align*}
-\end{definition}
+\subsubsection{Example: naturals}
+In practice, when carrying out parametricity proofs, many of the steps
+of the above isomorphisms cancel each other and one obtains a simpler
+proof. This section gives the example of Church-encoded natural
+numbers.
 
-\providecommand\TO{\overrightarrow}
-\providecommand\FROM{\overleftarrow}
-
-\begin{theorem}
-For every type $A$, $A \op i x$ is provable iff. $⟦A⟧ x$ is provable.
-\end{theorem}
-Let us call $\TO A$ the conversion from $A \op i x$ to $⟦A⟧ x$; and $\FROM A$ the other direction.
-\begin{proof}
-  By structural induction on $A$. Key cases:
-  \begin{itemize}
-  \item Pi.
-    Assume:
-    \begin{itemize}
-    \item $f : A → B$
-    \item $p : (A → B) \op i f$
-    \end{itemize}
-    We prove $q : (x:\proj i A) → ⟦A⟧ x → ⟦B⟧ (f x)$ with $q x x' = \TO {B[\CP i x {\FROM A x'}]} ((\CP i f
-    p \CP i x {\FROM A x'}) \param i)$.
-
-    Right to left: $p = (\fp i f {λx. λx'. \FROM {B[\CP i x {x'}]} (q x (\TO A x'))}) \param i $
-
-    (No need to carry around an environment; the proof given by the
-    user ($x'$) is substituted in terms --- the substitutions are
-    well-typed, given the {\sc In-Abs} rule.)
-
-  \item Universe.
-
-    Left to right. Assume:
-    \begin{itemize}
-    \item $A : U$
-    \item $P : U \op i A $
-    \end{itemize}
-    We prove $Q : A → U$ with $Q x = \CP i A P \op i x$.
- 
-
-    Right to left: $P = (\ip i A Q) \param i $
-
-  \item Sigma.
-    By def.
-  \item Param.
-
-    Left to right. Assume:
-    \begin{itemize}
-    \item $a : A$
-    \item $b : A\op j a$
-    \item $p : A \op j a \op i b $
-    \end{itemize}
-    We prove $q' : A \op i \CP j {\proj j a} b \op j a \param i  $ with $\CP i a {\CP j b p} \param j \param i$.
-    The result is given by $\TO A q'$.
-
-    Right to left: same principle.
-  \end{itemize}
-  \item Variable.
-    By def.
-\end{proof}
-
-\subsection{Example: naturals}
 Let $N = ∀X. X → (X → X) → X$.
 Proving (unary) parametricity for $N$ means that, assuming
 \begin{itemize}
@@ -389,6 +324,19 @@ Indeed, a proof term is the following:
 \[
 (f (\ip i A P) \CP i z {z'} \fp i s {s'}) \param i
 \]
+
+\subsection{Iterating Parametricity}
+For any type $A$ (which may not depend on any color), we have
+\begin{align*}
+p &: (x:A) → A \op i x\\
+p x &= x\param i\\
+q &: (x:A) → (A \op i x) \op j x \param  i\\
+  &: (x:A) → (A \op j \CP i x {x \param j}) \op j x \param  i\\
+q x &= x\param i\param j
+\end{align*}
+
+If $A$ were to depend on a color, the types would not be well-formed:
+types put in an environment must have no free color ({\sc New-Var}).
 
 \section{Presheaf model}
 
