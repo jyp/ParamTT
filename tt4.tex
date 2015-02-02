@@ -198,11 +198,6 @@ TODO
   induction on the typing judgement).
 \end{definition}
 
-\begin{definition}[Color erasure]
-We define $\proj i a$ as the application of the substitution $\mor i
-0$ on the term $a$.
-\end{definition}
-
 \comment{
 \begin{definition}[Normal forms and neutral terms]~
   \begin{align*}
@@ -216,6 +211,8 @@ We define $\proj i a$ as the application of the substitution $\mor i
   \end{align*}
 \end{definition}
 }
+
+Todo: perhaps rename conversion to definitional equality? To merit any of those names we need to argue that the relation is decidable. (Perhaps we can say that the new rules reduce the number of colors in scope)
 \begin{definition}[Conversion]~
 \label{def:conversion}
 
@@ -274,19 +271,31 @@ Instead, we provide the above relationships as isomorphisms. The
 existence of these isomorphisms ensure that all parametricity theorems
 hold in the present system.
 
-We say that two types are definitionally isomorphic iff. they are
-isomorphic and that the equalities use the conversion relation
-(\ref{def:conversion}).
+We say that $A$ is definitionally isomorphic to $B$ iff.
+\begin{enumerate}
+  \item There exist $f : A -> B$
+  \item There exist $g : B -> A$
+  \item For any $x$, $f (g x) = x$
+  \item For any $x$, $g (f x) = x$
+\end{enumerate}
 
 \begin{theorem}
 $U \op i A$ is definitionally isomorphic to $A → U$.
 \end{theorem}
 \begin{proof}~
   \begin{enumerate}
-  \item Assume $Q : U \op i A$. Then $P : A → U$ if $P x = \CP i A Q \op i x$.
-  \item Assume $P : A → U$. Then $Q : U \op i A$ if $Q = (\CSig i A P) \param i$.
-  \item Check 1: $\CP i A {(\CSig i A P) \param i} \op i x = (\CSig i A P) \op i x = P x$
-  \item Check 2: $(\CSig i A {λx. \CP i A Q \op i x}).i = Q$ iff $\CSig i A {λx. \CP i A Q \op i x} = \CP i A Q$. We use conversion for $\Sigma$. The first components are obviously equal. For the second components we are left with $\CP i A Q \op i x = \CP i A Q \op i x$, which is obvious.
+  \item
+    $\begin{array}[t]{l@{\,}l@{\,}l}
+      f : (&Q : U \op i A) -> &A → U \\ 
+      f & Q &x = \CP i A Q \op i x
+    \end{array}$
+  \item
+    $\begin{array}[t]{r@{\,}l}
+      g &: (P : A → U) -> U \op i A\\
+      g &P = (\CSig i A P) \param i
+    \end{array}$
+  \item $\CP i A {(\CSig i A P) \param i} \op i x = (\CSig i A P) \op i x = P x$ By eta-contraction we get the desired result.
+  \item $(\CSig i A {λx. \CP i A Q \op i x}).i = Q$ iff $\CSig i A {λx. \CP i A Q \op i x} = \CP i A Q$. We use conversion for $\Sigma$. The first components are obviously equal. For the second components we are left with $\CP i A Q \op i x = \CP i A Q \op i x$, which is obvious.
   \end{enumerate}
 \end{proof}
 
@@ -294,18 +303,29 @@ $U \op i A$ is definitionally isomorphic to $A → U$.
 $((x:A) → B[x]) \op i f$ is definitionally isomorphic to $(x:A) → (x' : A \op i x) → B[\CP i x {x'}] \op i (f x)$.
 \end{theorem}
 \begin{proof}~
-  \item Assume $q : ((x:A) → B[x]) \op i f$. Then $p : (x:A) → (x' : A \op i x) → B[\CP i x {x'}] \op i (f x)$ if $p x x' = (\CP i f q \CP i x {x'}) \param i$.
-  \item Assume $p : (x:A) → (x' : A \op i x) → B[\CP i x {x'}] \op i (f x)$ Then $q : ((x:A) → B[x]) \op i f$ if $q = \fp i f p \param i$.
-  \item Check 1: $(\CP i f {\fp i f p \param i} \CP i x x') \param i = ({\fp i f p} \CP i x {x'}) \param i = \CP i {f x} {p x x'} \param i = p x x' $
-  \item Check 2: $\fp i f {λx x'. (\CP i f q \CP i x {x'}) \param i} \param i$ iff $\fp i f {λx x'. (\CP i f q \CP i x {x'}) \param i} = \CP i f q$, which is true by conversion of function pairing.
+  \begin{enumerate}
+  \item $\begin{array}[t]{r@{\,}l}
+      f &: (q : ((x:A) → B[x]) \op i f) -> (x:A) → (x' : A \op i x) → B[\CP i x {x'}] \op i (f x)\\
+      f &q x x' = (\CP i f q \CP i x {x'}) \param i
+    \end{array}$
+  \item $\begin{array}[t]{r@{\,}l}
+      g &: ((x:A) → (x' : A \op i x) → B[\CP i x {x'}] \op i (f x)) ->  ((x:A) → B[x]) \op i f\\
+      g & p= \fp i f p \param i
+    \end{array}$
+  \item $(\CP i f {\fp i f p \param i} \CP i x x') \param i = ({\fp i
+      f p} \CP i x {x'}) \param i = \CP i {f x} {p x x'} \param i = p
+    x x' $
+  \item $\fp i f {λx x'. (\CP i f q \CP i x {x'}) \param i} \param i$
+    iff $\fp i f {λx x'. (\CP i f q \CP i x {x'}) \param i} = \CP i f
+    q$, which is true by conversion of function pairing.
+  \end{enumerate}
 \end{proof}
 
-\subsubsection{Example: naturals}
 In practice, when carrying out parametricity proofs, many of the steps
 of the above isomorphisms cancel each other and one obtains a simpler
-proof. This section gives the example of Church-encoded natural
-numbers.
-
+proof. This property is illustrated by the following example:
+parametricity for Church-encoded natural numbers.
+\begin{example}
 Let $N = ∀X. X → (X → X) → X$.
 Proving (unary) parametricity for $N$ means that, assuming
 \begin{itemize}
@@ -324,19 +344,20 @@ Indeed, a proof term is the following:
 \[
 (f (\ip i A P) \CP i z {z'} \fp i s {s'}) \param i
 \]
+\end{example}
 
 \subsection{Iterating Parametricity}
-For any type $A$ (which may not depend on any color), we have
+For any type $A$ which does not depend on colors $i$ or $j$, we have
 \begin{align*}
 p &: (x:A) → A \op i x\\
 p x &= x\param i\\
 q &: (x:A) → (A \op i x) \op j x \param  i\\
   &: (x:A) → (A \op j \CP i x {x \param j}) \op j x \param  i\\
+  &: (x:A) → (A \op j \CP i x {p x}) \op j (p x)\\
 q x &= x\param i\param j
 \end{align*}
 
-If $A$ were to depend on a color, the types would not be well-formed:
-types put in an environment must have no free color ({\sc New-Var}).
+(If $A$ were to depend on a color, the types would not be well-typed.)
 
 \section{Presheaf model}
 
