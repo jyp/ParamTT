@@ -204,34 +204,34 @@ TODO
 \begin{definition}[Color substitution]~
   We consider partial injections $f : I → J$ and for any $I$-term $a$,
   we define the $J$-term $af$ by structural induction on $a$.
-  We note $(ι\,0) : I,ι → I$ the partial identity.
+  We note $(i\,0) : I,i → I$ the partial identity.
 \begin{align*}
   x f & = x \\
   U f & = U \\
   (λ(x:A).t) f &= λ(x:Af).tf \\
   (t\,u) f &= (tf) \, (uf) \\
   ((x:A)→B) f &= (x:Af)→(Bf) \\
-  \CP {ι} a p f &= \CP {κ} {ag} {pg}
-    & \text{if $fι = κ$, $g : I→J_κ$ such that $(ι\,0)g = f(κ\,0) : I,ι → J_κ$} \\
+  \CP {i} a p f &= \CP {j} {ag} {pg}
+    & \text{if $fi = j$, $g : I→J_{\{j\}}$ such that $(i\,0)g = f(j\,0) : I,i → J_{\{j\}}$} \\
                 &= ag
-    & \text{if $∃g : I→J$ such that $f = (ι\,0)g : I,ι → J$} \\
-  (\ip {ι} A P) f &= \ip {κ} {(Ag)} {(Pg)}
-    & \text{if $fι = κ$, $g : I→J_κ$ such that $(ι\,0)g = f(κ\,0) : I,ι → J_κ$} \\
+    & \text{if $∃g : I→J$ such that $f = (i\,0)g : I,i → J$} \\
+  (\ip {i} A P) f &= \ip {j} {(Ag)} {(Pg)}
+    & \text{if $fi = j$, $g : I→J_{\{j\}}$ such that $(i\,0)g = f(j\,0) : I,i → J_{\{j\}}$} \\
                 &= Ag
-    & \text{if $∃g : I→J$ such that $f = (ι\,0)g : I,ι → J$} \\
-  \fp {ι} u v f &= \fp {κ} {ug} {vg}
-    & \text{if $fι = κ$, $g : I→J_κ$ such that $(ι\,0)g = f(κ\,0) : I,ι → J_κ$} \\
+    & \text{if $∃g : I→J$ such that $f = (i\,0)g : I,i → J$} \\
+  \fp {i} u v f &= \fp {j} {ug} {vg}
+    & \text{if $fi = j$, $g : I→J_{\{j\}}$ such that $(i\,0)g = f(j\,0) : I,i → J_{\{j\}}$} \\
                 &= ug
-    & \text{if $∃g : I→J$ such that $f = (ι\,0)g : I,ι → J$} \\
-  A \op {ι} a &= (Ag) \op {κ} (af)
-    & \text{where $κ = \fresh J$ and $g:I,ι → J,κ$ satisfies $(ι\,0)f = g(κ\,0)$} \\
-  (a · ι) f &= (ag) · κ
-    & \text{where $κ = \fresh J$ and $g:I,ι → J,κ$ satisfies $(ι\,0)f = g(κ\,0)$}
+    & \text{if $∃g : I→J$ such that $f = (i\,0)g : I,i → J$} \\
+  A \op {i} a &= (Ag) \op {j} (af)
+    & \text{where $j = \fresh J$ and $g:I,i → J,j$ satisfies $(i\,0)f = g(j\,0)$} \\
+  (a · i) f &= (ag) · j
+    & \text{where $j = \fresh J$ and $g:I,i → J,j$ satisfies $(i\,0)f = g(j\,0)$}
 \end{align*}
-  (We remark that for any $f : I,ι → J,κ$ with $fι=κ$, there is a
-  unique $g : I → J$ such that $(ι\,0)g = f(κ\,0) : I,ι → J$;
-  and that for any $f : I,ι → J$ which is not defined on $ι$, there is
-  a unique $g : I → J$ such that $(ι\,0)g = f$.)
+  (We remark that for any $f : I,i → J,j$ with $fi=j$, there is a
+  unique $g : I → J$ such that $(i\,0)g = f(j\,0) : I,i → J$;
+  and that for any $f : I,i → J$ which is not defined on $i$, there is
+  a unique $g : I → J$ such that $(i\,0)g = f$.)
 
   We have $a1 = a$ and $(af)g = a(fg)$ for any $g : J → K$.
   Furthermore, if $Γ ⊢_I a : A$ then $Γ f ⊢_J af : Af$ (proof by
@@ -436,7 +436,7 @@ over to the $n$-ary case.
   partial function \cite[ex.~9.7 p.~176]{PittsAM:nomsns}.
   (Any morphism $f : I → J$ has a unique decomposition into a projection map
   $α : I → I_α$, which is not defined anywhere, and an injection map $h : I_α ↣ J$.)
-  For any object $I$ and $ι ∉ I$, we note $(ι \, 0) : I,ι → I$ the partial
+  For any object $I$ and $i ∉ I$, we note $(i \, 0) : I,i → I$ the partial
   identity on $I$.
 
   \begin{tikzpicture}[node distance=4\baselineskip]
@@ -455,14 +455,14 @@ over to the $n$-ary case.
 \begin{definition}
   We call $I$-element any tuple indexed by the subsets of $I$: $(u_J)_{J ⊆ I}$.
   An $I$-set is a set of $I$-elements.  For instance, the elements of a
-  $\{ι,κ\}$-set are of the form $u = (u_∅,u_ι,u_κ,u_{ι,κ})$.
+  $\{i,j\}$-set are of the form $u = (u_∅,u_i,u_j,u_{i,j})$.
   %
-  If $a,b$ are $I$-elements and $κ ∉ I$, we define the $(I,κ)$-element
-  $(a ,_κ b)$ as $(a ,_κ b)_J ≔ a_J$ if $κ ∉ J$ and $(a ,_κ b)_{J,κ} ≔ b_J$.
+  If $a,b$ are $I$-elements and $j ∉ I$, we define the $(I,j)$-element
+  $(a ,_j b)$ as $(a ,_j b)_J ≔ a_J$ if $j ∉ J$ and $(a ,_j b)_{J,j} ≔ b_J$.
   %
-  Any $(I,ι)$-element can be written $u = (u_J)_{J ⊆ \{I,ι\}} = (u_J)_{J ⊆ I} ∪ (u_{J,ι})_{J ⊆ I}$;
-  We can therefore define the $I$-elements $u (ι\,0) ≔ (u_J)_{J ⊆ I}$ and $u · ι ≔ (u_{J,ι})_{J ⊆ I}$.
-  (Hence by definition $u = (u (ι\,0) ,_ι u · ι)$.)
+  Any $(I,i)$-element can be written $u = (u_J)_{J ⊆ \{I,i\}} = (u_J)_{J ⊆ I} ∪ (u_{J,i})_{J ⊆ I}$;
+  We can therefore define the $I$-elements $u (i\,0) ≔ (u_J)_{J ⊆ I}$ and $u · i ≔ (u_{J,i})_{J ⊆ I}$.
+  (Hence by definition $u = (u (i\,0) ,_i u · i)$.)
 \end{definition}
 
 \bigskip
@@ -509,14 +509,14 @@ $ρ ∈ Γf$ and $u ∈ A(f,ρ)$.
     The restriction maps are defined by induction on $I$.
     For $I = ∅$ we have $U(∅) = (Af)_{f:∅ ↣ J}$ and we take the map
     $u ↦ uf$, $A(∅) → A(J)$.
-    For $I,ι$ we have $U(I,ι) = \left(\left(A(αh)\right)_{h : I_α ↣ J}\right)_{I_α ⊆ I,ι}
+    For $I,i$ we have $U(I,i) = \left(\left(A(αh)\right)_{h : I_α ↣ J}\right)_{I_α ⊆ I,i}
     = \left(\left(A(α_1h)\right)_{h : I_α ↣ J}\right)_{I_α ⊆ I} ∪
-      \left(\left(A(α_2h)\right)_{h : I_α,ι ↣ J}\right)_{I_α ⊆ I}$
-    where $α_1 : I,ι → I_α$ and $α_2 : I,ι → I_α,ι$ are the projections
+      \left(\left(A(α_2h)\right)_{h : I_α,i ↣ J}\right)_{I_α ⊆ I}$
+    where $α_1 : I,i → I_α$ and $α_2 : I,i → I_α,i$ are the projections
     maps.
-    The map $u ↦ uf$, $A(I,ι) → A(J)$ is
-    that from $A(I) → A(J)$ if $f$ is not defined on $ι$; otherwise
-    we have $κ = fι$ and $g : I→J$ such that $(ι\,0)g = f(κ\,0)$, and we
+    The map $u ↦ uf$, $A(I,i) → A(J)$ is
+    that from $A(I) → A(J)$ if $f$ is not defined on $i$; otherwise
+    we have $j = fi$ and $g : I→J$ such that $(i\,0)g = f(j\,0)$, and we
     take $u ↦ ug$.
 
     Note that the $J$-element $u$ is isomorphic to the usual interpretation of
@@ -553,60 +553,60 @@ $ρ ∈ Γf$ and $u ∈ A(f,ρ)$.
          = \left(λ(βαh)\right)_{h : K ↣ L}
          = wβ_K$.
 
-%    Taking $ρ : Γ(ι\,0)$, we get by induction that
-%    that the ($I$-)elements of $(Π A B)((ι\,0),ρ)$
-%    are those of $(Π (A(ι\,0)) (B(ι\,0)))(1,ρ)$, \ie, of $(Π A B)(ι\,0)(1,ρ)$:
-%    $$ \left(\left(\prod_{u : A((ι\,0)αh,ραh)} B((ι\,0)αh,⟨ραh,u⟩)\right)_{h : I_α ↣ K}\right)_{I_α ⊆ I}
-%      = \left(\left(\prod_{u : A(ι\,0)(αh,ραh)} B(ι\,0)(αh,⟨ραh,u⟩)\right)_{h : I_α ↣ K}\right)_{I_α ⊆ I}
+%    Taking $ρ : Γ(i\,0)$, we get by induction that
+%    that the ($I$-)elements of $(Π A B)((i\,0),ρ)$
+%    are those of $(Π (A(i\,0)) (B(i\,0)))(1,ρ)$, \ie, of $(Π A B)(i\,0)(1,ρ)$:
+%    $$ \left(\left(\prod_{u : A((i\,0)αh,ραh)} B((i\,0)αh,⟨ραh,u⟩)\right)_{h : I_α ↣ K}\right)_{I_α ⊆ I}
+%      = \left(\left(\prod_{u : A(i\,0)(αh,ραh)} B(i\,0)(αh,⟨ραh,u⟩)\right)_{h : I_α ↣ K}\right)_{I_α ⊆ I}
 %    $$
 %    If $g : J \stackrel{α}{→} J_α \stackrel {h}{↣} K$, we note $wg$ the
 %    function $$\prod_{u : A(fαh,ραh)} B(fαh,⟨ραh,u⟩)$$.
 
   \item[\sc Out.]
-    Let $f : I → J$, $ρ : Γf$.  We need to define the $J$-set $(P \op {ι} a)(f,ρ)$.
-    Let $κ = \fresh J$ and $f' : I,ι → J,κ$ such that the following
+    Let $f : I → J$, $ρ : Γf$.  We need to define the $J$-set $(P \op {i} a)(f,ρ)$.
+    Let $j = \fresh J$ and $f' : I,i → J,j$ such that the following
     diagram commutes:
 
     \begin{tikzpicture}[node distance=4\baselineskip]
-      \node              (Ii) {$I,ι$};
+      \node              (Ii) {$I,i$};
       \node[below of=Ii] (I)  {$I$};
-      \node[right of=Ii] (Jk) {$J,κ$};
-      \node[below of=Jk] (J)  {$J$};
+      \node[right of=Ii] (Jj) {$J,j$};
+      \node[below of=Jj] (J)  {$J$};
 
-      \draw[->] (Ii) to node[left]  {$(ι\,0)$} (I);
-      \draw[->] (Ii) to node[above] {$f'$}     (Jk);
-      \draw[->] (Jk) to node[right] {$(κ\,0)$} (J);
+      \draw[->] (Ii) to node[left]  {$(i\,0)$} (I);
+      \draw[->] (Ii) to node[above] {$f'$}     (Jj);
+      \draw[->] (Jj) to node[right] {$(j\,0)$} (J);
       \draw[->] (I)  to node[below] {$f$}      (J);
     \end{tikzpicture}
 
-    By construction $P(ρ',f')$ is a $(J,κ)$-set for the extension $ρ' ∈ Γf'$ of $ρ$,
-    and $af ∈ P(ι\,0)(f,ρ)$ is a $J$-element.
-    We define $(P \op {ι} a)(f,ρ) ≔ \{ v \mid (af ,_κ v) ∈ P(ρ,f')\}$.
+    By construction $P(ρ',f')$ is a $(J,j)$-set for the extension $ρ' ∈ Γf'$ of $ρ$,
+    and $af ∈ P(i\,0)(f,ρ)$ is a $J$-element.
+    We define $(P \op {i} a)(f,ρ) ≔ \{ v \mid (af ,_j v) ∈ P(ρ,f')\}$.
 
   \item[\sc In-Pred.]
-    Let $f : I,ι → J$, $ρ : Γf$.  We need to define the $J$-set $(\ip {ι} A P)(f,ρ)$.
+    Let $f : I,i → J$, $ρ : Γf$.  We need to define the $J$-set $(\ip {i} A P)(f,ρ)$.
 
     \begin{itemize}
-      \item If $f$ is not defined on $ι$, we have $f : I,ι \stackrel{(ι\,0)}{→} I \stackrel{g}{→} J$
-        and we define $(\ip {ι} A P)(f,ρ) ≔ A(ρ',g)$
+      \item If $f$ is not defined on $i$, we have $f : I,i \stackrel{(i\,0)}{→} I \stackrel{g}{→} J$
+        and we define $(\ip {i} A P)(f,ρ) ≔ A(ρ',g)$
         where $ρ' ∈ Γg$ is the restriction of $ρ ∈ Γf$.
 
-      \item Otherwise, there is a $κ ∈ J$ and $g : I → J_κ$ such that
+      \item Otherwise, there is a $j ∈ J$ and $g : I → J_{\{j\}}$ such that
         the following diagram commutes
 
         \begin{tikzpicture}[node distance=4\baselineskip]
-          \node              (Ii) {$I,ι$};
+          \node              (Ii) {$I,i$};
           \node[below of=Ii] (I)  {$I$};
-          \node[right of=Ii] (Jk) {$J$};
-          \node[below of=Jk] (J)  {$J_κ$};
+          \node[right of=Ii] (J)  {$J$};
+          \node[below of=J]  (Jj) {$J_{\{j\}}$};
 
-          \draw[->] (Ii) to node[left]  {$(ι\,0)$} (I);
-          \draw[->] (Ii) to node[above] {$f$}      (Jk);
-          \draw[->] (Jk) to node[right] {$(κ\,0)$} (J);
-          \draw[->] (I)  to node[below] {$g$}      (J);
+          \draw[->] (Ii) to node[left]  {$(i\,0)$} (I);
+          \draw[->] (Ii) to node[above] {$f$}      (J);
+          \draw[->] (J)  to node[right] {$(j\,0)$} (Jj);
+          \draw[->] (I)  to node[below] {$g$}      (Jj);
         \end{tikzpicture}
 
-        We define $(\ip {ι} A P)(f,ρ) ≔ \{ (u ,_κ v) \mid u ∈ A(ρ',g), v ∈ \app{P(ρ',g)}u\}$
+        We define $(\ip {i} A P)(f,ρ) ≔ \{ (u ,_j v) \mid u ∈ A(ρ',g), v ∈ \app{P(ρ',g)}u\}$
         where $ρ' ∈ Γg$ is the restriction of $ρ ∈ Γf$.
     \end{itemize}
 \end{description}
@@ -624,18 +624,18 @@ $ρ ∈ Γf$ and $u ∈ A(f,ρ)$.
   \begin{itemize}
     \item $\app{λt}{u}(f,ρ) = t[u](f,ρ)$,
       where $[u]$ is the map $[u]ρ ↦ ⟨ρ,uρ⟩$, $Γ → Γ.A$
-    \item $({(\ip {ι} A P)} \op {ι} a)(f,ρ) = (P\,a)(f,ρ)$
+    \item $({(\ip {i} A P)} \op {i} a)(f,ρ) = (P\,a)(f,ρ)$
   \end{itemize}
 \end{theorem}
 \begin{proof}
-  Let $f : I → J$, $ι ∉ I$, $κ = \fresh J$, $g : I,ι → J,κ$ such that
-  $(ι\,0)f = g(κ\,0)$.
+  Let $f : I → J$, $i ∉ I$, $j = \fresh J$, $g : I,i → J,j$ such that
+  $(i\,0)f = g(j\,0)$.
   We have
   \begin{align*}
-    ({(\ip {ι} A P)} \op {ι} a)f
-    &= \left\{ v \mid (af ,_κ v) ∈ (\ip {ι} A P)g \right\}
+    ({(\ip {i} A P)} \op {i} a)f
+    &= \left\{ v \mid (af ,_j v) ∈ (\ip {i} A P)g \right\}
     \\
-    &= \left\{ v \mid (af ,_κ v) ∈ \left\{ (x ,_κ y) \mid x ∈ Af, y ∈ \app{Pf} x \right\} \right\}
+    &= \left\{ v \mid (af ,_j v) ∈ \left\{ (x ,_j y) \mid x ∈ Af, y ∈ \app{Pf} x \right\} \right\}
     \\
     &= \left\{ v \mid v ∈ \app{Pf}{af} \right\}
     \\
