@@ -58,8 +58,8 @@
 
 \section{Introduction}
 In lambda-calculi, every type can be interpreted as a predicate, which
-its inhabitants are guaranteed to satisfy.  
-
+its inhabitants are guaranteed to satisfy.
+%
 A simple example is that if a function $f$ has type $(A : U) → U → U$ ---
 the type of the polymorphic identity --- then the following
 proposition holds:
@@ -78,14 +78,14 @@ can be deduced from it \citep{wadler_girardreynolds_2007}.
 The abstraction theorem is an invention of
 \citet{reynolds_types_1983}, which he used to give formal meaning to
 polymorphism in the λ-calculus. He does so by a model construction
-where types are interpreted as predicates, functions are interpreted
+where types are interpreted as predicates and functions are interpreted
 by predicate-preserving functions.
 
 In this paper, we propose an extension of Reynolds' model, where a
-type is interpreted as a hypercubes of sets, predicates, relations,
-relations between relations and so on.  type-theory. Our model
+type is interpreted as a hypercube of sets, predicates, relations,
+relations between relations and so on. Our model
 supports the interpretation dependent type-theories, and of
-parametricity itself (parametricity is parametric).  We apply this
+parametricity itself (parametricity is parametric).  We take advantage of this
 closure property by intergrating parametricity into the syntax of the
 type-theory being interpreted.  This means that the user of the logic
 can prove any parametricity result directly in the logic, rather than
@@ -310,8 +310,8 @@ hold in the present system.
 
 We say that $A$ is definitionally isomorphic to $B$ iff.
 \begin{enumerate}
-  \item There exist $f : A -> B$
-  \item There exist $g : B -> A$
+  \item There exist $f : A → B$
+  \item There exist $g : B → A$
   \item For any $x$, $f (g x) = x$
   \item For any $x$, $g (f x) = x$
 \end{enumerate}
@@ -323,12 +323,12 @@ $U \op i A$ is definitionally isomorphic to $A → U$.
   \begin{enumerate}
   \item
     $\begin{array}[t]{l@{\,}l@{\,}l}
-      f : (&Q : U \op i A) -> &A → U \\ 
+      f : (&Q : U \op i A) → &A → U \\ 
       f & Q &x = \CP i A Q \op i x
     \end{array}$
   \item
     $\begin{array}[t]{r@{\,}l}
-      g &: (P : A → U) -> U \op i A\\
+      g &: (P : A → U) → U \op i A\\
       g &P = (\CSig i A P) \param i
     \end{array}$
   \item $\CP i A {(\CSig i A P) \param i} \op i x = (\CSig i A P) \op i x = P x$ By eta-contraction we get the desired result.
@@ -342,11 +342,11 @@ $((x:A) → B[x]) \op i f$ is definitionally isomorphic to $(x:A) → (x' : A \o
 \begin{proof}~
   \begin{enumerate}
   \item $\begin{array}[t]{r@{\,}l}
-      f &: (q : ((x:A) → B[x]) \op i f) -> (x:A) → (x' : A \op i x) → B[\CP i x {x'}] \op i (f x)\\
+      f &: (q : ((x:A) → B[x]) \op i f) → (x:A) → (x' : A \op i x) → B[\CP i x {x'}] \op i (f x)\\
       f &q x x' = (\CP i f q \CP i x {x'}) \param i
     \end{array}$
   \item $\begin{array}[t]{r@{\,}l}
-      g &: ((x:A) → (x' : A \op i x) → B[\CP i x {x'}] \op i (f x)) ->  ((x:A) → B[x]) \op i f\\
+      g &: ((x:A) → (x' : A \op i x) → B[\CP i x {x'}] \op i (f x)) →  ((x:A) → B[x]) \op i f\\
       g & p= \fp i f p \param i
     \end{array}$
   \item $(\CP i f {\fp i f p \param i} \CP i x x') \param i = ({\fp i
