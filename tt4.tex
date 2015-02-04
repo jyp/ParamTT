@@ -347,6 +347,7 @@ $U \op i A$ is isomorphic to $A → U$.
     \end{array}$
   \item $\CP i A {(\CTimes i {y:A} (P y)) \param i} \op i x = (\CTimes i {y:A} (P x) \op i x = P x$ By eta-contraction we get the desired result.
   \item $(\CTimes i {x:A} {\CP i A Q \op i x}).i = Q$ if $\CTimes i {x:A} {\CP i A Q \op i x} = \CP i A Q$. We then use equality for $×_i$. The first components are obviously equal. For the second components we are left with $\CP i A Q \op i x = \CP i A Q \op i x$, which holds by reflexivity.
+  \qedhere
   \end{enumerate}
 \end{proof}
 
@@ -370,6 +371,7 @@ $((x:A) → B[x]) \op i f$ is isomorphic to $(x:A) → (x' : A \op i x) → B[\C
   \item $\fp i f {λx x'. (\CP i f q \CP i x {x'}) \param i} \param i$
     iff $\fp i f {λx x'. (\CP i f q \CP i x {x'}) \param i} = \CP i f
     q$, which is true by the equality rule for function pairing.
+  \qedhere
   \end{enumerate}
 \end{proof}
 
@@ -428,6 +430,7 @@ If the type $A$ does not depend on either $i$ or $j$, the relation $λy z. A \op
   \end{align*}
   And, by α-equivalence, $A \op j \CP i x z \op i y = A \op i \CP j x z \op j y$.
 \end{proof}
+
 \begin{theorem}
   If the type $A$ and the term $x$ do not depend on either $i$ or $j$, any proof of $A \op i x$ is related to the canonic proof ($x \param i$).
 \end{theorem}
@@ -437,6 +440,7 @@ If the type $A$ does not depend on either $i$ or $j$, the relation $λy z. A \op
     q   &: (A:U) → (x:A) → (x':A \op i x) → A \op i \CP j x {x \param i} \op j x'& \text {by def.}\\
     q   &: (A:U) → (x:A) → (x':A \op i x) → A \op i x \op j x' &\text {by \fref{cor:equalities}}\\
     q & x x' = x' \param j
+  \qedhere
   \end{align*}
 \end{proof}
 
