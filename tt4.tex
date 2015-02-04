@@ -57,12 +57,49 @@
 \end{abstract}
 
 \section{Introduction}
+In lambda-calculi, every type can be interpreted as a predicate, which
+its inhabitants are guaranteed to satisfy.  
 
-% Line of work
+A simple example is that if a function $f$ has type $(A : U) → U → U$ ---
+the type of the polymorphic identity --- then the following
+proposition holds:
+%
+\[
+  (A : U) → (P : A → U) → (x : A) → P x → P (f A x)
+\]
+%
+(which implies that $f$ must return exactly its argument).
+The above result, \emph{abstraction}, has proved useful for reasoning
+about functional programs \citep{wadler_theorems_1989}. It also has deep
+theoretical implications: for example, the induction principle over Church numerals
+can be deduced from it \citep{wadler_girardreynolds_2007}.
 
-% Niche/Gap
 
-% Aim and achievements
+The abstraction theorem is an invention of
+\citet{reynolds_types_1983}, which he used to give formal meaning to
+polymorphism in the λ-calculus. He does so by a model construction
+where types are interpreted as predicates, functions are interpreted
+by predicate-preserving functions.
+
+In this paper, we propose an extension of Reynolds' model, where a
+type is interpreted as a hypercubes of sets, predicates, relations,
+relations between relations and so on.  type-theory. Our model
+supports the interpretation dependent type-theories, and of
+parametricity itself (parametricity is parametric).  We apply this
+closure property by intergrating parametricity into the syntax of the
+type-theory being interpreted.  This means that the user of the logic
+can prove any parametricity result directly in the logic, rather than
+having to resort to an external semantic justification.
+
+Our technical contributions are as follows:
+\begin{itemize}
+\item We propose a novel type-theory with internalized
+  parametricity.  TODO: refs
+  % In particular, we show that the calculus internalizes parametricity. 
+  % in \fref{sec:abstraction}. \comment{Much of this is now in the appendix...}
+\item We provide a presheaf model for this type-theory. We prove
+  TODO. + refs
+\end{itemize}
 
 \section{Syntax}
 In the following section we define the syntax and typing-rules of our
@@ -612,7 +649,9 @@ type-theory
 do not integrate parametricity in the syntax of the calculus. This
 means that, while certain consequences of parametricity can be made
 available in the logic, via constants validated by the model,
-parametricity itself is not available.
+parametricity itself is not available. In this paper, we not only
+propose a parametric model, but also show how it can be used to
+interpret parametricity straight up in the syntax of the type-theory.
 
 
 \paragraph{Various kinds of models}
