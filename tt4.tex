@@ -192,8 +192,6 @@ We mutually define three judgments:
         Γ ⊢_I g : (x:\proj i A) → (x':A \op i x) → P \CP i x {x'} \op i f x}{Γ ⊢_{I,i} \fp i f g : (x:A) → P x}
 
     \inferrule[Color-elim]{Γ ⊢_{I,i} a : T}{Γ ⊢_I a \param i : T \op i {\proj i a}}
-
-
   \end{mathpar}
 \end{definition}
 
@@ -201,6 +199,12 @@ The parametricity constructions ($·$ and $∋$) act like color
 binders (they bring colors into scope), while the pairing constructs
 remove colors from scope.
 The equality relation used in the {\sc Conv} rule is detailed below in \fref{def:conversion}.
+
+Additionally, for the above system to be well-founded, we need to
+distinguish small and big types, and allow only small types to be
+encoded in $U$. Small types are closed under product, $×_i$ and
+$∋_i$. The distinction between big and small types being standard, and
+to keep the presentation concise, we leave it implicit in the syntax.
 
 \begin{definition}[$I$-term]
 \todo{TODO}
@@ -308,18 +312,17 @@ Additionally, all congruences yield convertibity rules.
 \section{Parametricity}
 \label{sec:parametricity}
 
-Contrary to type-theories with internalized parametricity
-\citep{bernardy_computational_2012,
-  bernardy_type-theory_2013}, the system presented here lacks equalities
-which allow to compute parametricity types. Expressed in our syntax, those equalites are:
+Contrary to previous type theories with internalized parametricity,
+\citep{bernardy_computational_2012, bernardy_type-theory_2013}, the
+system presented here lacks equalities which allow to compute
+parametricity types. Expressed in our syntax, those equalites are:
 $$U \op i A = A → U$$
 and
 $$((x:A) → B[x]) \op i f = (x:A) → (x' : A \op i x) → B[\CP i x {x'}] \op i (f x).$$
 
-% \subsubsection{Isomorphisms}
-Instead, we provide the above relationships as isomorphisms. The
-existence of these isomorphisms ensure that all parametricity theorems
-hold in the present system.
+The absence of the above equalities allows for a simpler system, but
+how can we ensure that all parametricity theorems hold?  The answer is
+that we provide the above relationships as isomorphisms.
 
 We say that $A$ is isomorphic to $B$ iff.
 \begin{enumerate}
@@ -377,6 +380,8 @@ In practice, when carrying out parametricity proofs, many of the steps
 of the above isomorphisms cancel each other and one obtains a simpler
 proof. This property is illustrated by the following example:
 parametricity for Church-encoded natural numbers.
+(For the sake of simplicity, in the remainder of this section, we leave out the
+distinction between types and their codes.)
 \begin{example}
 Let $N = ∀X. X → (X → X) → X$.
 Proving (unary) parametricity for $N$ means that, assuming
@@ -715,14 +720,19 @@ The presheaf construction used in this paper follows a known template,
 used for example by \citet{bezem2014model,DBLP:journals/corr/Pitts14}
 to model univalence in type-theory.Not only both models use a
 presheaf, but the underlying category is the same ($\pI$). This means
-as all these models have an additional cuboidal structure.  We find
-remarkable that cuboidal structures are useful for modeling both
+as all these models have an additional cubical structure.  We find
+remarkable that cubical structures are useful for modeling both
 parametricity and univalence. The present work further refines the
 model by interpreting terms as $I$-elements, which is essential to
 interpret our special-purpose pairing constructions.
 
-\section{Conclusion}
-\todo{We did it.}
+\section{Future work and conclusion}
+We have defined a new type-theory with internalised parametricity.
+Thanks to our model construction, we have proved the consistency of
+the system. The next step would be to use our model construction to
+implement an evaluator. This would form the core of a type-checker,
+which could be used as a minimal proof assistant for a type-theory
+with parametricity.
 
 \bibliographystyle{abbrvnat}
 \bibliography{PaperTools/bibtex/jp,tt}
