@@ -108,6 +108,7 @@ We assume a set of symbols, called \emph{colors}.
 The metasyntactic variables $i,j,\ldots$ range over colors, while
 $I,J,…$ range over finite sets of colours.
 
+\todo{Is El part of the syntax? coding?}
 \begin{definition}[Syntax of terms and contexts]
   \begin{align*}
     t,u,A,B & \coloneqq x \mid U \mid λx:A. t      \mid t u \mid (x:A) → B \\
@@ -132,6 +133,13 @@ colors.
 
 
 \begin{definition}[Typing judgements — à la Tarski]
+We mutually define three judgments:
+\begin{itemize}
+\item $Γ⊢_I$ (Is the context $Γ$ is well-formed, assuming the color set $I$?).
+\item $Γ⊢_I A$  (Is the type $A$ well-formed in $Γ$ and assuming the color set $I$?)
+\item $Γ⊢_I a : A$  (Does the term $a$ have type $A$ in the context $Γ$ and assuming the color set $I$?)
+\end{itemize}
+
 Contexts:
   \begin{mathpar}
     \inferrule[Empty]{~}{() ⊢_I }
@@ -141,6 +149,7 @@ Contexts:
   \end{mathpar}
  
 Types:
+    \todo{The judgement "small" is defined nowhere. It looks like some rules are in the wrong section also. }
  \begin{mathpar}
     \inferrule{Γ ⊢_I \text{$A$ small} }{Γ ⊢_I |A| : U}
 
@@ -151,7 +160,7 @@ Types:
 
     \inferrule[Out]{Γ ⊢_{I,i} T \\ Γ ⊢_I a : \proj i T}{Γ ⊢_I T \op i  a}
 
-    \inferrule[In-Pred]{Γ ⊢_{I} A \\ Γ,x:A ⊢_{I} P}{Γ ⊢_{I,i} \CTimes i {(x:A)} P}
+    \inferrule[In-Pred]{Γ ⊢_{I} A \\ Γ,x:A ⊢_{I} B}{Γ ⊢_{I,i} \CTimes i {x:A} B}
  \end{mathpar}
 
 Terms:
