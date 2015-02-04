@@ -248,14 +248,6 @@ to keep the presentation concise, we leave it implicit in the syntax.
   unique $g : I → J$ such that $(i\,0)g = f(j\,0) : I,i → J$;
   and that for any $f : I,i → J$ such that $f(i) = 0$, there is
   a unique $g : I → J$ such that $(i\,0)g = f$.)
-
-  \begin{theorem}[Color substitution preserves typing]
-    If $Γ ⊢_I a : A$ then the term
-  $af$ is defined and $Γ f ⊢_J af : Af$
-  \end{theorem}
-  \begin{proof}
-    by induction on the typing judgement
-  \end{proof}
   \begin{theorem}~
     \begin{itemize}
     \item $a1_I = a$
@@ -263,7 +255,15 @@ to keep the presentation concise, we leave it implicit in the syntax.
     \end{itemize}
   \end{theorem}
   \begin{proof}
-    By structural induction on $a$
+    By structural induction on $a$.
+  \end{proof}
+
+  \begin{theorem}[Color substitution preserves typing]
+    If $Γ ⊢_I a : A$ then the term
+  $af$ is defined and $Γ f ⊢_J af : Af$
+  \end{theorem}
+  \begin{proof}
+    By induction on the typing judgement.
   \end{proof}
 \end{definition}
 
