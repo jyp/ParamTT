@@ -8,6 +8,12 @@
 \usepackage{mathpartir}
 \usepackage{fancyref}
 
+\newcommand{\Frefdefname}{Def.}
+\newcommand{\frefdefname}{Def.}
+\newcommand*{\fancyrefdeflabelprefix}{def}
+\frefformat{vario}{\fancyrefdeflabelprefix}{%
+       \textnormal{\frefdefname}\fancyrefdefaultspacing#1}
+
 \usepackage{tikz}
 \usetikzlibrary{arrows}
 
@@ -26,6 +32,7 @@
 \newcommand\mor[2]{({#1}\,{#2})}
 \newcommand\proj[2]{{#2}\,\mor{#1}0}
 \newcommand\projp[2]{\proj{#1}{(#2)}}
+
 
 \newcommand\comment[1]{}
 \input{unicodedefs}
@@ -46,7 +53,7 @@
 \maketitle
 
 \begin{abstract}
-   We propose a new intentional type-theory with internalized
+   We propose a new type-theory with internalized
   parametricity. Compared to previous similar proposals, this version
   comes with a denotational semantics, which is a refinement of the
   standard presheaf semantics of dependent type theory. This presheaf
@@ -118,12 +125,12 @@ $I,J,…$ range over finite sets of colours.
   \end{align*}
 \end{definition}
 
-Compared to intuitionistic type-theory, the main innovation of the
-type-theory presented here is that terms may depend on (a finite
-number of) colors. 
+Compared to type-theory, the main innovation of the type-theory
+presented here is that terms may depend on (a finite number of)
+colors.
 
 \begin{itemize}
-\item Each color $i$ may be erased from a term $a$ to obtain a realiser $\proj i a$.
+\item Each color $i$ may be erased from a term $a$ to obtain a realiser, written $\proj i a$ (detailed in \fref{def:color-subst}).
 \item the type $A \op i u$, which expresses that $u$ satisfies the
   parametricity predicate associated with the type $A$ on color $i$.
 \item the term $a \param i$, which yields a proof of $A \op i \proj i a$.
@@ -181,16 +188,14 @@ Terms:
   \end{mathpar}
 \end{definition}
 
-Notes:
+The parametricity constructions ($·$ and $∋$) act like color
+binders (they bring colors into scope), while the pairing constructs
+remove colors from scope.
+The equality relation used in the {\sc Conv} rule is detailed below in \fref{def:conversion}.
 
 \begin{itemize}
-\item The parametricity constructions ($·$ and $∋$) act like color
-  binders (they bring colors into scope), while the pairing constructs
-  remove colors from scope.
 \item The composition of the coding function with $\El{·}$ is the
     identity: $\El{|A|} = A$ and $|\El{A}| = A$.
-\item If one wishes to define a function depending usefully on a colored type
-  need to use the {\sc In-Fun} rule.
 \end{itemize}
 
 \begin{definition}[$I$-term]
@@ -202,6 +207,7 @@ TODO
 
 % 'Morphism' means something only in the context of a category; hence Morphism application ==> Color substitution
 \begin{definition}[Color substitution]~
+  \label{def:color-subst}
   We consider partial injections $f : I → J$ and for any $I$-term $a$,
   we define the $J$-term $af$ by structural induction on $a$.
   We note $(i\,0) : I,i → I$ the partial identity.
