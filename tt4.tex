@@ -206,18 +206,11 @@ encoded in $U$. Small types are closed under product, $×_i$ and
 $∋_i$. The distinction between big and small types being standard, and
 to keep the presentation concise, we leave it implicit in the syntax.
 
-\begin{definition}[$I$-term]
-\todo{TODO}
-\end{definition}
-\begin{definition}[$\fresh I$]
-\todo{TODO}
-\end{definition}
-
 % 'Morphism' means something only in the context of a category; hence Morphism application ==> Color substitution
 \begin{definition}[Color substitution]~
   \label{def:color-subst}
-  We consider partial injections $f : I → J$ and for any $I$-term $a$,
-  we define the $J$-term $af$ by structural induction on $a$.
+  We consider partial injections $f : I → J$ and for any term $a$,
+  we define the term $af$ by structural induction on $a$.
   We note $(i\,0) : I,i → I$ the partial identity.
 \begin{align*}
   x f & = x \\
@@ -238,18 +231,22 @@ to keep the presentation concise, we leave it implicit in the syntax.
                 &= ug
     & \text{if $∃g : I→J$ such that $f = (i\,0)g : I,i → J$} \\
   A \op {i} a &= (Ag) \op {j} (af)
-    & \text{where $j = \fresh J$ and $g:I,i → J,j$ satisfies $(i\,0)f = g(j\,0)$} \\
+    & \text{where $j ∉ J$ and $g:I,i → J,j$ satisfies $(i\,0)f = g(j\,0)$} \\
   (a · i) f &= (ag) · j
-    & \text{where $j = \fresh J$ and $g:I,i → J,j$ satisfies $(i\,0)f = g(j\,0)$}
+    & \text{where $j ∉ J$ and $g:I,i → J,j$ satisfies $(i\,0)f = g(j\,0)$}
+  \\[.33\baselineskip]
+  () f      &= () \\
+  (Γ,x:A) f &= Γ f, x : A f
 \end{align*}
   (We remark that for any $f : I,i → J,j$ with $fi=j$, there is a
   unique $g : I → J$ such that $(i\,0)g = f(j\,0) : I,i → J$;
   and that for any $f : I,i → J$ which is not defined on $i$, there is
   a unique $g : I → J$ such that $(i\,0)g = f$.)
 
-  We have $a1 = a$ and $(af)g = a(fg)$ for any $g : J → K$.
-  Furthermore, if $Γ ⊢_I a : A$ then $Γ f ⊢_J af : Af$ (proof by
-  induction on the typing judgement).
+  Furthermore, if $Γ ⊢_I a : A$ then the term
+  $af$ is defined and $Γ f ⊢_J af : Af$,
+  $a1_I = a$ and $(af)g = a(fg)$ for any $g : J → K$
+  (proof by induction on the typing judgement).
 \end{definition}
 
 \comment{
