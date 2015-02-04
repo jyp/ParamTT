@@ -47,14 +47,13 @@
 \maketitle
 
 \begin{abstract}
-   We propose a new type-theory with internalized
+  We propose a new type-theory with internalized
   parametricity. Compared to previous similar proposals, this version
-  comes with a denotational semantics, which is a refinement of the
-  standard presheaf semantics of dependent type theory. This presheaf
-  semantics is a refinement of the one used to interpret nominal sets
-  with restriction.
-  This calculus is a candidate for the core of a proof assistant
-  with internalized parametricity.
+  comes with a denotational semantics which is a refinement of the
+  standard presheaf semantics of dependent type theory. Further, this
+  presheaf semantics is a refinement of the one used to interpret
+  nominal sets with restriction.  This calculus is a candidate for the
+  core of a proof assistant with internalized parametricity.
 \end{abstract}
 
 \section{Introduction}
@@ -648,7 +647,7 @@ $ρ ∈ Γf$ and $u ∈ A(f,ρ)$.
 
 \section{Related Work}
 
-\paragraph{Our line of work}
+\subsection{Our own line of work}
 This work continues a line of work aiming at a smooth integration of
 parametricity with dependent types
 \citep{bernardy_proofs_2012,bernardy_computational_2012,bernardy_type-theory_2013}. Compared to our 2013 publication, the present work offers two improvements:
@@ -673,7 +672,7 @@ of special-purpose ones. On the other hand, obtaining the classical
 parametric interpretation of types requires some purely mechanical
 work by the user of the logic.
 
-\paragraph{Parametric Models of Type-Theory vs Parametric Type-Theories}
+\subsection{Parametric Models of Type-Theory vs. Parametric Type-Theories}
 
 Two pieces of work propose alternative parametric models of
 type-theory
@@ -686,7 +685,7 @@ propose a parametric model, but also show how it can be used to
 interpret parametricity straight up in the syntax of the type-theory.
 
 
-\paragraph{Various kinds of models}
+\subsection{Various kinds of models}
 Another characterising feature of proposals for parametricity is the
 kind of model underlying the
 semantics. \Citet{krishnaswami_internalizing_2013} propose a model
@@ -696,13 +695,18 @@ on reflexive graphs. The model that we use is based on cubes
 our 2012 work the cubes were reified as syntax in
 an underlying calculus, while in the present work they refine a presheaf structure.
 
-\paragraph{Cuboidal models}
+\subsection{Presheaf models}
 
-We find remarkable that cuboidal models have been also successfully
-used to interpret the univalence axiom.
+The presheaf construction used in this paper follows a known template,
+used for example by \citet{bezem2014model,DBLP:journals/corr/Pitts14}
+to model univalence in type-theory.Not only both models use a
+presheaf, but the underlying category is the same ($\pI$). This means
+as all these models have an additional cuboidal structure.  We find
+remarkable that cuboidal structures are useful for modeling both
+parametricity and univalence. The present work further refines the
+model by interpreting terms as $I$-elements, which is essential to
+interpret our special-purpose pairing constructions.
 
-Bezem, Coquand, Huber?
-Pitts?
 
 \bibliographystyle{abbrvnat}
 \bibliography{PaperTools/bibtex/jp,tt}
