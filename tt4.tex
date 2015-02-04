@@ -96,7 +96,10 @@ Our technical contributions are as follows:
   that it internalises parametricity (\fref{sec:parametricity}).
   % In particular, we show that the calculus internalizes parametricity. 
   % in \fref{sec:abstraction}. \comment{Much of this is now in the appendix...}
-\item We provide a presheaf model for this type-theory. \todo{what+refs}
+\item We provide a presheaf model for this type-theory.
+      This model is refinement of the presheaf semantics used to
+      interpret nominal sets with
+      restrictions~\citep{bezem2014model,DBLP:journals/corr/Pitts14}.
 \end{itemize}
 
 \section{Syntax}
@@ -162,7 +165,6 @@ We mutually define three judgments:
     \inferrule[Universe]{}{Γ ⊢_I U}
 
     \inferrule[Decode]{Γ ⊢_I A : U}{Γ ⊢_I \El{A}}
-
     \\
     \inferrule[Pi]{Γ ⊢_I A \\ Γ,x:A ⊢_I B}{Γ ⊢_I (x:A) → B}
 
