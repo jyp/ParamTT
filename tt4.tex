@@ -111,7 +111,7 @@ $I,J,…$ range over finite sets of colours.
 \begin{definition}[Syntax of terms and contexts]
   \begin{align*}
     t,u,A,B & \coloneqq x \mid U \mid λx:A. t      \mid t u \mid (x:A) → B \\
-            & \mid \CP i t u  \mid \CTimes i A B  \mid \fp i t u \\
+            & \mid \CP i t u  \mid \CTimes i {x:A} B  \mid \fp i t u \\
             & \mid A \op i u \mid t \param i  \\
     \Gamma,\Delta & \coloneqq () \mid \Gamma,x:A
   \end{align*}
@@ -146,9 +146,6 @@ Types:
 
     \inferrule{Γ ⊢_I A : U}{Γ ⊢_I \El{A}}
 
-    \El{|A|} = A
-
-    |\El{A}| = A
     \\
     \inferrule[Pi]{Γ ⊢_I A \\ Γ,x:A ⊢_I B}{Γ ⊢_I (x:A) → B}
 
@@ -184,11 +181,6 @@ The parametricity constructions ($·$ and $∋$) act like color
 binders (they bring colors into scope), while the pairing constructs
 remove colors from scope.
 The equality relation used in the {\sc Conv} rule is detailed below in \fref{def:conversion}.
-
-\begin{itemize}
-\item The composition of the coding function with $\El{·}$ is the
-    identity: $\El{|A|} = A$ and $|\El{A}| = A$.
-\end{itemize}
 
 \begin{definition}[$I$-term]
 \todo{TODO}
@@ -252,38 +244,37 @@ The equality relation used in the {\sc Conv} rule is detailed below in \fref{def
 
 \begin{definition}[Conversion]~
 \label{def:conversion}
-
-β:
-\begin{align*}
-  (λx:A. u[x]) t &= u[t]
-\end{align*}
-
-Pair-like things:
-\begin{align*}
-  {\fp i f g} \, a      &= (f\,{\proj i a} ,_i g\,{\proj i a}\,{(a \param i)}) \\
-  {(a,_i p)} \param i   &= p \\
-  {(\CTimes i {x:A} B[x])} \op i a &= B[a]
-\end{align*}
-
-Note: the param-witness construction is bootstrapped by the last rule.
-
-  \begin{mathpar}
-    \inferrule{t x = u} {t = λ x:A.u}
+The convertibity of types (noted $=$) as an untyped relation, defined inductively by the following rules:
+\begin{mathpar}
+  \inferrule[Pair-App]{}{{\fp i f g} \, a      = (f\,{\proj i a} ,_i g\,{\proj i a}\,{(a \param i)})}
+\and
+  \inferrule[Pair-Param]{}{{(a,_i p)}\param i   = p}
+\and
+  \inferrule[Pair-Pred]{}{{(\CTimes i {x:A} B[x])} \op i a = B[a]}
+\and
+    \inferrule{}{\El{|A|} = A}
+\and
+    \inferrule{}{|\El{A}| = A}
+\and
+    \inferrule[β]{}{(λx:A. u[x]) t = u[t]}
+\and
+    \inferrule[η]{t x = u} {t = λ x:A.u}
     \and
-    \inferrule{\proj i t = a \\ t \param i = p} {t = \CP i a p }
+    \inferrule[Surj-Param]{\proj i t = a \\ t \param i = p} {t = \CP i a p }
     \and
-    \inferrule{\proj i t = f \\ (t \CP i x y) \param i = g x y} {t = \fp i f g }
+    \inferrule[Surj-Fun]{\proj i t = f \\ (t \CP i x y) \param i = g x y} {t = \fp i f g }
     \and
-    \inferrule{\proj i T = A \\ T \op i x = B} {T = \CTimes i {x:A} B }
+    \inferrule[Surj-Typ]{\proj i T = A \\ T \op i x = B} {T = \CTimes i {x:A} B }
     \and
-    \inferrule{~}{a = a}
+    \inferrule[Refl]{~}{a = a}
     \and
-    \inferrule{a = b}{b = a}
+    \inferrule[Sym]{a = b}{b = a}
     \and
-    \inferrule{a = b \\ b = c}{a = c}
+    \inferrule[Trans]{a = b \\ b = c}{a = c}
   \end{mathpar}
-  + congruences
+Additionally, all congruences yield convertibity rules.
 \end{definition}
+
 
 \begin{corollary}~
   \label{cor:equalities}
@@ -710,6 +701,8 @@ parametricity and univalence. The present work further refines the
 model by interpreting terms as $I$-elements, which is essential to
 interpret our special-purpose pairing constructions.
 
+\section{Conclusion}
+\todo{We did it.}
 
 \bibliographystyle{abbrvnat}
 \bibliography{PaperTools/bibtex/jp,tt}
