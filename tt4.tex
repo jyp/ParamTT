@@ -184,7 +184,10 @@ Terms:
 Notes:
 
 \begin{itemize}
-  \item The composition of the coding function with $\El{·}$ is the
+\item The parametricity constructions ($·$ and $∋$) act like color
+  binders (they bring colors into scope), while the pairing constructs
+  remove colors from scope.
+\item The composition of the coding function with $\El{·}$ is the
     identity: $\El{|A|} = A$ and $|\El{A}| = A$.
 \item If one wishes to define a function depending usefully on a colored type
   need to use the {\sc In-Fun} rule.
@@ -293,7 +296,7 @@ Note: the param-witness construction is bootstrapped by the last rule.
   \end{itemize}
 \end{corollary}
 
-\subsection{Parametricity}
+\section{Parametricity}
 
 Contrary to previous systems with parametricity and dependent types
 \citep{bernardy_proofs_2012, bernardy_computational_2012,
@@ -303,7 +306,7 @@ $$U \op i A = A → U$$
 and
 $$((x:A) → B[x]) \op i f = (x:A) → (x' : A \op i x) → B[\CP i x {x'}] \op i (f x).$$
 
-\subsubsection{Isomorphisms}
+% \subsubsection{Isomorphisms}
 Instead, we provide the above relationships as isomorphisms. The
 existence of these isomorphisms ensure that all parametricity theorems
 hold in the present system.
@@ -377,25 +380,55 @@ Proving (unary) parametricity for $N$ means that, assuming
 we can prove $P (f A z s)$.
 
 Indeed, a proof term is the following:
-
+%
 \[
 (f (\ip i A P) \CP i z {z'} \fp i s {s'}) \param i
 \]
 \end{example}
 
 \subsection{Iterating Parametricity}
-For any type $A$ which does not depend on colors $i$ or $j$, we have
+In our system, one can use parametricity generically as follows:
 \begin{align*}
-p &: (x:A) → A \op i x\\
-p x &= x\param i\\
-q &: (x:A) → (A \op i x) \op j x \param  i\\
-  &: (x:A) → (A \op j \CP i x {x \param j}) \op j x \param  i\\
-  &: (x:A) → (A \op j \CP i x {p x}) \op j (p x)\\
-q x &= x\param i\param j
+p &: (A:U) → (x:A) → A \op i x\\
+p x &= x\param i
 \end{align*}
+We have already seen that $A \op i $ corresponds to the parametricity
+predicate for type $A$. We can iterate this operator to construct
+relations. That is, given
+\begin{align*}
+  x & :A \\
+  y & : A \op i x\\
+  z & : A \op i x
+\end{align*}
+Then the type $A \op i \CP j x y \op j z$ is well formed ($∋$ is left
+associative), and can be understood as a relation
+between the parametricity proofs $y$ and $z$. We have the following results on those relation.
+\begin{theorem}
+If the type $A$ does not depend on either $i$ or $j$, the relation $λy z. A \op i \CP j x y \op j z$ is symmetric.
+\end{theorem}
+\begin{proof}
+  We first construct the proof term:
+  \begin{align*}
+    s & : (x:A) → (y : A \op i x) → (z : A \op i x) → (w : A \op i \CP j x y \op j z) → A \op j \CP i x z \op i y \\
+    s & x y z w = \CP i {\CP j x y}{\CP j z w} \param j \param i
+  \end{align*}
+  And, by α-equivalence, $A \op j \CP i x z \op i y = A \op i \CP j x z \op j y$.
+\end{proof}
+\begin{theorem}
+  If the type $A$ and the term $x$ do not depend on either $i$ or $j$, any proof of $A \op i x$ is related to the canonic proof ($x \param i$).
+\end{theorem}
+\begin{proof}
+  \begin{align*}
+    q   &: (A:U) → (x:A) → (x':A \op i x) → A \op i \CP j x {p A x} \op j x'\\
+    q   &: (A:U) → (x:A) → (x':A \op i x) → A \op i \CP j x {x \param i} \op j x'& \text {by def.}\\
+    q   &: (A:U) → (x:A) → (x':A \op i x) → A \op i x \op j x' &\text {Corollary TODO}\\
+    q & x x' = x' \param j
+  \end{align*}
+\end{proof}
 
-(If $A$ were to depend on a color, the types would not be well-typed.)
-
+We conclude the section by noting that by iterating parametricity $n$
+times, one creates $n$-ary relations, and that the above results carry
+over to the $n$-ary case.
 \section{Presheaf model}
 
 \begin{definition}
