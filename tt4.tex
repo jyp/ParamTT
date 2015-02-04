@@ -243,10 +243,22 @@ to keep the presentation concise, we leave it implicit in the syntax.
   and that for any $f : I,i → J$ which is not defined on $i$, there is
   a unique $g : I → J$ such that $(i\,0)g = f$.)
 
-  Furthermore, if $Γ ⊢_I a : A$ then the term
-  $af$ is defined and $Γ f ⊢_J af : Af$,
-  $a1_I = a$ and $(af)g = a(fg)$ for any $g : J → K$
-  (proof by induction on the typing judgement).
+  \begin{theorem}[Color substitution preserves typing]
+    If $Γ ⊢_I a : A$ then the term
+  $af$ is defined and $Γ f ⊢_J af : Af$
+  \end{theorem}
+  \begin{proof}
+    by induction on the typing judgement
+  \end{proof}
+  \begin{theorem}~
+    \begin{itemize}
+    \item $a1_I = a$
+    \item $(af)g = a(fg)$ for any $f: I → J$ and $g : J → K$
+    \end{itemize}
+  \end{theorem}
+  \begin{proof}
+    By structural induction on $a$
+  \end{proof}
 \end{definition}
 
 \comment{
