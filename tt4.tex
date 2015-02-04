@@ -7,6 +7,7 @@
 \usepackage{mathtools}
 \usepackage{mathpartir}
 \usepackage{fancyref}
+\usepackage{todonotes}
 \input{fancyrefs}
 \usepackage{tikz}
 \usetikzlibrary{arrows}
@@ -26,7 +27,6 @@
 \newcommand\mor[2]{({#1}\,{#2})}
 \newcommand\proj[2]{{#2}\,\mor{#1}0}
 \newcommand\projp[2]{\proj{#1}{(#2)}}
-
 
 \newcommand\comment[1]{}
 \input{unicodedefs}
@@ -93,15 +93,15 @@ having to resort to an external semantic justification.
 
 Our technical contributions are as follows:
 \begin{itemize}
-\item We propose a novel type-theory with internalized
-  parametricity.  TODO: refs
+\item We propose a novel type-theory (\fref{sec:syntax}), and show
+  that it internalises parametricity (\fref{sec:parametricity}).
   % In particular, we show that the calculus internalizes parametricity. 
   % in \fref{sec:abstraction}. \comment{Much of this is now in the appendix...}
-\item We provide a presheaf model for this type-theory. We prove
-  TODO. + refs
+\item We provide a presheaf model for this type-theory. \todo{what+refs}
 \end{itemize}
 
 \section{Syntax}
+\label{sec:syntax}
 In the following section we define the syntax and typing-rules of our
 parametric type-theory, as well as the equality judgement.
 
@@ -192,10 +192,10 @@ The equality relation used in the {\sc Conv} rule is detailed below in \fref{def
 \end{itemize}
 
 \begin{definition}[$I$-term]
-TODO
+\todo{TODO}
 \end{definition}
 \begin{definition}[$\fresh I$]
-TODO
+\todo{TODO}
 \end{definition}
 
 % 'Morphism' means something only in the context of a category; hence Morphism application ==> Color substitution
@@ -287,6 +287,7 @@ Note: the param-witness construction is bootstrapped by the last rule.
 \end{definition}
 
 \begin{corollary}~
+  \label{cor:equalities}
   \begin{itemize}
   \item $a = \CP i {\proj i a} {a \param i}$
   \item $T = \CSig i {\proj i T} {(λx. T \op i x)}$
@@ -295,11 +296,12 @@ Note: the param-witness construction is bootstrapped by the last rule.
 \end{corollary}
 
 \section{Parametricity}
+\label{sec:parametricity}
 
-Contrary to previous systems with parametricity and dependent types
-\citep{bernardy_proofs_2012, bernardy_computational_2012,
+Contrary to type-theories with internalized parametricity
+\citep{bernardy_computational_2012,
   bernardy_type-theory_2013}, the system presented here lacks equalities
-which allow to compute parametricity types, namely:
+which allow to compute parametricity types. Expressed in our syntax, those equalites are:
 $$U \op i A = A → U$$
 and
 $$((x:A) → B[x]) \op i f = (x:A) → (x' : A \op i x) → B[\CP i x {x'}] \op i (f x).$$
@@ -318,6 +320,7 @@ We say that $A$ is isomorphic to $B$ iff.
 \end{enumerate}
 
 \begin{theorem}
+\label{thm:iso-univ}
 $U \op i A$ is isomorphic to $A → U$.
 \end{theorem}
 \begin{proof}~
@@ -338,6 +341,7 @@ $U \op i A$ is isomorphic to $A → U$.
 \end{proof}
 
 \begin{theorem}
+\label{thm:iso-fun}
 $((x:A) → B[x]) \op i f$ is isomorphic to $(x:A) → (x' : A \op i x) → B[\CP i x {x'}] \op i (f x)$.
 \end{theorem}
 \begin{proof}~
@@ -419,14 +423,14 @@ If the type $A$ does not depend on either $i$ or $j$, the relation $λy z. A \op
   \begin{align*}
     q   &: (A:U) → (x:A) → (x':A \op i x) → A \op i \CP j x {p A x} \op j x'\\
     q   &: (A:U) → (x:A) → (x':A \op i x) → A \op i \CP j x {x \param i} \op j x'& \text {by def.}\\
-    q   &: (A:U) → (x:A) → (x':A \op i x) → A \op i x \op j x' &\text {Corollary TODO}\\
+    q   &: (A:U) → (x:A) → (x':A \op i x) → A \op i x \op j x' &\text {by \fref{cor:equalities}}\\
     q & x x' = x' \param j
   \end{align*}
 \end{proof}
 
 We conclude the section by noting that by iterating parametricity $n$
 times, one creates $n$-ary relations, and that the above results carry
-over to the $n$-ary case.
+over to the $n$-ary case in a straightforward manner.
 \section{Presheaf model}
 
 \begin{definition}
@@ -665,7 +669,7 @@ certain function arguments must be swapped when performing the
 substitution of beta reduction, as identified by
 \citet{bernardy_computational_2012}.  In the present system, the
 parametric interpretation of functions is instead merely isomorphic to
-a function, thanks to the {\sc In-Fun} rule (TODO: ref theorem). This
+a function, thanks to the {\sc In-Fun} rule (\fref{thm:iso-fun}). This
 isomorphism (rather than equality) means on the one hand that the
 swapping of arguments is handled by the usual rules of logic, instead
 of special-purpose ones. On the other hand, obtaining the classical
