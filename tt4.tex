@@ -14,8 +14,7 @@
 
 \newcommand\CC[4]{(#2,_{#1} #3)}
 \newcommand\CP[3]{(#2,_{#1} #3)}
-\newcommand\CSig[1]{\Sigma^{#1}}
-\newcommand\CTimes[3]{#2 ×_{#1} #3}
+\newcommand\CTimes[2]{(#2) ×_{#1}}
 \newcommand\SW[2]{\mathsf{SW}^{#1}_{#2}}
 \newcommand\sw[2]{\mathsf{sw}^{#1}_{#2}}
 \newcommand\dom{\mathsf{dom}}
@@ -112,7 +111,7 @@ $I,J,…$ range over finite sets of colours.
 \begin{definition}[Syntax of terms and contexts]
   \begin{align*}
     t,u,A,B & \coloneqq x \mid U \mid λx:A. t      \mid t u \mid (x:A) → B \\
-            & \mid \CP i t u  \mid \ip i A B  \mid \fp i t u \\
+            & \mid \CP i t u  \mid \CTimes i A B  \mid \fp i t u \\
             & \mid A \op i u \mid t \param i  \\
     \Gamma,\Delta & \coloneqq () \mid \Gamma,x:A
   \end{align*}
@@ -127,7 +126,7 @@ colors.
 \item the type $A \op i u$, which expresses that $u$ satisfies the
   parametricity predicate associated with the type $A$ on color $i$.
 \item the term $a \param i$, which yields a proof of $A \op i \proj i a$.
-\item the forms $\CP i t u$, $\ip i A B$ and $\fp i t u$ allow to
+\item the forms $\CP i t u$, $\CTimes i A B$ and $\fp i t u$ allow to
   locally associate parametricity proofs with a given realizer.
 \end{itemize}
 
@@ -155,7 +154,7 @@ Types:
 
     \inferrule[Out]{Γ ⊢_{I,i} T \\ Γ ⊢_I a : \proj i T}{Γ ⊢_I T \op i  a}
 
-    \inferrule[In-Pred]{Γ ⊢_{I} A \\ Γ,x:A ⊢_{I} P}{Γ ⊢_{I,i} \ip i {(x:A)} P}
+    \inferrule[In-Pred]{Γ ⊢_{I} A \\ Γ,x:A ⊢_{I} P}{Γ ⊢_{I,i} \CTimes i {(x:A)} P}
  \end{mathpar}
 
 Terms:
@@ -214,7 +213,7 @@ The equality relation used in the {\sc Conv} rule is detailed below in \fref{def
     & \text{if $fi = j$, $g : I→J_{\{j\}}$ such that $(i\,0)g = f(j\,0) : I,i → J_{\{j\}}$} \\
                 &= ag
     & \text{if $∃g : I→J$ such that $f = (i\,0)g : I,i → J$} \\
-  (\ip {i} A P) f &= \ip {j} {(Ag)} {(Pg)}
+  (\CTimes {i} A B) f &= \CTimes {j} {(Ag)} {(Bg)}
     & \text{if $fi = j$, $g : I→J_{\{j\}}$ such that $(i\,0)g = f(j\,0) : I,i → J_{\{j\}}$} \\
                 &= Ag
     & \text{if $∃g : I→J$ such that $f = (i\,0)g : I,i → J$} \\
@@ -243,7 +242,7 @@ The equality relation used in the {\sc Conv} rule is detailed below in \fref{def
     \mathsf{Nf} ∋ u,v,A,B & \coloneqq
       U \mid λx:A. t \mid (x:A) → B \\
       & \mid \CP i u v \mid \fp i u v \\
-      & \mid {(\ip {i₀} A B)} \op {i₁} {u_1 \cdots} \op {i_n} {u_n} &\quad \text{($i₀ \prec i₁ \prec \ldots \prec i_n$)} \\
+      & \mid {(\CTimes {i₀} A B)} \op {i₁} {u_1 \cdots} \op {i_n} {u_n} &\quad \text{($i₀ \prec i₁ \prec \ldots \prec i_n$)} \\
       & \mid s \param {i₀} \cdots \param {i_{n-1}}                  &\quad \text{($i₀ \prec   < \ldots \prec i_{n-1}$)}
     \\
     \mathsf{Ne} ∋ s & \coloneqq x \mid s \, u
@@ -263,7 +262,7 @@ Pair-like things:
 \begin{align*}
   {\fp i f g} \, a      &= (f\,{\proj i a} ,_i g\,{\proj i a}\,{(a \param i)}) \\
   {(a,_i p)} \param i   &= p \\
-  {(\ip i A P)} \op i a &= P\,a
+  {(\CTimes i {x:A} B[x])} \op i a &= B[a]
 \end{align*}
 
 Note: the param-witness construction is bootstrapped by the last rule.
@@ -275,7 +274,7 @@ Note: the param-witness construction is bootstrapped by the last rule.
     \and
     \inferrule{\proj i t = f \\ (t \CP i x y) \param i = g x y} {t = \fp i f g }
     \and
-    \inferrule{\proj i T = A \\ T \op i x = P x} {T = \CSig i A P }
+    \inferrule{\proj i T = A \\ T \op i x = B} {T = \CTimes i {x:A} B }
     \and
     \inferrule{~}{a = a}
     \and
@@ -290,7 +289,7 @@ Note: the param-witness construction is bootstrapped by the last rule.
   \label{cor:equalities}
   \begin{itemize}
   \item $a = \CP i {\proj i a} {a \param i}$
-  \item $T = \CSig i {\proj i T} {(λx. T \op i x)}$
+  \item $T = \CTimes i {x:\proj i T} {(T \op i x)}$
   \item $f = \fp i {\proj i f} {λx x'. (f \CP i x {x'}) \param i}$
   \end{itemize}
 \end{corollary}
@@ -333,10 +332,10 @@ $U \op i A$ is isomorphic to $A → U$.
   \item
     $\begin{array}[t]{r@{\,}l}
       g &: (P : A → U) → U \op i A\\
-      g &P = (\CSig i A P) \param i
+      g &P = (\CTimes i {x:A} (P x)) \param i
     \end{array}$
-  \item $\CP i A {(\CSig i A P) \param i} \op i x = (\CSig i A P) \op i x = P x$ By eta-contraction we get the desired result.
-  \item $(\CSig i A {λx. \CP i A Q \op i x}).i = Q$ iff $\CSig i A {λx. \CP i A Q \op i x} = \CP i A Q$. We use conversion for $\Sigma$. The first components are obviously equal. For the second components we are left with $\CP i A Q \op i x = \CP i A Q \op i x$, which is obvious.
+  \item $\CP i A {(\CTimes i {y:A} (P y)) \param i} \op i x = (\CTimes i {y:A} (P x) \op i x = P x$ By eta-contraction we get the desired result.
+  \item $(\CTimes i {x:A} {\CP i A Q \op i x}).i = Q$ if $\CTimes i {x:A} {\CP i A Q \op i x} = \CP i A Q$. We then use equality for $×_i$. The first components are obviously equal. For the second components we are left with $\CP i A Q \op i x = \CP i A Q \op i x$, which holds by reflexivity.
   \end{enumerate}
 \end{proof}
 
@@ -384,7 +383,7 @@ we can prove $P (f A z s)$.
 Indeed, a proof term is the following:
 %
 \[
-(f (\ip i A P) \CP i z {z'} \fp i s {s'}) \param i
+(f (\CTimes i {x:A} (P x)) \CP i z {z'} \fp i s {s'}) \param i
 \]
 \end{example}
 
