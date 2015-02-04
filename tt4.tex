@@ -450,6 +450,37 @@ If the type $A$ does not depend on either $i$ or $j$, the relation $λy z. A \op
 \end{proof}
 
 \begin{theorem}
+  As defined above, function $s$ is involutive in its last argument:
+  \[ s x y z (s\, x\, y\, z\, w) = w \]
+\end{theorem}
+\begin{proof}
+  Let
+  \begin{align*}
+    t &= \CP i {\CP j x y}{\CP j z w} \\
+    w' &= t \param j \param i \\
+    t' &= \CP j {\CP i x z}{\CP i y {w'}}
+  \end{align*}
+  Then
+  \begin{align*}
+    \proj i {t'} &= \CP j x y = \proj i t \\
+    \proj j {t'} &= \CP i x z = \proj j t \\
+    \projp j {t  \param i} &= z
+  \end{align*}
+We continue to reason by deduction:
+  \begin{align*}
+    w' &= t \param j \param i & \text{By def}\\
+    {\CP i y {w'}} &= t\param j & \text{Because $\projp i {t\param j} = y $}  \\
+    t'\param j &= t\param j & \text{By def}\\
+    t' &= t &\text{Because {\proj j {t'} = \proj j t}} \\
+    t' &= \CP i {\CP j x y} {\CP j z w} & \text{By def} \\
+    t'\param i &= \CP j z w \\
+    t'\param i\param j &= w
+  \end{align*}
+\end{proof}
+\begin{corollary}
+  The types $A \op i \CP j x y \op j z$ and $A \op j \CP i x z \op i y$ are isomorphic.
+\end{corollary}
+\begin{theorem}
   If the type $A$ and the term $x$ do not depend on either $i$ or $j$, any proof of $A \op i x$ is related to the canonic proof ($x \param i$).
 \end{theorem}
 \begin{proof}
