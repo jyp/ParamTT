@@ -105,22 +105,29 @@ In the following section we define the syntax and typing-rules of our
 parametric type-theory, as well as the equality judgement.
 
 We assume a set of symbols, called \emph{colors}.
-The metasyntactic variables $i,j,\ldots$ range over colors, while
+The metasyntactic variables $i,j,\ldots$ range over colours, while
 $I,J,…$ range over finite sets of colours.
-
-\todo{Is El part of the syntax? coding?}
-\begin{definition}[Syntax of terms and contexts]
-  \begin{align*}
-    t,u,A,B & \coloneqq x \mid U \mid λx:A. t      \mid t u \mid (x:A) → B \\
-            & \mid \CP i t u  \mid \CTimes i {x:A} B  \mid \fp i t u \\
-            & \mid A \op i u \mid t \param i  \\
-    \Gamma,\Delta & \coloneqq () \mid \Gamma,x:A
-  \end{align*}
-\end{definition}
 
 Compared to type-theory, the main innovation of the type-theory
 presented here is that terms may depend on (a finite number of)
-colors.
+colours.
+\begin{definition}[Syntax of terms and contexts]
+  \begin{align*}
+    t,u,A,B & \coloneqq x & \text {variable} \\
+            & \mid U & \text{universe} \\ 
+            & \mid |A| & \text{code} \\ 
+            & \mid El(A) & \text{decode} \\ 
+            & \mid λx:A. t & \text{abstraction} \\
+            & \mid t u & \text{application} \\ 
+            & \mid (x:A) → B & \text{product} \\
+            & \mid \CP i t u & \text{colored pair} \\
+            & \mid \CTimes i {x:A} B  & \text{colored type pair} \\
+            & \mid \fp i t u & \text{colored function pair}\\
+            & \mid A \op i u & \text{parametricity type} \\
+            & \mid t \param i & \text{parametricity proof} \\
+    \Gamma,\Delta & \coloneqq () \mid \Gamma,x:A
+  \end{align*}
+\end{definition}
 
 \begin{itemize}
 \item Each color $i$ may be erased from a term $a$ to obtain a realiser, written $\proj i a$ (detailed in \fref{def:color-subst}).
@@ -132,6 +139,7 @@ colors.
 \end{itemize}
 
 
+
 \begin{definition}[Typing judgements — à la Tarski]
 We mutually define three judgments:
 \begin{itemize}
@@ -140,7 +148,7 @@ We mutually define three judgments:
 \item $Γ⊢_I a : A$  (Does the term $a$ have type $A$ in the context $Γ$ and assuming the color set $I$?)
 \end{itemize}
 
-Contexts:
+\fbox{$Γ⊢_I$}
   \begin{mathpar}
     \inferrule[Empty]{~}{() ⊢_I }
 
@@ -148,12 +156,12 @@ Contexts:
 
   \end{mathpar}
  
-Types:
-    \todo{The judgement "small" is defined nowhere. It looks like some rules are in the wrong section also. }
+\fbox{$Γ⊢_I A$}
  \begin{mathpar}
-    \inferrule{Γ ⊢_I \text{$A$ small} }{Γ ⊢_I |A| : U}
 
-    \inferrule{Γ ⊢_I A : U}{Γ ⊢_I \El{A}}
+    \inferrule[Universe]{}{Γ ⊢_I U}
+
+    \inferrule[Decode]{Γ ⊢_I A : U}{Γ ⊢_I \El{A}}
 
     \\
     \inferrule[Pi]{Γ ⊢_I A \\ Γ,x:A ⊢_I B}{Γ ⊢_I (x:A) → B}
@@ -163,12 +171,13 @@ Types:
     \inferrule[In-Pred]{Γ ⊢_{I} A \\ Γ,x:A ⊢_{I} B}{Γ ⊢_{I,i} \CTimes i {x:A} B}
  \end{mathpar}
 
-Terms:
+\fbox{$Γ⊢_I a : A$}
   \begin{mathpar}
     \inferrule[Conv]{Γ ⊢_I t:A \\ A = B}{Γ ⊢_I t : B}
 
     \inferrule[Var]{Γ ⊢_I \\ x : A ∈ Γ}{Γ ⊢_I x : A}
 
+    \inferrule[Code]{Γ ⊢_I A }{Γ ⊢_I |A| : U}
 
     \\\inferrule[Lam]{Γ,x:A ⊢_I B}{Γ ⊢_I λx:A.b : (x:A) → B}
  
