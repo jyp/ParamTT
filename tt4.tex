@@ -107,13 +107,14 @@ Our technical contributions are as follows:
 In the following section we define the syntax and typing-rules of our
 parametric type-theory, as well as the equality judgement.
 
-We assume a set of symbols, called \emph{colors}.
-The metasyntactic variables $i,j,\ldots$ range over colours, while
-$I,J,…$ range over finite sets of colours.
+We consider a special symbol ‘0’ and assume a countable infinite set of other
+symbols, called \emph{colors}.
+The metasyntactic variables $i,j,\ldots$ range over colors, while
+$I,J,…$ range over \emph{finite} sets of colors.
 
 Compared to type-theory, the main innovation of the type-theory
 presented here is that terms may depend on (a finite number of)
-colours.
+colors.
 \begin{definition}[Syntax of terms and contexts]
   \begin{align*}
     t,u,A,B & \coloneqq x & \text {variable} \\
@@ -207,11 +208,16 @@ $∋_i$. The distinction between big and small types being standard, and
 to keep the presentation concise, we leave it implicit in the syntax.
 
 % 'Morphism' means something only in the context of a category; hence Morphism application ==> Color substitution
+\begin{definition}
+  A \emph{color map} $f : I → J$ is a function $I → J ∪ \{0\}$ such that
+  $f(i_1) = f(i_2)$ iff $i_1 = i_2$ whenever $f(i_1) = f(i_2) ∈ J$.
+\end{definition}
 \begin{definition}[Color substitution]~
   \label{def:color-subst}
-  We consider partial injections $f : I → J$ and for any term $a$,
+  We consider a color map $f : I → J$ and for any term $a$,
   we define the term $af$ by structural induction on $a$.
-  We note $(i\,0) : I,i → I$ the partial identity.
+  We note $(i\,0) : I,i → I$ the partial identity: $(i\,0)\,i = 0$ and
+  $(i\,0)\,j = j$ for any $j ∈ I$.
 \begin{align*}
   x f & = x \\
   U f & = U \\
@@ -240,7 +246,7 @@ to keep the presentation concise, we leave it implicit in the syntax.
 \end{align*}
   (We remark that for any $f : I,i → J,j$ with $fi=j$, there is a
   unique $g : I → J$ such that $(i\,0)g = f(j\,0) : I,i → J$;
-  and that for any $f : I,i → J$ which is not defined on $i$, there is
+  and that for any $f : I,i → J$ such that $f(i) = 0$, there is
   a unique $g : I → J$ such that $(i\,0)g = f$.)
 
   \begin{theorem}[Color substitution preserves typing]
@@ -321,7 +327,7 @@ Additionally, all congruences yield convertibity rules.
 \section{Parametricity}
 \label{sec:parametricity}
 
-Contrary to previous type theories with internalized parametricity,
+Contrary to previous type theories with internalized parametricity
 \citep{bernardy_computational_2012, bernardy_type-theory_2013}, the
 system presented here lacks equalities which allow to compute
 parametricity types. Expressed in our syntax, those equalites are:
@@ -337,8 +343,8 @@ We say that $A$ is isomorphic to $B$ iff.
 \begin{enumerate}
   \item There exist $f : A → B$
   \item There exist $g : B → A$
-  \item For any $x$, $f (g x) = x$
-  \item For any $x$, $g (f x) = x$
+  \item For any $x$, $f\, (g\, x) = x$
+  \item For any $x$, $g\, (f\, x) = x$
 \end{enumerate}
 
 \begin{theorem}
@@ -357,31 +363,33 @@ $U \op i A$ is isomorphic to $A → U$.
       g &: (P : A → U) → U \op i A\\
       g &P = (\CTimes i {x:A} (P x)) \param i
     \end{array}$
-  \item $\CP i A {(\CTimes i {y:A} (P y)) \param i} \op i x = (\CTimes i {y:A} (P x) \op i x = P x$ By eta-contraction we get the desired result.
+  \item $\CP i A {(\CTimes i {y:A} (P y)) \param i} \op i x = (\CTimes i
+    {y:A} (P x) \op i x = P x$ By $η$-contraction we get the desired result.
   \item $(\CTimes i {x:A} {\CP i A Q \op i x}).i = Q$ if $\CTimes i {x:A} {\CP i A Q \op i x} = \CP i A Q$. We then use equality for $×_i$. The first components are obviously equal. For the second components we are left with $\CP i A Q \op i x = \CP i A Q \op i x$, which holds by reflexivity.
+  \qedhere
   \end{enumerate}
 \end{proof}
 
 \begin{theorem}
 \label{thm:iso-fun}
-$((x:A) → B[x]) \op i f$ is isomorphic to $(x:A) → (x' : A \op i x) → B[\CP i x {x'}] \op i (f x)$.
+$((x:A) → B[x]) \op i f$ is isomorphic to $(x:A) → (x' : A \op i x) → B[\CP i x {x'}] \op i {(f\, x)}$.
 \end{theorem}
 \begin{proof}~
   \begin{enumerate}
   \item $\begin{array}[t]{r@{\,}l}
-      f &: (q : ((x:A) → B[x]) \op i f) → (x:A) → (x' : A \op i x) → B[\CP i x {x'}] \op i (f x)\\
-      f &q x x' = (\CP i f q \CP i x {x'}) \param i
+      f &: (q : ((x:A) → B[x]) \op i f) → (x:A) → (x' : A \op i x) → B[\CP i x {x'}] \op i {(f x)}\\
+      f &q\, x\, x' = (\CP i f q \CP i x {x'}) \param i
     \end{array}$
   \item $\begin{array}[t]{r@{\,}l}
-      g &: ((x:A) → (x' : A \op i x) → B[\CP i x {x'}] \op i (f x)) →  ((x:A) → B[x]) \op i f\\
+      g &: ((x:A) → (x' : A \op i x) → B[\CP i x {x'}] \op i (f\,x)) →  ((x:A) → B[x]) \op i f\\
       g & p= \fp i f p \param i
     \end{array}$
   \item $(\CP i f {\fp i f p \param i} \CP i x x') \param i = ({\fp i
-      f p} \CP i x {x'}) \param i = \CP i {f x} {p x x'} \param i = p
-    x x' $
+      f p} \CP i x {x'}) \param i = \CP i {f\, x} {p\, x\, x'} \param i = p\, x\, x'$
   \item $\fp i f {λx x'. (\CP i f q \CP i x {x'}) \param i} \param i$
     iff $\fp i f {λx x'. (\CP i f q \CP i x {x'}) \param i} = \CP i f
     q$, which is true by the equality rule for function pairing.
+  \qedhere
   \end{enumerate}
 \end{proof}
 
@@ -435,20 +443,22 @@ If the type $A$ does not depend on either $i$ or $j$, the relation $λy z. A \op
 \begin{proof}
   We first construct the proof term:
   \begin{align*}
-    s & : (x:A) → (y : A \op i x) → (z : A \op i x) → (w : A \op i \CP j x y \op j z) → A \op j \CP i x z \op i y \\
-    s & x y z w = \CP i {\CP j x y}{\CP j z w} \param j \param i
+    &s : (x:A) → (y : A \op i x) → (z : A \op i x) → (w : A \op i \CP j x y \op j z) → A \op j \CP i x z \op i y \\
+    &s\, x\, y\, z\, w = \CP i {\CP j x y}{\CP j z w} \param j \param i
   \end{align*}
   And, by α-equivalence, $A \op j \CP i x z \op i y = A \op i \CP j x z \op j y$.
 \end{proof}
+
 \begin{theorem}
   If the type $A$ and the term $x$ do not depend on either $i$ or $j$, any proof of $A \op i x$ is related to the canonic proof ($x \param i$).
 \end{theorem}
 \begin{proof}
   \begin{align*}
-    q   &: (A:U) → (x:A) → (x':A \op i x) → A \op i \CP j x {p A x} \op j x'\\
-    q   &: (A:U) → (x:A) → (x':A \op i x) → A \op i \CP j x {x \param i} \op j x'& \text {by def.}\\
-    q   &: (A:U) → (x:A) → (x':A \op i x) → A \op i x \op j x' &\text {by \fref{cor:equalities}}\\
-    q & x x' = x' \param j
+    &q   : (A:U) → (x:A) → (x':A \op i x) → A \op i \CP j x {p A x} \op j x'\\
+    &q   : (A:U) → (x:A) → (x':A \op i x) → A \op i \CP j x {x \param i} \op j x'& \text {by def.}\\
+    &q   : (A:U) → (x:A) → (x':A \op i x) → A \op i x \op j x' &\text {by \fref{cor:equalities}}\\
+    &q\, x\, x' = x' \param j
+  \qedhere
   \end{align*}
 \end{proof}
 
@@ -458,12 +468,14 @@ over to the $n$-ary case in a straightforward manner.
 \section{Presheaf model}
 
 \begin{definition}
-  Let \pI{} be the category of finite set of names $I,J,K,…$ and injective
-  partial function \cite[ex.~9.7 p.~176]{PittsAM:nomsns}.
-  (Any morphism $f : I → J$ has a unique decomposition into a projection map
-  $α : I → I_α$, which is not defined anywhere, and an injection map $h : I_α ↣ J$.)
-  For any object $I$ and $i ∉ I$, we note $(i \, 0) : I,i → I$ the partial
-  identity on $I$.
+  Let \pI{} be the category of finite color sets $I,J,K,…$ and color
+  maps \cite[ex.~9.7 p.~176]{PittsAM:nomsns}.
+  A morphism $h : I → J$ is called \emph{total} if $h(i) ≠ 0$ for all $i ∈ I$,
+  and we say that $h$ is a \emph{projection} if $h(i) = 0$ for all $i ∈ I$.
+  We note $h : I ↣ J$ if $h : I → J$ if $h$ is injective and total.
+  Any morphism $f : I → J$ has a unique decomposition into a projection map
+  $α : I → I_α$ and an injection map $h : I_α ↣ J$.
+  %For any object $I$ and $i ∉ I$, we note $(i \, 0) : I,i → I$ the partial identity on $I$.
 
   \begin{tikzpicture}[node distance=4\baselineskip]
     \node              (I)  {$I$};
@@ -541,7 +553,7 @@ $ρ ∈ Γf$ and $u ∈ A(f,ρ)$.
     where $α_1 : I,i → I_α$ and $α_2 : I,i → I_α,i$ are the projections
     maps.
     The map $u ↦ uf$, $A(I,i) → A(J)$ is
-    that from $A(I) → A(J)$ if $f$ is not defined on $i$; otherwise
+    that from $A(I) → A(J)$ if $f(i) = 0$; otherwise
     we have $j = fi$ and $g : I→J$ such that $(i\,0)g = f(j\,0)$, and we
     take $u ↦ ug$.
 
@@ -613,7 +625,7 @@ $ρ ∈ Γf$ and $u ∈ A(f,ρ)$.
     Let $f : I,i → J$, $ρ : Γf$.  We need to define the $J$-set $(\ip {i} A P)(f,ρ)$.
 
     \begin{itemize}
-      \item If $f$ is not defined on $i$, we have $f : I,i \stackrel{(i\,0)}{→} I \stackrel{g}{→} J$
+      \item If $f(i) = 0$, we have $f : I,i \stackrel{(i\,0)}{→} I \stackrel{g}{→} J$
         and we define $(\ip {i} A P)(f,ρ) ≔ A(ρ',g)$
         where $ρ' ∈ Γg$ is the restriction of $ρ ∈ Γf$.
 
