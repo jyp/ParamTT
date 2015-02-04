@@ -258,7 +258,6 @@ TODO
 \end{definition}
 }
 
-Todo: perhaps rename conversion to definitional equality? To merit any of those names we need to argue that the relation is decidable. (Perhaps we can say that the new rules reduce the number of colors in scope)
 \begin{definition}[Conversion]~
 \label{def:conversion}
 
@@ -363,7 +362,7 @@ $((x:A) → B[x]) \op i f$ is isomorphic to $(x:A) → (x' : A \op i x) → B[\C
     x x' $
   \item $\fp i f {λx x'. (\CP i f q \CP i x {x'}) \param i} \param i$
     iff $\fp i f {λx x'. (\CP i f q \CP i x {x'}) \param i} = \CP i f
-    q$, which is true by conversion of function pairing.
+    q$, which is true by the equality rule for function pairing.
   \end{enumerate}
 \end{proof}
 
