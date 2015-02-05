@@ -704,13 +704,16 @@ We proceed to interpret each of the type constructions.
   the $I$-set of $(n_J)_{J ⊆ I}$ where $n_∅ ∈ ℕ$ and $n_J = 0$ for any
   non-empty $J ⊆ I$.
 \end{remark}
+\todo{We don't interpret terms? Shouldn't we say at least something
+  about it? That seems necessary to at the very least give an idea of
+  the following proof.}
 
 \begin{theorem}
   If $Γ ⊢_I a : A$, $f : I → J$, $ρ ∈ Γf$, then $a(f,ρ) ∈ A(f,ρ)$.
 %  Furthermore $af(1,ρ) = a(f,ρ)$ (using the interpretation of
 %  $Γf ⊢_J af : Af$).
 \end{theorem}
-
+\todo{Proof by induction of on the judgement?}
 \begin{theorem}
   If $Γ ⊢_I a : A$ and $Γ ⊢_I b : A$ with $a = b$, then
   $a(f,ρ) = b(f,ρ)$ for any $f : I → J$ and $ρ : Γf$.
@@ -722,6 +725,7 @@ We proceed to interpret each of the type constructions.
   \end{itemize}
 \end{theorem}
 \begin{proof}
+  \todo{We prove only so and so cases, the rest are similar or straightforward.}
   Let $f : I → J$, $j = \fresh J$, $g = (f,i=j): I,i → J,j$. We have
   We have
   \begin{align*}
