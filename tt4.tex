@@ -112,6 +112,8 @@ We consider a special symbol ‘0’ and assume a countable infinite set of othe
 symbols, called \emph{colors}.
 The metasyntactic variables $i,j,\ldots$ range over colors, while
 $I,J,…$ range over \emph{finite} sets of colors.
+We suppose a fixed \emph{gensym} function $\fresh{·}$ such that
+$\fresh{I} ∉ I$ for any finite color set $I$.
 
 Compared to type-theory, the main innovation of the type-theory
 presented here is that terms may depend on (a finite number of)
@@ -525,9 +527,6 @@ over to the $n$-ary case in a straightforward manner.
     \draw[->] (I) to node[above right] {$f$} (J);
     \draw[to reversed->] (Ia) to node[below] {$h$} (J);
   \end{tikzpicture}
-
-  We suppose a fixed \emph{gensym} function $\fresh{·}$ such that
-  $\fresh{I} ∉ I$ for any object $I$.
 \end{definition}
 
 \begin{definition}
