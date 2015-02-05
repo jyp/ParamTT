@@ -108,11 +108,12 @@ Our technical contributions are as follows:
 In the following section we define the syntax and typing-rules of our
 parametric type-theory, as well as the equality judgement.
 
-We consider a special symbol ‘0’ and assume a countable infinite set of other
+We assume a special symbol ‘0’, and a countable infinite set of other
 symbols, called \emph{colors}.
 The metasyntactic variables $i,j,\ldots$ range over colors, while
 $I,J,…$ range over \emph{finite} sets of colors.
-We suppose a fixed \emph{gensym} function $\fresh{·}$ such that
+We suppose a fixed function $\fresh{·}$ such that
+% JP: I remove \emph{gensym} which occurs nowhere else in the text
 $\fresh{I} ∉ I$ for any finite color set $I$.
 %
 The main innovation of the type-theory
@@ -137,7 +138,7 @@ colors.
 \end{definition}
 
 We give a few intuitions to interpret the novel syntax, before giving formally the typing rules of the system. 
-\begin{itemize}
+\begin{enumerate}
 \item The type $A \op i u$ expresses that $u$ satisfies the
   parametricity predicate associated with the type $A$ on color $i$.
 \item The term $a \param i$ yields a proof of $A \op i \proj i a$.
@@ -146,7 +147,7 @@ We give a few intuitions to interpret the novel syntax, before giving formally t
   \fref{def:color-subst}).
 \item The forms $\CP i t u$, $\CTimes i A B$ and $\fp i t u$ allow to
   locally associate parametricity proofs with a given realizer.
-\end{itemize}
+\end{enumerate}
 
 
 
@@ -324,11 +325,11 @@ inductively by the following rules.
     \and
     \inferrule[Trans]{a = b \\ b = c}{a = c}
   \end{mathpar}
-Additionally, all congruences yield convertibity rules.
+Additionally, all congruences yield conversion rules.
 \end{definition}
 
 
-\begin{corollary}~
+\begin{corollary}[Any term can be seen as a pair of a realizer and a parametricity proof]~
   \label{cor:equalities}
   \begin{itemize}
   \item $a = \CP i {\proj i a} {a \param i}$
@@ -350,7 +351,7 @@ $$((x:A) → B[x]) \op i f = (x:A) → (x' : A \op i x) → B[\CP i x {x'}] \op 
 
 The absence of the above equalities allows for a simpler system, but
 how can we ensure that all parametricity theorems hold?  The answer is
-that we provide the above relationships as isomorphisms.
+that the above relationships hold as isomorphisms.
 
 We say that $A$ is isomorphic to $B$ iff.
 \begin{enumerate}
@@ -370,9 +371,9 @@ $U \op i A$ is isomorphic to $A → U$.
 \begin{proof}~
   \begin{enumerate}
   \item
-    $\begin{array}[t]{l@{\,}l@{\,}l}
-      f : (&Q : U \op i A) → &A → U \\ 
-      f & Q &x = \CP i A Q \op i x
+    $\begin{array}[t]{l@{\,}l}
+      f &: (Q : U \op i A) → A → U \\ 
+      f & Q\, x = \CP i A Q \op i x
     \end{array}$
   \item
     $\begin{array}[t]{r@{\,}l}
@@ -722,7 +723,7 @@ system with explicit substitution laws, as in \citep{dybjer_inductive_1994}.
 \subsection{Our own line of work}
 This work continues a line of work aiming at a smooth integration of
 parametricity with dependent types
-\citep{bernardy_parametricity_2010,bernardy_realizability_2011,bernardy_proofs_2012,bernardy_computational_2012,bernardy_type-theory_2013}. The present work offers two improvements:
+\citep{bernardy_parametricity_2010,bernardy_realizability_2011,bernardy_proofs_2012,bernardy_computational_2012,bernardy_type-theory_2013}. The present work offers two improvements over previous publications:
 1. a denotational semantics, and
 2. a much simplified syntax, suitable as the basis of a proof assistant.
 
