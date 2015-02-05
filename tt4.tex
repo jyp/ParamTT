@@ -212,13 +212,18 @@ to keep the presentation concise, we leave it implicit in the syntax.
 \begin{definition}
   A \emph{color map} $f : I → J$ is a function $I → J ∪ \{0\}$ such that
   $f(i_1) = f(i_2)$ iff $i_1 = i_2$ whenever $f(i_1) = f(i_2) ∈ J$.
+%
+  We note $(i\,0) : I,i → I$ the partial identity: $(i\,0)\,i = 0$ and
+  $(i\,0)\,j = j$ for any $j ∈ I$; and $η_i : I → I,i$ the canonical
+  injection: $η_i(i) =i$ for all $i ∈ I$.
+  Furthermore for each color map $f : I → J$, $i ∉ I$ and $j ∉ J$, we
+  note $f^{ij} : I,i → J,j$ the color map such that
+  $f^{ij}(i) = j$ and $f^{ij}(k) = f(k)$ for all $k ∈ I$.
 \end{definition}
 \begin{definition}[Color substitution]~
   \label{def:color-subst}
   We consider a color map $f : I → J$ as a (color) substitution on terms,
-  and we define $af$ by structural induction on $a$.
-  We note $(i\,0) : I,i → I$ the partial identity: $(i\,0)\,i = 0$ and
-  $(i\,0)\,j = j$ for any $j ∈ I$.
+  and define $af$ by structural induction on $a$.
 \begin{align*}
   x f & = x \\
   U f & = U \\
@@ -226,47 +231,44 @@ to keep the presentation concise, we leave it implicit in the syntax.
   (t\,u) f &= (tf) \, (uf) \\
   ((x:A)→B) f &= (x:Af)→(Bf) \\
   \CP {i} a p f &= \CP {j} {ag} {pg}
-    & \text{if $fi = j$, $g : I→J_{\{j\}}$ such that $(i\,0)g = f(j\,0) : I,i → J_{\{j\}}$} \\
-                &= ag
-    & \text{if $∃g : I→J$ such that $f = (i\,0)g : I,i → J$} \\
-  (\CTimes {i} A B) f &= \CTimes {j} {(Ag)} {(Bg)}
-    & \text{if $fi = j$, $g : I→J_{\{j\}}$ such that $(i\,0)g = f(j\,0) : I,i → J_{\{j\}}$} \\
-                &= Ag
-    & \text{if $∃g : I→J$ such that $f = (i\,0)g : I,i → J$} \\
+    & \text{if $f(i) = j ∈ J$, where g = $η_i f (j\,0)$} \\
+    &= a(η_if)
+    & \text{if $f(i) = 0$} \\
+  (A ×_i B) f &= \CTimes {j} {Ag} {(Bg)}
+    & \text{if $f(i) = j ∈ J$, where g = $η_i f (j\,0)$} \\
+    &= A(η_if)
+    & \text{if $f(i) = 0$} \\
   \fp {i} u v f &= \fp {j} {ug} {vg}
-    & \text{if $fi = j$, $g : I→J_{\{j\}}$ such that $(i\,0)g = f(j\,0) : I,i → J_{\{j\}}$} \\
-                &= ug
-    & \text{if $∃g : I→J$ such that $f = (i\,0)g : I,i → J$} \\
-  A \op {i} a &= (Ag) \op {j} (af)
-    & \text{where $j ∉ J$ and $g:I,i → J,j$ satisfies $(i\,0)f = g(j\,0)$} \\
-  (a · i) f &= (ag) · j
-    & \text{where $j ∉ J$ and $g:I,i → J,j$ satisfies $(i\,0)f = g(j\,0)$}
+    & \text{if $f(i) = j ∈ J$, where g = $η_i f (j\,0)$} \\
+    &= u(η_if)
+    & \text{if $f(i) = 0$} \\
+  (A \op {i} a) f &= (Af^{ij}) \op {j} (af)
+    & \text{where $j = \fresh J$} \\
+  (a · i) f &= (af^{ij}) · j
+    & \text{where $j = \fresh J$} \\
   \\[.33\baselineskip]
   () f      &= () \\
   (Γ,x:A) f &= Γ f, x : A f
 \end{align*}
-  (We remark that for any $f : I,i → J,j$ with $fi=j$, there is a
-  unique $g : I → J$ such that $(i\,0)g = f(j\,0) : I,i → J$;
-  and that for any $f : I,i → J$ such that $f(i) = 0$, there is
-  a unique $g : I → J$ such that $(i\,0)g = f$.)
-  \begin{theorem}~
-    \begin{itemize}
-    \item $a1_I = a$
-    \item $(af)g = a(fg)$ for any $f: I → J$ and $g : J → K$
-    \end{itemize}
-  \end{theorem}
-  \begin{proof}
-    By structural induction on $a$.
-  \end{proof}
-
-  \begin{theorem}[Color substitution preserves typing]
-    If $Γ ⊢_I a : A$ then the term
-  $af$ is defined and $Γ f ⊢_J af : Af$
-  \end{theorem}
-  \begin{proof}
-    By induction on the typing judgement.
-  \end{proof}
 \end{definition}
+
+\begin{theorem}~
+  \begin{itemize}
+  \item $a1_I = a$
+  \item $(af)g = a(fg)$ for any $f: I → J$ and $g : J → K$
+  \end{itemize}
+\end{theorem}
+\begin{proof}
+  By structural induction on $a$.
+\end{proof}
+
+\begin{theorem}[Color substitution preserves typing]
+  If $Γ ⊢_I a : A$ then the term
+$af$ is defined and $Γ f ⊢_J af : Af$
+\end{theorem}
+\begin{proof}
+  By induction on the typing judgement.
+\end{proof}
 
 \comment{
 \begin{definition}[Normal forms and neutral terms]~
