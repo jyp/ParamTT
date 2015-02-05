@@ -509,10 +509,26 @@ We continue to reason by deduction:
   \qedhere
   \end{align*}
 \end{proof}
-
 \begin{corollary}
   The types $A \op i \CP j x y \op j z$ and $A \op j \CP i x z \op i y$ are isomorphic.
 \end{corollary}
+
+\begin{remark}
+  At this point one may wonder if the system could have been set up to have
+ $t\param i \param j = t\param j \param i$, to have an
+  equality between $A \op i \CP j x y \op j z$ and $A \op j \CP i x z
+  \op i y$ rather than an isomorphism, and to have conversion
+  rules such as $\CP j a b \param i = \CP j {a \param i}{b \param
+    i}$. The answer is that the equation
+  $$A \op i \CP j x y \op j z = A \op j \CP i x z \op i y$$  
+  is inconsistent: in particular for $A = U$ one gets
+  $$U \op i \CP j X P \op j Q = U \op i \CP j X P \op j Q$$
+  for arbitrary $P$ and $Q$ of type $U \op i X$.  The above equality
+  in turn implies
+  $$(x:X) → P x → Q x → U = (x:X) → Q x → P x → U$$
+  for arbitrary predicates $P$ and $Q$ over $X$, which is obviously
+  inconsistent.
+\end{remark}
 \begin{theorem}
   If the type $A$ and the term $x$ do not depend on either $i$ or $j$, any proof of $A \op i x$ is related to the canonic proof ($x \param i$).
 \end{theorem}
