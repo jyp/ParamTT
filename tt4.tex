@@ -220,7 +220,7 @@ to keep the presentation concise, we leave it implicit in the syntax.
   We note $1_I : I → I$ the identity map: $1_I(i) = i$ for each $i ∈ I$;
   we note $(i\,0) : I,i → I$ the partial identity: $(i\,0)(i) = 0$ and
   $(i\,0)(j) = j$ for each $j ∈ I$;
-  and $η_i : I → I,i$ the canonical injection: $η_i(i) =i$ for all $i ∈ I$.
+  and $ι_i : I → I,i$ the inclusion: $ι_i(i) =i$ for all $i ∈ I$.
 %
   Furthermore for each color map $f : I → J$, $i ∉ I$ and $j ∉ J$, we
   note $f^{ij} : I,i → J,j$ the color map such that
@@ -237,16 +237,16 @@ to keep the presentation concise, we leave it implicit in the syntax.
   (t\,u) f &= (tf) \, (uf) \\
   ((x:A)→B) f &= (x:Af)→(Bf) \\
   \CP {i} a p f &= \CP {j} {ag} {pg}
-    & \text{if $f(i) = j ∈ J$, where g = $η_i f (j\,0)$} \\
-    &= a(η_if)
+    & \text{if $f(i) = j ∈ J$, where g = $ι_i f (j\,0)$} \\
+    &= a(ι_if)
     & \text{if $f(i) = 0$} \\
   (A ×_i B) f &= \CTimes {j} {Ag} {(Bg)}
-    & \text{if $f(i) = j ∈ J$, where g = $η_i f (j\,0)$} \\
-    &= A(η_if)
+    & \text{if $f(i) = j ∈ J$, where g = $ι_i f (j\,0)$} \\
+    &= A(ι_if)
     & \text{if $f(i) = 0$} \\
   \fp {i} u v f &= \fp {j} {ug} {vg}
-    & \text{if $f(i) = j ∈ J$, where g = $η_i f (j\,0)$} \\
-    &= u(η_if)
+    & \text{if $f(i) = j ∈ J$, where g = $ι_i f (j\,0)$} \\
+    &= u(ι_if)
     & \text{if $f(i) = 0$} \\
   (A \op {i} a) f &= (Af^{ij}) \op {j} (af)
     & \text{where $j = \fresh J$} \\
