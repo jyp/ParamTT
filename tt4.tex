@@ -584,7 +584,7 @@ satisfying $u1 = u$ and $(uf)g = u(fg)$. We refine this notion by requiring
 two further conditions:
 %
 \begin{enumerate}
-  \item for any $I ∈ \pI$, $F(I)$ is a $I$-set, and
+  \item for any $I ∈ \pI$, $F(I)$ is an $I$-set, and
   \item for any projection map $α : I → I_α$, the restriction
     map $F(I) → F(I_α)$, $u ↦ uα$ is the projection operation, \ie,
     $uα_J = u_J$ for any $J ⊆ I$.
@@ -605,10 +605,10 @@ A type $Γ ⊢_I A$ is interpreted as follows.
 For each map $f : I → J$, and $ρ ∈ Γf$ we give a $J$-set $A(f,ρ)$
 together with restriction maps $A(f,ρ) → A(fg,ρg)$, $u ↦ ug$ if $g : J → K$
 satisfying $u1 = u$ and $(ug)h = u(gh)$ for any $h : K → L$.
-Furthermore the map $A(f,ρ) → A(fα,ρα)$, $u ↦ uα$ is the projection operation,
+Furthermore the map $A(f,ρ) → A(fα,ρα)$, $u ↦ uα$ is the projection operation.
 
 \medskip
-A term $Γ ⊢_I a : A$ is defined by giving a $J$-element $a(f,ρ) ∈ A(f,ρ)$
+A term $Γ ⊢_I a : A$ is interpreted by a $J$-element $a(f,ρ) ∈ A(f,ρ)$
 for each $f: I → J$ and $ρ ∈ Γf$, such that
 $a(f,ρ)g = a(fg,ρg)$ for any $g : J → K$.
 
@@ -624,7 +624,7 @@ it is not clear how to validate the equality
 ${{(\CTimes i {x:A} B[x])} \op i a = B[a]}$.
 
 \bigskip
-The semantics we define satisfies the substitution law that if $Γ,x:A ⊢_I B$
+The semantics we define satisfies the substitution law. That is, if $Γ,x:A ⊢_I B$
 and $Γ ⊢_I a:A$ then for any $f : I → J$ and $ρ ∈ Γ f$ we have
 $B[a](f,ρ) = B(f,(ρ,x=a(f,ρ)))$.
 It also satisfies the substitution law on colors, \ie, if $Γ ⊢_I A$ and
@@ -635,24 +635,25 @@ For establishing these properties, one way is to introduce an intermediate
 system with explicit substitution laws, as in \citep{dybjer_inductive_1994}.
 
 \bigskip
+We proceed to interpret each of the type constructions.
 \begin{description}
   \item[\sc Pi.]
     Assume $f : I → J$ and $ρ ∈ Γf$. We define $((x:A) → B)(ρ,f)$ as a $J$-set.
-    A ($J$-)element of $((x:A) → B)(f,ρ)$ is defined as a tuple $λ = (λ_α)$,
+    A $J$-element of $((x:A) → B)(f,ρ)$ is defined as a tuple $λ = (λ_α)$,
     where each $λ_α$ is a family of elements indexed by any total map $g : J_α ↣ K$:
     $$λ_{α g} ∈ \prod_{u : A(fα g,ραg)} B(fαg,⟨ραg,x=u⟩)$$
     such that
     $\app{λ_{αg}}{u} h = \app{λ_{gh}}{uh}$ for $g : J ↣ K$ total and \emph{any} $h : K → L$.
-    Since any map $J → K$ has an unique decomposition in a projection and a total
+    Because any map $J → K$ has an unique decomposition as a projection and a total
     map, we can consider $λ_h$ for an arbitrary map $h : J → K$.
     Indeed, if $g : J → K$ is an arbitrary map, we define $λ g$ to be the tuple
     $(λ g_β)$ where $λ g_β$ is the family $λ g_{βh} = λ_{gβh}$.
 
-    With such a definition, it is direct that we have $λα_{β} = λ_{αβ}$.
+    With such a definition, we directly have $λα_{β} = λ_{αβ}$.
 
     This is similar to the usual interpretation of dependent product in
     presheaf models \citep{Hofmann97syntaxand,bezem2014model} except that we
-    have to present each element as a tuple, which it is in a natural way.
+    have to present each element as a tuple, which can be done in a natural way.
 
 
   \item[\sc Universe.]
@@ -670,14 +671,14 @@ system with explicit substitution laws, as in \citep{dybjer_inductive_1994}.
 
     This is similar to the usual interpretation of universe in
     presheaf models \citep{Hofmann97syntaxand,bezem2014model} except that we
-    have to present each element as a tuple, which it is in a natural way.
+    have to present each element as a tuple, which again can be done in a natural way.
 
 
   \item[\sc Out.]
-    Assume $f : I → J$ assume $ρ ∈ Γf$.  We need to define the $J$-set $(P \op {i} a)(f,ρ)$.
+    Assume $f : I → J$ and assume $ρ ∈ Γf$.  We need to define the $J$-set $(P \op {i} a)(f,ρ)$.
     Let $j = \fresh J$ and $f' = (f,i=j) : I,i → J,j$ and $ι_i : I → I,i$,
     $ι_j : J → J,j$ the inclusions.
-    We can consider the $J,j$-set $P(f',ρι_i)$, and $a(f,ρ)$ is a ($J$-)element of
+    We can consider the $J,j$-set $P(f',ρι_i)$, and $a(f,ρ)$ a ($J$-)element of
     $P(i\,0)(f,ρ) = P((i\,0)f,ρ) = P(ι_i f\,ρι_j)(j\,0)$.
     We define $(P \op {i} a)(f,ρ)$ to be the set of $J$-elements $v$ such that
     $(a(f,ρ),_j v) ∈ P(ι_i f\,ρι_j)$. If $v$ is such an element and $g : J → K$
@@ -686,10 +687,10 @@ system with explicit substitution laws, as in \citep{dybjer_inductive_1994}.
 
   \item[\sc In-Pred.]
     Assume $f : I,i → J$, and $ρ ∈ Γ(ι_if)$.  We need to define the $J$-set
-    $(\CTimes {x:A} i B)(f,ρ)$.
+    $(\CTimes i {x:A} B)(f,ρ)$.
     Let $ι_i : I → I,i$ be the inclusion. There are two cases. If $f(i) = 0$
-    then $(\CTimes {x:A} i B)(f,ρ)$ is defined to be the $J$-set $A(ι_i f)$.
-    Otherwise, if $f(i) = j ∈ J$, then we define $(\CTimes {x:A} i B)(f,ρ)$ to
+    then $(\CTimes i {x:A} B)(f,ρ)$ is defined to be the $J$-set $A(ι_i f)$.
+    Otherwise, if $f(i) = j ∈ J$, then we define $(\CTimes i {x:A} B)(f,ρ)$ to
     be the $J$-set of $(u,_j v)$ where $u$ is a $J\backslash\{j\}$-element in
     $A(ι_i f(j\,0),ρ(j\,0))$ and $v$ is an element in
     $B(ι_i f(j\,0),(ρ(j\,0),x=u))$.
