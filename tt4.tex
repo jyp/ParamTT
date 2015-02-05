@@ -456,15 +456,15 @@ If the type $A$ does not depend on either $i$ or $j$, the relation $λy z. A \op
 \begin{proof}
   We first construct the proof term:
   \begin{align*}
-    &s : (x:A) → (y : A \op i x) → (z : A \op i x) → (w : A \op i \CP j x y \op j z) → A \op j \CP i x z \op i y \\
-    &s\, x\, y\, z\, w = \CP i {\CP j x y}{\CP j z w} \param j \param i
+    &\sigma_1 : (x:A) → (y : A \op i x) → (z : A \op i x) → (w : A \op i \CP j x y \op j z) → A \op j \CP i x z \op i y \\
+    &\sigma_1\, x\, y\, z\, w = \CP i {\CP j x y}{\CP j z w} \param j \param i
   \end{align*}
   And, by α-equivalence, $A \op j \CP i x z \op i y = A \op i \CP j x z \op j y$.
 \end{proof}
 
 \begin{theorem}
   As defined above, function $s$ is involutive in its last argument:
-  \[ s\, y\, x\, z\, (s\, x\, y\, z\, w) = w \]
+  \[ \sigma_1\, y\, x\, z\, (\sigma_1\, x\, y\, z\, w) = w \]
 \end{theorem}
 \begin{proof}
   Let
@@ -510,7 +510,10 @@ We continue to reason by deduction:
 
 To conclude the section we note that by iterating parametricity $n$
 times, one creates $n$-ary relations, and that the above results carry
-over to the $n$-ary case in a straightforward manner.
+over to the $n$-ary case. That is, for each $k < n$, one can construct a function
+$\sigma_k$, which exchanges the arguments $k$ and $k+1$ of a
+relation. Furthermore, these functions satisfy the laws of the
+generators of the symmetric group.
 \section{Presheaf model}
 
 \begin{definition}
