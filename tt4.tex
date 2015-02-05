@@ -538,11 +538,16 @@ In this section we show how to interpret our type-theory by a presheaf model.
 
   Recall \pI{} (\fref{def:pI}), the category of color
   maps.
-  We say that a morphism $α : I → I_α$ is a \emph{projection} if $I_α ⊆ I$,$α(i) = 0$
-  for each $i ∈ I \backslash I_α$ and $α(i) = i$ for each $i ∈ I_α$.
+  \begin{definition}[Projection]
+    We say that a morphism $α : I → I_α$ is a \emph{projection} if $I_α ⊆ I$,$α(i) = 0$
+    for each $i ∈ I \backslash I_α$ and $α(i) = i$ for each $i ∈ I_α$.
+  \end{definition}
+  \begin{definition}[Injective morphism]
   Injective morphisms, noted $h : I ↣ J$, are the \emph{total} ones, \ie,
   those verifying $h(i) ≠ 0$ for all $i ∈ I$.
-  A simple, but fundamental, remark is that any morphism $f : I → J$ has a
+  \end{definition}
+  \begin{remark}[Morphism decomposition]
+  Any morphism $f : I → J$ has a
   unique decomposition into a projection map
   $α : I → I_α$ and a total map $h : I_α ↣ J$.
 
@@ -555,13 +560,15 @@ In this section we show how to interpret our type-theory by a presheaf model.
     \draw[->] (I) to node[above right] {$f$} (J);
     \draw[to reversed->] (Ia) to node[below] {$h$} (J);
   \end{tikzpicture}
+  \end{remark}
 
-\begin{definition}
+\begin{definition}[$I$-set]
   We call $I$-element any tuple indexed by the subsets of $I$: $(u_J)_{J ⊆ I}$.
   An $I$-set is a set of $I$-elements.  For instance, the elements of a
   $\{i,j\}$-set are of the form $u = (u_∅,u_i,u_j,u_{i,j})$.
   Alternatively, such an element can be seen as a tuple $(u_α)$ indexed
   by the projections $α : I → I_α$.
+\end{definition}
   %
   If $a,b$ are $I$-elements and $j ∉ I$, we define the $(I,j)$-element
   $(a ,_j b)$ as $(a ,_j b)_J ≔ a_J$ if $j ∉ J$ and $(a ,_j b)_{J,j} ≔ b_J$.
@@ -569,10 +576,9 @@ In this section we show how to interpret our type-theory by a presheaf model.
   Any $(I,i)$-element can be written $u = (u_J)_{J ⊆ \{I,i\}} = (u_J)_{J ⊆ I} ∪ (u_{J,i})_{J ⊆ I}$;
   We can therefore define the $I$-elements $u (i\,0) ≔ (u_J)_{J ⊆ I}$ and $u · i ≔ (u_{J,i})_{J ⊆ I}$.
   (Hence by definition $u = (u (i\,0) ,_i u · i)$.)
-\end{definition}
 
 \bigskip
-A \emph{presheaf} $F$ on \pI{} is given by a family of sets $F(I)$ together
+Recall that a \emph{presheaf} $F$ on \pI{} is given by a family of sets $F(I)$ together
 with restriction maps $F(I) → F(J)$, $u ↦ uf$ for $f : I → J$
 satisfying $u1 = u$ and $(uf)g = u(fg)$. We refine this notion by requiring
 two further conditions:
