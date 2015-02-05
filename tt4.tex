@@ -219,17 +219,28 @@ to keep the presentation concise, we leave it implicit in the syntax.
   A \emph{color map} $f : I → J$ is a function $I → J ∪ \{0\}$ such that
   $f(i_1) = f(i_2)$ iff $i_1 = i_2$ whenever $f(i_1) = f(i_2) ∈ J$.
 %
+%
+\end{definition}
+
+\begin{definition}[Category $\pI{}$]
+  \label{def:pI}
+  Let objets be objects be finite color sets
+  $I,J,K,…$ and morphisms be color maps.
   If $f : I → J$ and $g : J → k$, we define the composition $fg : I → K$
   as $fg(i) = 0$ if $f(i) = 0$ and $fg(i) = g(f(i))$ if $f(i) ∈ J$.
-  We note $1_I : I → I$ the identity map: $1_I(i) = i$ for each $i ∈ I$;
-  we note $(i\,0) : I,i → I$ the partial identity: $(i\,0)(i) = 0$ and
-  $(i\,0)(j) = j$ for each $j ∈ I$;
-  and $ι_i : I → I,i$ the inclusion: $ι_i(i) =i$ for all $i ∈ I$.
-%
-  Furthermore for each color map $f : I → J$, $i ∉ I$ and $j ∉ J$, we
-  note $f^{ij} : I,i → J,j$ the color map such that
-  $f^{ij}(i) = j$ and $f^{ij}(k) = f(k)$ for all $k ∈ I$.
+  We write $1_I : I → I$ the identity map: $1_I(i) = i$ for each $i ∈ I$;
+  It is easy to check that we have a category (\cite[ex.~9.7 p.~176]{PittsAM:nomsns}).
 \end{definition}
+
+We note
+\begin{itemize}
+\item $(i\,0) : I,i → I$ the partial identity: $(i\,0)(i) = 0$ and $(i\,0)(j) = j$ for each $j ∈ I$; 
+\item $ι_i : I → I,i$ the inclusion: $ι_i(i) =i$ for all $i ∈ I$.
+\end{itemize}
+Furthermore for each color map $f : I → J$, $i ∉ I$ and $j ∉ J$, we
+note $f^{ij} : I,i → J,j$ the color map such that
+$f^{ij}(i) = j$ and $f^{ij}(k) = f(k)$ for all $k ∈ I$.
+
 \begin{definition}[Color substitution]~
   \label{def:color-subst}
   We consider a color map $f : I → J$ as a (color) substitution on terms,
@@ -525,9 +536,8 @@ generators of the symmetric group.
 \label{sec:model}
 In this section we show how to interpret our type-theory by a presheaf model.
 
-\begin{definition}
-  Let \pI{} be the category of finite color sets $I,J,K,…$ and color
-  maps \cite[ex.~9.7 p.~176]{PittsAM:nomsns}.
+  Recall \pI{} (\fref{def:pI}), the category of color
+  maps.
   We say that a morphism $α : I → I_α$ is a \emph{projection} if $I_α ⊆ I$,$α(i) = 0$
   for each $i ∈ I \backslash I_α$ and $α(i) = i$ for each $i ∈ I_α$.
   Injective morphisms, noted $h : I ↣ J$, are the \emph{total} ones, \ie,
@@ -545,7 +555,6 @@ In this section we show how to interpret our type-theory by a presheaf model.
     \draw[->] (I) to node[above right] {$f$} (J);
     \draw[to reversed->] (Ia) to node[below] {$h$} (J);
   \end{tikzpicture}
-\end{definition}
 
 \begin{definition}
   We call $I$-element any tuple indexed by the subsets of $I$: $(u_J)_{J ⊆ I}$.
