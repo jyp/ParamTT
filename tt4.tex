@@ -123,7 +123,7 @@ colors.
     t,u,A,B & \coloneqq x & \text {variable} \\
             & \mid U & \text{universe} \\ 
             & \mid |A| & \text{code} \\ 
-            & \mid El(A) & \text{decode} \\ 
+            & \mid \El{A} & \text{decode} \\
             & \mid λx:A. t & \text{abstraction} \\
             & \mid t u & \text{application} \\ 
             & \mid (x:A) → B & \text{product} \\
@@ -675,7 +675,7 @@ system with explicit substitution laws, as in \citep{dybjer_inductive_1994}.
 \end{description}
 
 \begin{remark}
-  Our calculs does not have any base type, but they could interpreted
+  Our calculus does not have any base type, but they could interpreted
   by modifying their usual interpretation as a constant presheaf into an
   isomorphic $I$-set.
   For instance, the base type of natural numbers $ℕ$ would be interpreted as
@@ -770,7 +770,7 @@ an underlying calculus, while in the present work they refine a presheaf structu
 
 The presheaf construction used in this paper follows a known template,
 used for example by \citet{bezem2014model,DBLP:journals/corr/Pitts14}
-to model univalence in type-theory.Not only both models use a
+to model univalence in type-theory. Not only both models use a
 presheaf, but the underlying category is the same ($\pI$). This means
 as all these models have an additional cubical structure.  We find
 remarkable that cubical structures are useful for modeling both
