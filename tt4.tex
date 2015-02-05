@@ -36,6 +36,7 @@
 \def\ie{\textit{i.e.}}
 \def\app#1#2{\mathsf{app}(#1,#2)}
 \def\El#1{\mathrm{El}(#1)}
+\def\opp{\mathrm{op}}
 
 \title{A presheaf model of parametric type-theory}
 
@@ -518,7 +519,8 @@ over to the $n$-ary case in a straightforward manner.
     \draw[to reversed->] (Ia) to node[below] {$h$} (J);
   \end{tikzpicture}
 
-  For any object $I$, let $\fresh{I}$ be a fresh name: $\fresh{I} ∉ I$.
+  We suppose a fixed \emph{gensym} function $\fresh{·}$ such that
+  $\fresh{I} ∉ I$ for any object $I$.
 \end{definition}
 
 \begin{definition}
@@ -545,29 +547,68 @@ following restrictions:
 \end{enumerate}
 
 \bigskip
-A context $Γ ⊢_I$ is given by a $J$-set $Γf$ for each map $f : I → J$.
+A context $Γ ⊢_I$ is given by a $J$-set $Γf$ for any map $f : I → J$.
 Furthermore the map $ρ ↦ ρα$, $Γf → Γ(fα)$ is the projection operation,
 and if $g : J → K$ then the map $ρ ↦ ρg$, $Γf → Γ(fg)$ is such that
 $ρ1 = ρ$ and $(ρg)h = ρ(gh)$ for any $h : K → L$.
 
 \medskip
-A type $Γ ⊢_I A$ is given by a $J$-set $A(f,ρ)$ for each $f : I → J$ and
-$ρ : Γf$.
+A context $Γ ⊢_I$ is interpreted as a presheaf on the slice category
+$\pI^\opp/I$: for each map $f : I → J$, we have a $J$-set $ρ : Γf$ and
+we give a $J$-set $A(f,ρ)$.
 Furthermore the map $u ↦ uα$, $A(f,ρ) → A(fα,ρα)$ is the projection operation,
 and if $g : J → K$ then the map $u ↦ ug$, $A(f,ρ) → A(fg,ρg)$ is such that
 $u1 = u$ and $(ug)h = u(gh)$ for any $h : K → L$.
 
 \medskip
-A term $Γ ⊢_I a : A$ is given by a family $a(f,ρ) : A(f,ρ)$ such that
-$a(f,ρ)g = a(fg,ρg)$ for any $f : I → J$, $ρ : Γf$ and $g : J → K$.
+A term $Γ ⊢_I a : A$ is defined by giving a $J$-element $a(f,ρ) ∈ A(f,ρ)$
+for each $f: I → J$ and $ρ : Γf$, such that
+$a(f,ρ)g = a(fg,ρg)$ for any $g : J → K$.
 
 \medskip
-If $Γ ⊢_I A$ and $f : I → J$, we define $⟨ρ,u⟩ : (Γ.A)f$ to mean
-$ρ ∈ Γf$ and $u ∈ A(f,ρ)$.
+If $Γ ⊢_I A$ and $f : I → J$, we define a new presheaf $⟨ρ,u⟩ : (Γ.A)f$
+to mean $ρ ∈ Γf$ and $u ∈ A(f,ρ)$.
 
+\bigskip
+The above refinement on presheaves is necessary for the interpretation
+of your new styntactic constructions.  Indeed with the usual presheaf model
+$u : T \op i a$ would be interpreted as some $u : T$ such that $u(i\,0) = a$,
+which violates the equality ${{(\CTimes i {x:A} B[x])} \op i a = B[a]}$.
 
 \bigskip
 \begin{description}
+  \item[\sc Pi.]
+    Assume $f : I → J$ and $ρ : Γf$.
+    A ($J$-)element $(Π A B)(f,ρ)$ is defined as
+    $w = \left(\left(λ(αh)\right)_{h : J_α ↣ K}\right)_{J_α ⊆ J}$,
+    where
+    $$λ g ∈ \prod_{u : A(fg,ρg)} B(fg,⟨ρg,u⟩) \quad\text{for $g : J → K$}$$
+    such that
+    $\app{λg} u h = \app{λ(gh)}{uh}$ for $g : J → K$ and $h : K → L$.
+    We define the $K$-element $w g$ as
+    $\left(\left(λ(gαh)\right)_{h : K_α ↣ L}\right)_{K_α ⊆ K}$ for any $g : J → K$.
+
+    Note that the $J$-element $w$ is isomorphic to the usual interpretation
+    of $(ΠAB)(f,ρ)$, a family $λ$ of functions indexed by
+    $g : J \stackrel{α}{→} J_α \stackrel {h}{↣} K$.  Indeed repartitioning $λ$ gives
+    $\left(λg\right)_{g : J → K} ≅ \left(\left(λ(αh)\right)_{h : J_α ↣ K}\right)_{J_α ⊆ J}$.
+
+    Consider the map $w ↦ wβ$, $(Π A B)(f,ρ) → (Π A B)(fβ,ρβ)$.  Let
+    $K ⊆ J_β$, and $γ : J \stackrel{β}{→} J_β \stackrel{α}{→} K$ the projection map.
+    We have that
+    $w_K = \left(λ(γh)\right)_{h : K ↣ L}
+         = \left(λ(βαh)\right)_{h : K ↣ L}
+         = wβ_K$.
+
+%    Taking $ρ : Γ(i\,0)$, we get by induction that
+%    that the ($I$-)elements of $(Π A B)((i\,0),ρ)$
+%    are those of $(Π (A(i\,0)) (B(i\,0)))(1,ρ)$, \ie, of $(Π A B)(i\,0)(1,ρ)$:
+%    $$ \left(\left(\prod_{u : A((i\,0)αh,ραh)} B((i\,0)αh,⟨ραh,u⟩)\right)_{h : I_α ↣ K}\right)_{I_α ⊆ I}
+%      = \left(\left(\prod_{u : A(i\,0)(αh,ραh)} B(i\,0)(αh,⟨ραh,u⟩)\right)_{h : I_α ↣ K}\right)_{I_α ⊆ I}
+%    $$
+%    If $g : J \stackrel{α}{→} J_α \stackrel {h}{↣} K$, we note $wg$ the
+%    function $$\prod_{u : A(fαh,ραh)} B(fαh,⟨ραh,u⟩)$$.
+
   \item[\sc Universe.]
     Let $f : I → J$, $ρ : Γf$.  We interpret $A(f,ρ) : U(f,ρ)$ as the
     $J$-element $u = \left(\left(ω(αh)\right)_{h : J_α ↣ K}\right)_{J_α ⊆ J}$,
@@ -599,37 +640,6 @@ $ρ ∈ Γf$ and $u ∈ A(f,ρ)$.
     $u_K = \left(ω(γh)\right)_{h : K ↣ L}
          = \left(ω(βαh)\right)_{h : K ↣ L}
          = uβ_K$.
-
-  \item[\sc Pi.]
-    Let $f : I → J$, $ρ : Γf$.  A ($J$-)element $(Π A B)(f,ρ)$ is defined as
-    $w = \left(\left(λ(αh)\right)_{h : J_α ↣ K}\right)_{J_α ⊆ J}$,
-    where
-    $$λ g = \prod_{u : A(fg,ρg)} B(fg,⟨ρg,u⟩) \quad\text{for $g : J → K$}$$
-    such that
-    $\app{λg} u h = \app{λ(gh)}{uh}$ for $g : J → K$ and $h : K → L$.
-    We define the $K$-element $w g$ as
-    $\left(\left(λ(gαh)\right)_{h : K_α ↣ L}\right)_{K_α ⊆ K}$ for any $g : J → K$.
-
-    Note that the $J$-element $w$ is isomorphic to the usual interpretation
-    of $(ΠAB)(f,ρ)$, a family $λ$ of functions indexed by
-    $g : J \stackrel{α}{→} J_α \stackrel {h}{↣} K$.  Indeed repartitioning $λ$ gives
-    $\left(λg\right)_{g : J → K} ≅ \left(\left(λ(αh)\right)_{h : J_α ↣ K}\right)_{J_α ⊆ J}$.
-
-    Consider the map $w ↦ wβ$, $(Π A B)(f,ρ) → (Π A B)(fβ,ρβ)$.  Let
-    $K ⊆ J_β$, and $γ : J \stackrel{β}{→} J_β \stackrel{α}{→} K$ the projection map.
-    We have that
-    $w_K = \left(λ(γh)\right)_{h : K ↣ L}
-         = \left(λ(βαh)\right)_{h : K ↣ L}
-         = wβ_K$.
-
-%    Taking $ρ : Γ(i\,0)$, we get by induction that
-%    that the ($I$-)elements of $(Π A B)((i\,0),ρ)$
-%    are those of $(Π (A(i\,0)) (B(i\,0)))(1,ρ)$, \ie, of $(Π A B)(i\,0)(1,ρ)$:
-%    $$ \left(\left(\prod_{u : A((i\,0)αh,ραh)} B((i\,0)αh,⟨ραh,u⟩)\right)_{h : I_α ↣ K}\right)_{I_α ⊆ I}
-%      = \left(\left(\prod_{u : A(i\,0)(αh,ραh)} B(i\,0)(αh,⟨ραh,u⟩)\right)_{h : I_α ↣ K}\right)_{I_α ⊆ I}
-%    $$
-%    If $g : J \stackrel{α}{→} J_α \stackrel {h}{↣} K$, we note $wg$ the
-%    function $$\prod_{u : A(fαh,ραh)} B(fαh,⟨ραh,u⟩)$$.
 
   \item[\sc Out.]
     Let $f : I → J$, $ρ : Γf$.  We need to define the $J$-set $(P \op {i} a)(f,ρ)$.
