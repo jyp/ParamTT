@@ -284,7 +284,8 @@ to keep the presentation concise, we leave it implicit in the syntax.
 
 \begin{definition}[Conversion]~
 \label{def:conversion}
-The convertibity of types (noted $=$) as an untyped relation, defined inductively by the following rules:
+The convertibity of types used in the {\sc Conv} rule is defined
+inductively by the following rules.
 \begin{mathpar}
   \inferrule[Pair-App]{}{{\fp i f g} \, a      = (f\,{\proj i a} ,_i g\,{\proj i a}\,{(a \param i)})}
 \and
