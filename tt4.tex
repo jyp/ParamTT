@@ -449,7 +449,7 @@ relations. That is, given
 \end{align*}
 Then the type $A \op i \CP j x y \op j z$ is well formed ($∋$ is left
 associative), and can be understood as a relation
-between the parametricity proofs $y$ and $z$. We have the following results on those relation.
+between the parametricity proofs $y$ and $z$. The following results about this relation illustrate the expressivity of our system.
 \begin{theorem}
 If the type $A$ does not depend on either $i$ or $j$, the relation $λy z. A \op i \CP j x y \op j z$ is symmetric.
 \end{theorem}
@@ -464,7 +464,7 @@ If the type $A$ does not depend on either $i$ or $j$, the relation $λy z. A \op
 
 \begin{theorem}
   As defined above, function $s$ is involutive in its last argument:
-  \[ s\, x\, y\, z\, (s\, x\, y\, z\, w) = w \]
+  \[ s\, y\, x\, z\, (s\, x\, y\, z\, w) = w \]
 \end{theorem}
 \begin{proof}
   Let
