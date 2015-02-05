@@ -215,9 +215,13 @@ to keep the presentation concise, we leave it implicit in the syntax.
   A \emph{color map} $f : I → J$ is a function $I → J ∪ \{0\}$ such that
   $f(i_1) = f(i_2)$ iff $i_1 = i_2$ whenever $f(i_1) = f(i_2) ∈ J$.
 %
-  We note $(i\,0) : I,i → I$ the partial identity: $(i\,0)\,i = 0$ and
-  $(i\,0)\,j = j$ for any $j ∈ I$; and $η_i : I → I,i$ the canonical
-  injection: $η_i(i) =i$ for all $i ∈ I$.
+  If $f : I → J$ and $g : J → k$, we define the composition $fg : I → K$
+  as $fg(i) = 0$ if $f(i) = 0$ and $fg(i) = g(f(i))$ if $f(i) ∈ J$.
+  We note $1_I : I → I$ the identity map: $1_I(i) = i$ for each $i ∈ I$;
+  we note $(i\,0) : I,i → I$ the partial identity: $(i\,0)\,i = 0$ and
+  $(i\,0)\,j = j$ for any $j ∈ I$;
+  and $η_i : I → I,i$ the canonical injection: $η_i(i) =i$ for all $i ∈ I$.
+%
   Furthermore for each color map $f : I → J$, $i ∉ I$ and $j ∉ J$, we
   note $f^{ij} : I,i → J,j$ the color map such that
   $f^{ij}(i) = j$ and $f^{ij}(k) = f(k)$ for all $k ∈ I$.
