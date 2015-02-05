@@ -437,7 +437,7 @@ Indeed, a proof term is the following:
 In our system, one can use parametricity generically as follows:
 \begin{align*}
 p &: (A:U) → (x:A) → A \op i x\\
-p x &= x\param i
+p\, x &= x\param i
 \end{align*}
 We have already seen that $A \op i $ corresponds to the parametricity
 predicate for type $A$. We can iterate this operator to construct
@@ -464,7 +464,7 @@ If the type $A$ does not depend on either $i$ or $j$, the relation $λy z. A \op
 
 \begin{theorem}
   As defined above, function $s$ is involutive in its last argument:
-  \[ s x y z (s\, x\, y\, z\, w) = w \]
+  \[ s\, x\, y\, z\, (s\, x\, y\, z\, w) = w \]
 \end{theorem}
 \begin{proof}
   Let
@@ -484,12 +484,14 @@ We continue to reason by deduction:
     w' &= t \param j \param i & \text{By def}\\
     {\CP i y {w'}} &= t\param j & \text{Because $\projp i {t\param j} = y $}  \\
     t'\param j &= t\param j & \text{By def}\\
-    t' &= t &\text{Because {\proj j {t'} = \proj j t}} \\
+    t' &= t &\text{Because $\proj j {t'} = \proj j t$} \\
     t' &= \CP i {\CP j x y} {\CP j z w} & \text{By def} \\
     t'\param i &= \CP j z w \\
     t'\param i\param j &= w
+  \qedhere
   \end{align*}
 \end{proof}
+
 \begin{corollary}
   The types $A \op i \CP j x y \op j z$ and $A \op j \CP i x z \op i y$ are isomorphic.
 \end{corollary}
@@ -514,7 +516,7 @@ over to the $n$-ary case in a straightforward manner.
 \begin{definition}
   Let \pI{} be the category of finite color sets $I,J,K,…$ and color
   maps \cite[ex.~9.7 p.~176]{PittsAM:nomsns}.
-  We say that a morphism $α : I → I_α$ is a \emph{projection} if $I_α ⊆ I$,$h(i) = 0$
+  We say that a morphism $α : I → I_α$ is a \emph{projection} if $I_α ⊆ I$,$α(i) = 0$
   for each $i ∈ I \backslash I_α$ and $α(i) = i$ for each $i ∈ I_α$.
   Injective morphisms, noted $h : I ↣ J$, are those verifying $h(i) ≠ 0$
   for all $i ∈ I$.
@@ -551,7 +553,7 @@ We take the the usual presheaf model of type theory on \pI{} with the
 following restrictions:
 \begin{enumerate}
   \item for any $I ∈ \pI$, $F(I)$ is a $I$-set, and
-  \item for any projection map $α : I → I_α$, the
+  \item for any projection map $α : I → I_α$, the restriction
     map $u ↦ uα$, $F(I) → F(I_α)$ is the projection operation, \ie,
     $uα_J = u_J$ for any $J ⊆ I$.
 \end{enumerate}
@@ -563,7 +565,7 @@ and if $g : J → K$ then the map $ρ ↦ ρg$, $Γf → Γ(fg)$ is such that
 $ρ1 = ρ$ and $(ρg)h = ρ(gh)$ for any $h : K → L$.
 
 \medskip
-A context $Γ ⊢_I$ is interpreted as a presheaf on the slice category
+A type $Γ ⊢_I A$ is interpreted as a presheaf on the slice category
 $\pI^\opp/I$: for each map $f : I → J$, we have a $J$-set $ρ : Γf$ and
 we give a $J$-set $A(f,ρ)$.
 Furthermore the map $u ↦ uα$, $A(f,ρ) → A(fα,ρα)$ is the projection operation,
