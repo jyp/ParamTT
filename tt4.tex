@@ -520,9 +520,9 @@ over to the $n$-ary case in a straightforward manner.
   for each $i ∈ I \backslash I_α$ and $α(i) = i$ for each $i ∈ I_α$.
   Injective morphisms, noted $h : I ↣ J$, are those verifying $h(i) ≠ 0$
   for all $i ∈ I$.
-  Any morphism $f : I → J$ has a unique decomposition into a projection map
+  A simple, but fundamental, remark is that any morphism $f : I → J$ has a
+  unique decomposition into a projection map
   $α : I → I_α$ and an injective map $h : I_α ↣ J$.
-  %For any object $I$ and $i ∉ I$, we note $(i \, 0) : I,i → I$ the partial identity on $I$.
 
   \begin{tikzpicture}[node distance=4\baselineskip]
     \node              (I)  {$I$};
@@ -539,6 +539,8 @@ over to the $n$-ary case in a straightforward manner.
   We call $I$-element any tuple indexed by the subsets of $I$: $(u_J)_{J ⊆ I}$.
   An $I$-set is a set of $I$-elements.  For instance, the elements of a
   $\{i,j\}$-set are of the form $u = (u_∅,u_i,u_j,u_{i,j})$.
+  Alternatively, such an element can be seen as a tuple $(u_α)$ indexed
+  by the projections $α : I → I_α$.
   %
   If $a,b$ are $I$-elements and $j ∉ I$, we define the $(I,j)$-element
   $(a ,_j b)$ as $(a ,_j b)_J ≔ a_J$ if $j ∉ J$ and $(a ,_j b)_{J,j} ≔ b_J$.
@@ -549,163 +551,125 @@ over to the $n$-ary case in a straightforward manner.
 \end{definition}
 
 \bigskip
-We take the the usual presheaf model of type theory on \pI{} with the
-following restrictions:
+A \emph{presheaf} $F$ on \pI{} is given by a family of sets $F(I)$ together
+with restriction maps $F(I) → F(J)$, $u ↦ uf$ for $f : I → J$
+satisfying $u1 = u$ and $(uf)g = u(fg)$. We refine this notion by requiring
+two further conditions:
+%
 \begin{enumerate}
   \item for any $I ∈ \pI$, $F(I)$ is a $I$-set, and
   \item for any projection map $α : I → I_α$, the restriction
-    map $u ↦ uα$, $F(I) → F(I_α)$ is the projection operation, \ie,
+    map $F(I) → F(I_α)$, $u ↦ uα$ is the projection operation, \ie,
     $uα_J = u_J$ for any $J ⊆ I$.
 \end{enumerate}
+%
+Seeing an $I$-element $u$ as a tuple indexed by projection maps
+$α : I → I_α$, the second restriction can be written $(uα)_β = u_{αβ}$.
 
 \bigskip
-A context $Γ ⊢_I$ is given by a $J$-set $Γf$ for any map $f : I → J$.
-Furthermore the map $ρ ↦ ρα$, $Γf → Γ(fα)$ is the projection operation,
-and if $g : J → K$ then the map $ρ ↦ ρg$, $Γf → Γ(fg)$ is such that
-$ρ1 = ρ$ and $(ρg)h = ρ(gh)$ for any $h : K → L$.
+A context $Γ ⊢_I$ is interpreted as a presheaf on the slice category
+$\pI^\opp/I$, \ie, by a family of $J$-sets $Γf$ for any map $f : I → J$
+together with restriction maps $Γ f → Γ fg$, $ρ ↦ ρg$
+for $g : J → K$ satisfying the conditions $ρ 1 = ρ$ and $(ρg)h = ρ(gh)$.
+Furthermore the map $Γf → Γ(fα)$, $ρ ↦ ρα$ is the projection operation.
 
 \medskip
-A type $Γ ⊢_I A$ is interpreted as a presheaf on the slice category
-$\pI^\opp/I$: for each map $f : I → J$, we have a $J$-set $ρ : Γf$ and
-we give a $J$-set $A(f,ρ)$.
-Furthermore the map $u ↦ uα$, $A(f,ρ) → A(fα,ρα)$ is the projection operation,
-and if $g : J → K$ then the map $u ↦ ug$, $A(f,ρ) → A(fg,ρg)$ is such that
-$u1 = u$ and $(ug)h = u(gh)$ for any $h : K → L$.
+A type $Γ ⊢_I A$ is interpreted as follows.
+For each map $f : I → J$, and $ρ ∈ Γf$ we give a $J$-set $A(f,ρ)$
+together with restriction maps $A(f,ρ) → A(fg,ρg)$, $u ↦ ug$ if $g : J → K$
+satisfying $u1 = u$ and $(ug)h = u(gh)$ for any $h : K → L$.
+Furthermore the map $A(f,ρ) → A(fα,ρα)$, $u ↦ uα$ is the projection operation,
 
 \medskip
 A term $Γ ⊢_I a : A$ is defined by giving a $J$-element $a(f,ρ) ∈ A(f,ρ)$
-for each $f: I → J$ and $ρ : Γf$, such that
+for each $f: I → J$ and $ρ ∈ Γf$, such that
 $a(f,ρ)g = a(fg,ρg)$ for any $g : J → K$.
 
 \medskip
-If $Γ ⊢_I A$ and $f : I → J$, we define a new presheaf $⟨ρ,u⟩ : (Γ.A)f$
-to mean $ρ ∈ Γf$ and $u ∈ A(f,ρ)$.
+If $Γ ⊢_I A$ we define the interpretation of $Γ,x:A ⊢_I$
+by taking $⟨ρ,x=u⟩ : (Γ,x:A)f$ to mean $ρ ∈ Γf$ and $u ∈ A(f,ρ)$. The
+restriction map is defined by $(ρ,x=u)g = (ρ g, x=ug)$.
 
 \bigskip
 The above refinement on presheaves is necessary for the interpretation
-of your new styntactic constructions.  Indeed with the usual presheaf model
-$u : T \op i a$ would be interpreted as some $u : T$ such that $u(i\,0) = a$,
-which violates the equality ${{(\CTimes i {x:A} B[x])} \op i a = B[a]}$.
+of some of our styntactic constructions.  Indeed, without this refinement,
+it is not clear how to validate the equality
+${{(\CTimes i {x:A} B[x])} \op i a = B[a]}$.
+
+\bigskip
+The semantics we define satisfies the substitution law that if $Γ,x:A ⊢_I B$
+and $Γ ⊢_I a:A$ then for any $f : I → J$ and $ρ ∈ Γ f$ we have
+$B[a](f,ρ) = B(f,(ρ,x=a(f,ρ)))$.
+It also satisfies the substitution law on colors, \ie, if $Γ ⊢_I A$ and
+$f : I → J$ then for any $g : J → K$ we have $Γ'g = Γ(fg)$,
+where $Γ'$ is the result of perfoming the substitution $f$ in $Γ$, and if
+$ρ ∈ Γfg$ we have $Af (g,ρ) = A(fg,ρ)$.
+For establishing these properties, one way is to introduce an intermediate
+system with explicit substitution laws, as in \cite{cwf}.
 
 \bigskip
 \begin{description}
   \item[\sc Pi.]
-    Assume $f : I → J$ and $ρ : Γf$.
-    A ($J$-)element $(Π A B)(f,ρ)$ is defined as
-    $w = \left(\left(λ(αh)\right)_{h : J_α ↣ K}\right)_{J_α ⊆ J}$,
-    where
-    $$λ g ∈ \prod_{u : A(fg,ρg)} B(fg,⟨ρg,u⟩) \quad\text{for $g : J → K$}$$
+    Assume $f : I → J$ and $ρ ∈ Γf$. We define $((x:A) → B)(ρ,f)$ as a $J$-set.
+    A ($J$-)element of $((x:A) → B)(f,ρ)$ is defined as a tuple $λ = (λ_α)$,
+    where each $λ_α$ is a family of elements indexed by any injective map $g : J_α ↣ K$:
+    $$λ_{α g} ∈ \prod_{u : A(fα g,ραg)} B(fαg,⟨ραg,x=u⟩)$$
     such that
-    $\app{λg} u h = \app{λ(gh)}{uh}$ for $g : J → K$ and $h : K → L$.
-    We define the $K$-element $w g$ as
-    $\left(\left(λ(gαh)\right)_{h : K_α ↣ L}\right)_{K_α ⊆ K}$ for any $g : J → K$.
+    $\app{λ_{αg}}{u} h = \app{λ_{gh}}{uh}$ for $g : J ↣ K$ total and \emph{any} $h : K → L$.
+    Since any map $J → K$ has an unique decomposition in a projection and an injective
+    map, we can consider $λ_h$ for an arbitrary map $h : J → K$.
+    Indeed, if $g : J → K$ is an arbitrary map, we define $λ g$ to be the tuple
+    $(λ g_β)$ where $λ g_β$ is the family $λ g_{βh} = λ_{gβh}$.
 
-    Note that the $J$-element $w$ is isomorphic to the usual interpretation
-    of $(ΠAB)(f,ρ)$, a family $λ$ of functions indexed by
-    $g : J \stackrel{α}{→} J_α \stackrel {h}{↣} K$.  Indeed repartitioning $λ$ gives
-    $\left(λg\right)_{g : J → K} ≅ \left(\left(λ(αh)\right)_{h : J_α ↣ K}\right)_{J_α ⊆ J}$.
+    With such a definition, it is direct that we have $λα_{β} = λ_{αβ}$.
 
-    Consider the map $w ↦ wβ$, $(Π A B)(f,ρ) → (Π A B)(fβ,ρβ)$.  Let
-    $K ⊆ J_β$, and $γ : J \stackrel{β}{→} J_β \stackrel{α}{→} K$ the projection map.
-    We have that
-    $w_K = \left(λ(γh)\right)_{h : K ↣ L}
-         = \left(λ(βαh)\right)_{h : K ↣ L}
-         = wβ_K$.
+    This is similar to the usual interpretation of dependent product in presheaf models \cite{Hofmann,BCH}
+    except that we have to present each element as a tuple, which it is in a natural way.
 
-%    Taking $ρ : Γ(i\,0)$, we get by induction that
-%    that the ($I$-)elements of $(Π A B)((i\,0),ρ)$
-%    are those of $(Π (A(i\,0)) (B(i\,0)))(1,ρ)$, \ie, of $(Π A B)(i\,0)(1,ρ)$:
-%    $$ \left(\left(\prod_{u : A((i\,0)αh,ραh)} B((i\,0)αh,⟨ραh,u⟩)\right)_{h : I_α ↣ K}\right)_{I_α ⊆ I}
-%      = \left(\left(\prod_{u : A(i\,0)(αh,ραh)} B(i\,0)(αh,⟨ραh,u⟩)\right)_{h : I_α ↣ K}\right)_{I_α ⊆ I}
-%    $$
-%    If $g : J \stackrel{α}{→} J_α \stackrel {h}{↣} K$, we note $wg$ the
-%    function $$\prod_{u : A(fαh,ραh)} B(fαh,⟨ραh,u⟩)$$.
 
   \item[\sc Universe.]
-    Let $f : I → J$, $ρ : Γf$.  We interpret $A(f,ρ) : U(f,ρ)$ as the
-    $J$-element $u = \left(\left(ω(αh)\right)_{h : J_α ↣ K}\right)_{J_α ⊆ J}$,
-    where $ωg = A(fg,ρg)$.
-    For $g : J → K$, we define the $K$-element $u g$ as
-    $\left(\left(ω(gαh)\right)_{h : K_α ↣ L}\right)_{K_α ⊆ K}$.
+    The universe $U$ is interpreted as a presheaf over \pI. An element $A$ of
+    $U(I)$ is a tuple $(A_α)$ where each $A_α$ is a family of sets
+    $A_{α f}$ for $f : I ↣ J$ \emph{total} together with restriction
+    maps $A_{α f} → A_{α fg}$, $u ↦ ug$ for $f : I ↣ J$ total
+    and $g : J → K$ arbitrary, such that $u1 = u$ and $(ug)h = u(gh)$.
 
-    The restriction maps are defined by induction on $I$.
-    For $I = ∅$ we have $U(∅) = (Af)_{f:∅ ↣ J}$ and we take the map
-    $u ↦ uf$, $A(∅) → A(J)$.
-    For $I,i$ we have $U(I,i) = \left(\left(A(αh)\right)_{h : I_α ↣ J}\right)_{I_α ⊆ I,i}
-    = \left(\left(A(α_1h)\right)_{h : I_α ↣ J}\right)_{I_α ⊆ I} ∪
-      \left(\left(A(α_2h)\right)_{h : I_α,i ↣ J}\right)_{I_α ⊆ I}$
-    where $α_1 : I,i → I_α$ and $α_2 : I,i → I_α,i$ are the projections
-    maps.
-    The map $u ↦ uf$, $A(I,i) → A(J)$ is
-    that from $A(I) → A(J)$ if $f(i) = 0$; otherwise
-    we have $j = fi$ and $g : I→J$ such that $(i\,0)g = f(j\,0)$, and we
-    take $u ↦ ug$.
+    If $g : I → J$ is an arbitrary map, we define $Ag$ by taking $Ag_{βh}$
+    to be the set $A_{gβh}$, together with restriction maps $Ag_{βh} → Ag_{βhl}$
+    defined as the given maps $A_{gβh} → A_{gβhl}$.
 
-    Note that the $J$-element $u$ is isomorphic to the usual interpretation of
-    $U(f,ρ)$, the family $ω$ indexed by $g : J \stackrel{α}{→} J_α \stackrel {h}{↣} K$.
-    Indeed repartitioning $ω$ gives
-    $\left(ωg\right)_{g : J → K} ≅ \left(\left(ω(gαh)\right)_{h : K_α ↣ L}\right)_{K_α ⊆ K}$.
+    We can then check, as before, that we have $Aα_{β} = A_{αβ}$
 
-    Consider the map $u ↦ uβ$, $U(f,ρ) → U(fβ,ρβ)$.  Let
-    $K ⊆ J_β$, and $γ : J \stackrel{β}{→} J_β \stackrel{α}{→} K$ the projection map.
-    We have that
-    $u_K = \left(ω(γh)\right)_{h : K ↣ L}
-         = \left(ω(βαh)\right)_{h : K ↣ L}
-         = uβ_K$.
+    This is similar to the usual interpretation of universe in presheaf models \cite{Hofmann,BCH}
+    except that we have to present each element as a tuple, which it is in a natural way.
+
 
   \item[\sc Out.]
-    Let $f : I → J$, $ρ : Γf$.  We need to define the $J$-set $(P \op {i} a)(f,ρ)$.
-    Let $j = \fresh J$ and $f' : I,i → J,j$ such that the following
-    diagram commutes:
-
-    \begin{tikzpicture}[node distance=4\baselineskip]
-      \node              (Ii) {$I,i$};
-      \node[below of=Ii] (I)  {$I$};
-      \node[right of=Ii] (Jj) {$J,j$};
-      \node[below of=Jj] (J)  {$J$};
-
-      \draw[->] (Ii) to node[left]  {$(i\,0)$} (I);
-      \draw[->] (Ii) to node[above] {$f'$}     (Jj);
-      \draw[->] (Jj) to node[right] {$(j\,0)$} (J);
-      \draw[->] (I)  to node[below] {$f$}      (J);
-    \end{tikzpicture}
-
-    By construction $P(ρ',f')$ is a $(J,j)$-set for the extension $ρ' ∈ Γf'$ of $ρ$,
-    and $af ∈ P(i\,0)(f,ρ)$ is a $J$-element.
-    We define $(P \op {i} a)(f,ρ) ≔ \{ v \mid (af ,_j v) ∈ P(ρ,f')\}$.
+    Assume $f : I → J$ assume $ρ ∈ Γf$.  We need to define the $J$-set $(P \op {i} a)(f,ρ)$.
+    Let $j = \fresh J$ and $f' = (f,i=j) : I,i → J,j$ and $ι_i : I → I,i$,
+    $ι_j : J → J,j$ the inclusions.
+    We can consider the $J,j$-set $P(f',ρι_i)$, and $a(f,ρ)$ is a ($J$-)element of
+    $P(i\,0)(f,ρ) = P((i\,0)f,ρ) = P(ι_i f\,ρι_j)(j\,0)$.
+    We define $(P \op {i} a)(f,ρ)$ to be the set of $J$-elements $v$ such that
+    $(a(f,ρ),_j v) ∈ P(ι_i f\,ρι_j)$. If $v$ is such an element and $g : J → K$
+    and $k=\fresh K$, then $vg$ is defined by the equation
+    $(a(f,ρ)g,_k vg) = (a(f,ρ)g,_k v) g'$ with $g' = (g,j=k)$.
 
   \item[\sc In-Pred.]
-    Let $f : I,i → J$, $ρ : Γf$.  We need to define the $J$-set $(\ip {i} A P)(f,ρ)$.
-
-    \begin{itemize}
-      \item If $f(i) = 0$, we have $f : I,i \stackrel{(i\,0)}{→} I \stackrel{g}{→} J$
-        and we define $(\ip {i} A P)(f,ρ) ≔ A(ρ',g)$
-        where $ρ' ∈ Γg$ is the restriction of $ρ ∈ Γf$.
-
-      \item Otherwise, there is a $j ∈ J$ and $g : I → J_{\{j\}}$ such that
-        the following diagram commutes
-
-        \begin{tikzpicture}[node distance=4\baselineskip]
-          \node              (Ii) {$I,i$};
-          \node[below of=Ii] (I)  {$I$};
-          \node[right of=Ii] (J)  {$J$};
-          \node[below of=J]  (Jj) {$J_{\{j\}}$};
-
-          \draw[->] (Ii) to node[left]  {$(i\,0)$} (I);
-          \draw[->] (Ii) to node[above] {$f$}      (J);
-          \draw[->] (J)  to node[right] {$(j\,0)$} (Jj);
-          \draw[->] (I)  to node[below] {$g$}      (Jj);
-        \end{tikzpicture}
-
-        We define $(\ip {i} A P)(f,ρ) ≔ \{ (u ,_j v) \mid u ∈ A(ρ',g), v ∈ \app{P(ρ',g)}u\}$
-        where $ρ' ∈ Γg$ is the restriction of $ρ ∈ Γf$.
-    \end{itemize}
+    Assume $f : I,i → J$, and $ρ ∈ Γ(ι_if)$.  We need to define the $J$-set
+    $(\CTimes {x:A} i B)(f,ρ)$.
+    Let $ι_i : I → I,i$ be the inclusion. There are two cases. If $f(i) = 0$
+    then $(\CTimes {x:A} i B)(f,ρ)$ is defined to be the $J$-set $A(ι_i f)$.
+    Otherwise, if $f(i) = j ∈ J$, then we define $(\CTimes {x:A} i B)(f,ρ)$ to
+    be the $J$-set of $(u,_j v)$ where $u$ is a $J\backslash\{j\}$-element in
+    $A(ι_i f(j\,0),ρ(j\,0))$ and $v$ is an element in
+    $B(ι_i f(j\,0),(ρ(j\,0),x=u))$.
 \end{description}
 
 \begin{theorem}
   If $Γ ⊢_I a : A$, $f : I → J$, $ρ ∈ Γf$, then $a(f,ρ) ∈ A(f,ρ)$.
-  Furthermore $af(1,ρ) = a(f,ρ)$ (using the interpretation of
-  $Γf ⊢_J af : Af$).
+%  Furthermore $af(1,ρ) = a(f,ρ)$ (using the interpretation of
+%  $Γf ⊢_J af : Af$).
 \end{theorem}
 
 \begin{theorem}
@@ -714,29 +678,27 @@ which violates the equality ${{(\CTimes i {x:A} B[x])} \op i a = B[a]}$.
   In particular,
   \begin{itemize}
     \item $\app{λt}{u}(f,ρ) = t[u](f,ρ)$,
-      where $[u]$ is the map $[u]ρ ↦ ⟨ρ,uρ⟩$, $Γ → Γ.A$
-    \item $({(\ip {i} A P)} \op {i} a)(f,ρ) = (P\,a)(f,ρ)$
+ %     where $[u]$ is the map $Γ → Γ.A$, $[u]ρ ↦ ⟨ρ,uρ⟩$
+    \item $({(\CTimes {x:A} i B)} \op {i} a)(f,ρ) = B(f,(\rho,x=a(f,\rho))) = B[a] (f,ρ)$
   \end{itemize}
 \end{theorem}
 \begin{proof}
-  Let $f : I → J$, $i ∉ I$, $j = \fresh J$, $g : I,i → J,j$ such that
-  $(i\,0)f = g(j\,0)$.
+  Let $f : I → J$, $j = \fresh J$, $g = (f,i=j): I,i → J,j$. We have
   We have
   \begin{align*}
-    ({(\ip {i} A P)} \op {i} a)f
-    &= \left\{ v \mid (af ,_j v) ∈ (\ip {i} A P)g \right\}
+    ({((x:A)\times_i B)} \op {i} a)(f,ρ)
+    &= \left\{ v \mid (a(f,ρ) ,_j v) ∈ (\CTimes {x:A} i B)g \right\}
     \\
-    &= \left\{ v \mid (af ,_j v) ∈ \left\{ (x ,_j y) \mid x ∈ Af, y ∈ \app{Pf} x \right\} \right\}
+    &= \left\{ v \mid (a(f,ρ) ,_j v) ∈ \left\{ (u ,_j w) \mid u ∈ A(f,ρ), w ∈ B(f,(ρ,x=u)) \right\} \right\}
     \\
-    &= \left\{ v \mid v ∈ \app{Pf}{af} \right\}
+    &= \left\{ v \mid v ∈ B(f,(ρ,x=a(f,ρ)) \right\}
     \\
-    &= \app{Pf}{af}
+    &= \left\{ v \mid v ∈ B[a](f,ρ) \right\}
     \\
-    &= \app{P}{a}f
+    &= B[a](f,ρ)
   \qedhere
   \end{align*}
 \end{proof}
-
 
 \section{Related Work}
 
