@@ -215,8 +215,8 @@ to keep the presentation concise, we leave it implicit in the syntax.
 \end{definition}
 \begin{definition}[Color substitution]~
   \label{def:color-subst}
-  We consider a color map $f : I → J$ and for any term $a$,
-  we define the term $af$ by structural induction on $a$.
+  We consider a color map $f : I → J$ as a (name) substitution on terms,
+  and we define $af$ by structural induction on $a$.
   We note $(i\,0) : I,i → I$ the partial identity: $(i\,0)\,i = 0$ and
   $(i\,0)\,j = j$ for any $j ∈ I$.
 \begin{align*}
@@ -348,6 +348,9 @@ We say that $A$ is isomorphic to $B$ iff.
   \item For any $x$, $f\, (g\, x) = x$
   \item For any $x$, $g\, (f\, x) = x$
 \end{enumerate}
+Note that this notion of isomorphism is quite strong since the equality
+used in its definition is the conversion relation (defined in
+\fref{def:conversion}).
 
 \begin{theorem}
 \label{thm:iso-univ}
