@@ -124,7 +124,7 @@ colors.
     t,u,A,B & \coloneqq x & \text {variable} \\
             & \mid U & \text{universe} \\ 
             & \mid |A| & \text{code} \\ 
-            & \mid El(A) & \text{decode} \\ 
+            & \mid \El{A} & \text{decode} \\
             & \mid λx:A. t & \text{abstraction} \\
             & \mid t u & \text{application} \\ 
             & \mid (x:A) → B & \text{product} \\
@@ -525,11 +525,11 @@ generators of the symmetric group.
   maps \cite[ex.~9.7 p.~176]{PittsAM:nomsns}.
   We say that a morphism $α : I → I_α$ is a \emph{projection} if $I_α ⊆ I$,$α(i) = 0$
   for each $i ∈ I \backslash I_α$ and $α(i) = i$ for each $i ∈ I_α$.
-  Injective morphisms, noted $h : I ↣ J$, are those verifying $h(i) ≠ 0$
-  for all $i ∈ I$.
+  Injective morphisms, noted $h : I ↣ J$, are the \emph{total} ones, \ie,
+  those verifying $h(i) ≠ 0$ for all $i ∈ I$.
   A simple, but fundamental, remark is that any morphism $f : I → J$ has a
   unique decomposition into a projection map
-  $α : I → I_α$ and an injective map $h : I_α ↣ J$.
+  $α : I → I_α$ and a total map $h : I_α ↣ J$.
 
   \begin{tikzpicture}[node distance=4\baselineskip]
     \node              (I)  {$I$};
@@ -619,11 +619,11 @@ system with explicit substitution laws, as in \citep{dybjer_inductive_1994}.
   \item[\sc Pi.]
     Assume $f : I → J$ and $ρ ∈ Γf$. We define $((x:A) → B)(ρ,f)$ as a $J$-set.
     A ($J$-)element of $((x:A) → B)(f,ρ)$ is defined as a tuple $λ = (λ_α)$,
-    where each $λ_α$ is a family of elements indexed by any injective map $g : J_α ↣ K$:
+    where each $λ_α$ is a family of elements indexed by any total map $g : J_α ↣ K$:
     $$λ_{α g} ∈ \prod_{u : A(fα g,ραg)} B(fαg,⟨ραg,x=u⟩)$$
     such that
     $\app{λ_{αg}}{u} h = \app{λ_{gh}}{uh}$ for $g : J ↣ K$ total and \emph{any} $h : K → L$.
-    Since any map $J → K$ has an unique decomposition in a projection and an injective
+    Since any map $J → K$ has an unique decomposition in a projection and a total
     map, we can consider $λ_h$ for an arbitrary map $h : J → K$.
     Indeed, if $g : J → K$ is an arbitrary map, we define $λ g$ to be the tuple
     $(λ g_β)$ where $λ g_β$ is the family $λ g_{βh} = λ_{gβh}$.
@@ -676,7 +676,7 @@ system with explicit substitution laws, as in \citep{dybjer_inductive_1994}.
 \end{description}
 
 \begin{remark}
-  Our calculs does not have any base type, but they could interpreted
+  Our calculus does not have any base type, but they could interpreted
   by modifying their usual interpretation as a constant presheaf into an
   isomorphic $I$-set.
   For instance, the base type of natural numbers $ℕ$ would be interpreted as
@@ -771,7 +771,7 @@ an underlying calculus, while in the present work they refine a presheaf structu
 
 The presheaf construction used in this paper follows a known template,
 used for example by \citet{bezem2014model,DBLP:journals/corr/Pitts14}
-to model univalence in type-theory.Not only both models use a
+to model univalence in type-theory. Not only both models use a
 presheaf, but the underlying category is the same ($\pI$). This means
 as all these models have an additional cubical structure.  We find
 remarkable that cubical structures are useful for modeling both
