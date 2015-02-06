@@ -226,10 +226,10 @@ to keep the presentation concise, we leave it implicit in the syntax.
 \begin{definition}[Category $\pI{}$]
   \label{def:pI}
   Let objets be objects be finite color sets
-  $I,J,K,…$ and morphisms be color maps.
+  and morphisms be color maps.
   If $f : I → J$ and $g : J → k$, we define the composition $fg : I → K$
   as $fg(i) = 0$ if $f(i) = 0$ and $fg(i) = g(f(i))$ if $f(i) ∈ J$.
-  We write $1_I : I → I$ the identity map: $1_I(i) = i$ for each $i ∈ I$;
+  We write $1_I : I → I$ for identity map, and define it as $1_I(i) = i$ for each $i ∈ I$.
   It is easy to check that we have a category (\cite[ex.~9.7 p.~176]{PittsAM:nomsns}).
 \end{definition}
 
@@ -482,7 +482,7 @@ If the type $A$ does not depend on either $i$ or $j$, the relation $λy z. A \op
 \end{proof}
 
 \begin{theorem}
-  As defined above, function $s$ is involutive in its last argument:
+  Function $\sigma_1$ (defined above) is involutive in its last argument:
   \[ \sigma_1\, y\, x\, z\, (\sigma_1\, x\, y\, z\, w) = w \]
 \end{theorem}
 \begin{proof}
@@ -496,7 +496,7 @@ If the type $A$ does not depend on either $i$ or $j$, the relation $λy z. A \op
   \begin{align*}
     \proj i {t'} &= \CP j x y = \proj i t \\
     \proj j {t'} &= \CP i x z = \proj j t \\
-    \projp j {t  \param i} &= z
+    \projp i {t\param j} &= y
   \end{align*}
 We continue to reason by deduction:
   \begin{align*}
@@ -535,10 +535,9 @@ We continue to reason by deduction:
 \end{theorem}
 \begin{proof}
   \begin{align*}
-    &q   : (A:U) → (x:A) → (x':A \op i x) → A \op i \CP j x {p A x} \op j x'\\
-    &q   : (A:U) → (x:A) → (x':A \op i x) → A \op i \CP j x {x \param i} \op j x'& \text {by def.}\\
+    &q   : (A:U) → (x:A) → (x':A \op i x) → A \op i \CP j x {x \param i} \op j x'\\
     &q   : (A:U) → (x:A) → (x':A \op i x) → A \op i x \op j x' &\text {by \fref{cor:equalities}}\\
-    &q\, x\, x' = x' \param j
+    &q\, A\, x\, x' = x' \param j
   \qedhere
   \end{align*}
 \end{proof}
