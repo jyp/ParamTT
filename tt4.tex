@@ -699,9 +699,9 @@ We proceed to interpret each of the type constructions.
     Assume $f : I → J$ and assume $ρ ∈ Γf$.  We need to define the $J$-set $(P \op {i} a)(f,ρ)$.
     Let $j = \fresh J$ and $ι_i : I → I,i$, $ι_j : J → J,j$ the inclusions.
     We can consider the $J,j$-set $P(f^{ij},ρι_i)$, and $a(f,ρ)$ a ($J$-)element of
-    $P(i\,0)(f,ρ) = P((i\,0)f,ρ) = P(ι_i f\,ρι_j)(j\,0)$.
+    $P(i\,0)(f,ρ) = P((i\,0)f,ρ) = P(ι_i f,ρι_j)(j\,0)$.
     We define $(P \op {i} a)(f,ρ)$ to be the set of $J$-elements $v$ such that
-    $(a(f,ρ),_j v) ∈ P(ι_i f\,ρι_j)$. If $v$ is such an element and $g : J → K$
+    $(a(f,ρ),_j v) ∈ P(ι_i f,ρι_j)$. If $v$ is such an element and $g : J → K$
     and $k=\fresh K$, then $vg$ is defined by the equation
     $(a(f,ρ)g,_k vg) = (a(f,ρ)g,_k v) g'$ with $g' = (g,j=k)$.
 
@@ -742,7 +742,7 @@ We now describe how to interpret terms.
     Let $f:I,i → J$ and $ρ ∈ Γι_i f$ be given.
     We define $(a ,_i p)(f,ρ)$ by case on $f(i)$.
     If $f(i) = 0$, we take $(a,_ip)(f,ρ)$ to be $a(ι_i f,ρ)$.
-    If $f(i) = j ∈ J$, we take $(a,_ip)(f,ρ)$ to be $(aι_i f(j0),_j p(ι_i f(j0))$
+    If $f(i) = j ∈ J$, we take $(a,_ip)(f,ρ)$ to be $(a(ι_if(j0),ρ),_j p(ι_if(j0),ρ))$
 
   \item[\sc In-Fun.]
     Let $f:I,i → J$ and $ρ ∈ Γι_i f$ be given.
@@ -761,21 +761,15 @@ We now describe how to interpret terms.
     where $j = \fresh{J}$.
 \end{description}
 
-
-\begin{theorem}
-  If $Γ ⊢_I a : A$, $f : I → J$, $ρ ∈ Γf$, then $a(f,ρ) ∈ A(f,ρ)$.
-%  Furthermore $af(1,ρ) = a(f,ρ)$ (using the interpretation of
-%  $Γf ⊢_J af : Af$).
-\end{theorem}
-\todo{Proof by induction of on the judgement?}
-\begin{theorem}
+\begin{theorem}[Convertible terms are semantically equal]
+  \label{thm:convertible-in-model}
   If $Γ ⊢_I a : A$ and $Γ ⊢_I b : A$ with $a = b$, then
   $a(f,ρ) = b(f,ρ)$ for any $f : I → J$ and $ρ : Γf$.
   In particular,
   \begin{itemize}
     \item $\app{λt}{u}(f,ρ) = t[u](f,ρ)$,
  %     where $[u]$ is the map $Γ → Γ.A$, $[u]ρ ↦ ⟨ρ,uρ⟩$
-    \item $({(\CTimes {x:A} i B)} \op {i} a)(f,ρ) = B(f,⟨ρ,x=a(f,ρ)⟩) = B[a] (f,ρ)$
+    \item $({(\CTimes i {x:A} B)} \op {i} a)(f,ρ) = B(f,⟨ρ,x=a(f,ρ)⟩) = B[a] (f,ρ)$
   \end{itemize}
 \end{theorem}
 \begin{proof}
@@ -784,7 +778,7 @@ We now describe how to interpret terms.
   We have
   \begin{align*}
     ({((x:A)\times_i B)} \op {i} a)(f,ρ)
-    &= \left\{ v \mid (a(f,ρ) ,_j v) ∈ (\CTimes {x:A} i B)g \right\}
+    &= \left\{ v \mid (a(f,ρ) ,_j v) ∈ (\CTimes i {x:A} B)g \right\}
     \\
     &= \left\{ v \mid (a(f,ρ) ,_j v) ∈ \left\{ (u ,_j w) \mid u ∈ A(f,ρ), w ∈ B(f,⟨ρ,x=u⟩) \right\} \right\}
     \\
