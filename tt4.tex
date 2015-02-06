@@ -791,6 +791,45 @@ We now describe how to interpret terms.
   \end{align*}
 \end{proof}
 
+
+\begin{theorem}[Validity]
+  If $Γ ⊢_I a : A$, $f : I → J$, $ρ ∈ Γf$, then $a(f,ρ) ∈ A(f,ρ)$.
+%  Furthermore $af(1,ρ) = a(f,ρ)$ (using the interpretation of
+%  $Γf ⊢_J af : Af$).
+\end{theorem}
+\begin{proof}
+  By induction on the typing judgement.  We only prove the cases \textsc{In-Abs} and \textsc{Color-Elim}.  \textsc{In-Fun} is similar to the former, and the other
+  cases match the usual proof (using \fref{thm:convertible-in-model} for \textsc{Conv}).
+  \begin{description}
+    \item[\sc In-Abs.]
+      Let $f : I,i → J$ and $ρ ∈ Γf$.
+      We need to show that $(a ,_i p)(f,ρ) : T(f,ρ)$.
+      If $f(i) = 0$, we have by definition $(a,_ip)(f,ρ) = a(ι_i f,ρ)$,
+      which by induction hypothesis belongs to the $J$-set $T(i\,0)(ι_i f,ρ)$;
+      but by color substitution $T(i\,0)(ι_i f,ρ) = T((i\,0)ι_i f,ρ) = T(f,ρ)$.
+      If $f(i) = j ∈ J$, we have $f = g^{ij}$ where $g = ι_if(j\,0)$; by induction
+      hypothesis $p(g,ρ) ∈ (T \op i a)(g,ρ)$ hence by definition
+      $(a(g,ρ) ,_j p(g,ρ)) ∈ T(g^{ij},ρι_j)$ then
+      $(a ,_i p)(f,ρ) ∈ T(f,ρ)$.
+
+    \item[\sc Color-Elim.]
+      Let $f : I → J$ and $ρ ∈ Γf$.
+      We need to show that $(a \param i)(f,ρ) ∈ (T \op i {a(i\,0)}) (f,ρ)$, \ie,
+      that
+      $ (a(i\,0)(f,ρ) ,_j (a \param i)(f,ρ))
+      = (a((i\,0)f,ρ) ,_j a(f^{ij},ρι_j) · j)
+      ∈ T(f^{ij},ρι_j)$
+      where $j = \fresh J$.
+      By induction hypothesis $a(f^{ij},ρι_j) ∈ T(f^{ij},ρι_j)$, and since it is a
+      $(J,j)$-element we have
+      $a(f^{ij},ρι_j) = (a(f^{ij},ρι_j)(j\,0) ,_j a(f^{ij},ρι_j) · j)$
+      We conclude by remarking that $a(f^{ij},ρι_j)(j\,0) = a((i\,0)f,ρ)$ holds
+      by color substitution and definition of $f^{ij}$.
+    \qedhere
+  \end{description}
+
+\end{proof}
+
 \section{Related Work}
 
 \subsection{Our own line of work}
