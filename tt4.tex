@@ -549,17 +549,17 @@ over to the $n$-ary case. That is, for each $k < n$, one can construct a functio
 $\sigma_k$, which exchanges the arguments $k$ and $k+1$ of a
 relation. Furthermore, these functions satisfy the laws of the
 generators of the symmetric group.
+
 \section{Presheaf model}
 \label{sec:model}
 In this section we show how to interpret our type-theory by a presheaf model.
+Recall \pI{} (\fref{def:pI}), the category of color maps.
 
-  Recall \pI{} (\fref{def:pI}), the category of color
-  maps.
   \begin{definition}[Projection]
     We say that a morphism $α : I → I_α$ is a \emph{projection} if $I_α ⊆ I$,$α(i) = 0$
     for each $i ∈ I \backslash I_α$ and $α(i) = i$ for each $i ∈ I_α$.
   \end{definition}
-  \begin{definition}[Injective morphism]
+  \begin{definition}[Total maps]
   Injective morphisms, noted $h : I ↣ J$, are the \emph{total} ones, \ie,
   those verifying $h(i) ≠ 0$ for all $i ∈ I$.
   \end{definition}
@@ -567,16 +567,15 @@ In this section we show how to interpret our type-theory by a presheaf model.
   Any morphism $f : I → J$ has a
   unique decomposition into a projection map
   $α : I → I_α$ and a total map $h : I_α ↣ J$.
-
-  \begin{tikzpicture}[node distance=4\baselineskip]
-    \node              (I)  {$I$};
-    \node[below of=I]  (Ia) {$I_α$};
-    \node[right of=Ia] (J)  {$J$};
-
-    \draw[->] (I) to node[left] {$α$} (Ia);
-    \draw[->] (I) to node[above right] {$f$} (J);
-    \draw[to reversed->] (Ia) to node[below] {$h$} (J);
-  \end{tikzpicture}
+%  \begin{tikzpicture}[node distance=4\baselineskip]
+%    \node              (I)  {$I$};
+%    \node[below of=I]  (Ia) {$I_α$};
+%    \node[right of=Ia] (J)  {$J$};
+%
+%    \draw[->] (I) to node[left] {$α$} (Ia);
+%    \draw[->] (I) to node[above right] {$f$} (J);
+%    \draw[to reversed->] (Ia) to node[below] {$h$} (J);
+%  \end{tikzpicture}
   \end{remark}
 
 \begin{definition}[$I$-set]
@@ -629,6 +628,7 @@ A term $Γ ⊢_I a : A$ is interpreted by a $J$-element $a(f,ρ) ∈ A(f,ρ)$
 for each $f: I → J$ and $ρ ∈ Γf$, such that
 $a(f,ρ)g = a(fg,ρg)$ for any $g : J → K$.
 
+
 \medskip
 If $Γ ⊢_I A$ we define the interpretation of $Γ,x:A ⊢_I$
 by taking $⟨ρ,x=u⟩ : (Γ,x:A)f$ to mean $ρ ∈ Γf$ and $u ∈ A(f,ρ)$. The
@@ -655,15 +655,16 @@ system with explicit substitution laws, as in \citep{dybjer_inductive_1994}.
 We proceed to interpret each of the type constructions.
 \begin{description}
   \item[\sc Pi.]
-    Assume $f : I → J$ and $ρ ∈ Γf$. We define $((x:A) → B)(ρ,f)$ as a $J$-set.
+    Assume $f : I → J$ and $ρ ∈ Γf$. We define $((x:A) → B)(f,ρ)$ as a $J$-set.
     A $J$-element of $((x:A) → B)(f,ρ)$ is defined as a tuple $λ = (λ_α)$,
-    where each $λ_α$ is a family of elements indexed by any total map $g : J_α ↣ K$:
+    where each $λ_α$ is a family of elements indexed by a total map $g : J_α ↣ K$:
     $$λ_{α g} ∈ \prod_{u : A(fα g,ραg)} B(fαg,⟨ραg,x=u⟩)$$
     such that
-    $\app{λ_{αg}}{u} h = \app{λ_{gh}}{uh}$ for $g : J ↣ K$ total and \emph{any} $h : K → L$.
+    $\app{λ_{αg}}{u} h = \app{λ_{α gh}}{uh}$ for $g : J ↣ K$ total and \emph{any} $h : K → L$.
     Because any map $J → K$ has an unique decomposition as a projection and a total
     map, we can consider $λ_h$ for an arbitrary map $h : J → K$.
-    Indeed, if $g : J → K$ is an arbitrary map, we define $λ g$ to be the tuple
+
+    If $g : J → K$ is an arbitrary map, we define $λ g$ to be the tuple
     $(λ g_β)$ where $λ g_β$ is the family $λ g_{βh} = λ_{gβh}$.
 
     With such a definition, we directly have $λα_{β} = λ_{αβ}$.
@@ -680,6 +681,9 @@ We proceed to interpret each of the type constructions.
     maps $A_{α f} → A_{α fg}$, $u ↦ ug$ for $f : I ↣ J$ total
     and $g : J → K$ arbitrary, such that $u1 = u$ and $(ug)h = u(gh)$.
 
+    As before, such a data defines a set $A_f$ for an arbitrary map $f : I → J$
+    with restriction maps $A_f → A_{fg}$ if $g : J → K$.
+
     If $g : I → J$ is an arbitrary map, we define $Ag$ by taking $Ag_{βh}$
     to be the set $A_{gβh}$, together with restriction maps $Ag_{βh} → Ag_{βhl}$
     defined as the given maps $A_{gβh} → A_{gβhl}$.
@@ -693,14 +697,14 @@ We proceed to interpret each of the type constructions.
 
   \item[\sc Out.]
     Assume $f : I → J$ and assume $ρ ∈ Γf$.  We need to define the $J$-set $(P \op {i} a)(f,ρ)$.
-    Let $j = \fresh J$ and $f' = (f,i=j) : I,i → J,j$ and $ι_i : I → I,i$,
-    $ι_j : J → J,j$ the inclusions.
-    We can consider the $J,j$-set $P(f',ρι_i)$, and $a(f,ρ)$ a ($J$-)element of
+    Let $j = \fresh J$ and $ι_i : I → I,i$, $ι_j : J → J,j$ the inclusions.
+    We can consider the $J,j$-set $P(f^{ij},ρι_i)$, and $a(f,ρ)$ a ($J$-)element of
     $P(i\,0)(f,ρ) = P((i\,0)f,ρ) = P(ι_i f\,ρι_j)(j\,0)$.
     We define $(P \op {i} a)(f,ρ)$ to be the set of $J$-elements $v$ such that
     $(a(f,ρ),_j v) ∈ P(ι_i f\,ρι_j)$. If $v$ is such an element and $g : J → K$
     and $k=\fresh K$, then $vg$ is defined by the equation
     $(a(f,ρ)g,_k vg) = (a(f,ρ)g,_k v) g'$ with $g' = (g,j=k)$.
+
 
   \item[\sc In-Pred.]
     Assume $f : I,i → J$, and $ρ ∈ Γ(ι_if)$.  We need to define the $J$-set
@@ -714,16 +718,49 @@ We proceed to interpret each of the type constructions.
 \end{description}
 
 \begin{remark}
-  Our calculus does not have any base type, but they could interpreted
+  Our calculus does not have any base type, but they could be interpreted
   by modifying their usual interpretation as a constant presheaf into an
   isomorphic $I$-set.
-  For instance, the base type of natural numbers $ℕ$ would be interpreted as
+  For instance, the base type of natural numbers would be interpreted as
   the $I$-set of $(n_J)_{J ⊆ I}$ where $n_∅ ∈ ℕ$ and $n_J = 0$ for any
   non-empty $J ⊆ I$.
 \end{remark}
-\todo{We don't interpret terms? Shouldn't we say at least something
-  about it? That seems necessary to at the very least give an idea of
-  the following proof.}
+
+\bigskip
+We now describe how to interpret terms.
+\begin{description}
+  \item[\sc Var.]
+    We define $x(f,ρ)$ to be $ρ(x)$
+
+  \item[\sc Lam.]
+    We define $\app{(λ x:A.b)(f,ρ)_{α f}}{u}$ to be $b(f,(ρα f,x=u))$
+
+  \item[\sc App.]
+    We define $(t\,u)(f,ρ)$ to be $\app{t(f,ρ)_1}{u(f,ρ)}$
+
+  \item[\sc In-Abs.]
+    Let $f:I,i → J$ and $ρ ∈ Γι_i f$ be given.
+    We define $(a ,_i p)(f,ρ)$ by case on $f(i)$.
+    If $f(i) = 0$, we take $(a,_ip)(f,ρ)$ to be $a(ι_i f,ρ)$.
+    If $f(i) = j ∈ J$, we take $(a,_ip)(f,ρ)$ to be $(aι_i f(j0),_j p(ι_i f(j0))$
+
+  \item[\sc In-Fun.]
+    Let $f:I,i → J$ and $ρ ∈ Γι_i f$ be given.
+    We define ${\fp i t u}(f,ρ)_g$ by case on $g(f(i))$.
+    If $g(f(i)) = 0$, we take ${\fp i t u}(f,ρ)_g$ to be $t(ι_i f,ρ)_g$.
+    If $g(f(i)) = j ∈ K$, we define $w = {\fp i t u}(f,ρ)_g$ by
+    $$\app{w}{(a ,_j b)} =
+      ( \app{t\,(ι_i fg(j0),ρ g(j0))}{a}
+      ,_j
+        {\app{\app{u\,(ι_i fg(j0),ρ g(j0))}{a}}{b}}
+      )$$
+
+  \item[\sc Color-Elim.]
+    Let $f:I → J$ and $ρ ∈ Γ f$ be given.
+    We define $(a \param i)(f,ρ)$ to be $a(f^{ij},ρι_j)\param j$
+    where $j = \fresh{J}$.
+\end{description}
+
 
 \begin{theorem}
   If $Γ ⊢_I a : A$, $f : I → J$, $ρ ∈ Γf$, then $a(f,ρ) ∈ A(f,ρ)$.
