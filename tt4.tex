@@ -196,8 +196,8 @@ We mutually define three judgments:
     \\\inferrule[In-Abs]{Γ ⊢_I a : \proj i T \\Γ ⊢_I p : T \op i a}{Γ ⊢_{I,i} \CP i a p : T}
 
     \inferrule[In-Fun]
-        {Γ ⊢_I f : \projp i {(x:A) → P x}\\\\
-        Γ ⊢_I g : (x:\proj i A) → (x':A \op i x) → P \CP i x {x'} \op i f x}{Γ ⊢_{I,i} \fp i f g : (x:A) → P x}
+        {Γ ⊢_I f : \projp i {(x:A) → P[x]}\\\\
+        Γ ⊢_I g : (x:\proj i A) → (x':A \op i x) → P[\CP i x {x'}] \op i f x}{Γ ⊢_{I,i} \fp i f g : (x:A) → P[x]}
 
     \inferrule[Color-elim]{Γ ⊢_{I,i} a : T}{Γ ⊢_I a \param i : T \op i {\proj i a}}
   \end{mathpar}
