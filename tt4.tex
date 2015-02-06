@@ -189,7 +189,7 @@ We mutually define three judgments:
 
     \inferrule[Code]{Γ ⊢_I A }{Γ ⊢_I |A| : U}
 
-    \\\inferrule[Lam]{Γ,x:A ⊢_I B}{Γ ⊢_I λx:A.b : (x:A) → B}
+    \\\inferrule[Lam]{Γ,x:A ⊢_I b : B}{Γ ⊢_I λx:A.b : (x:A) → B}
  
     \inferrule[App]{Γ ⊢_I t : (x:A) → B[x] \\ Γ ⊢_I u : A}{Γ ⊢_I t u: B[u]}
 
@@ -632,7 +632,7 @@ $a(f,ρ)g = a(fg,ρg)$ for any $g : J → K$.
 \medskip
 If $Γ ⊢_I A$ we define the interpretation of $Γ,x:A ⊢_I$
 by taking $⟨ρ,x=u⟩ : (Γ,x:A)f$ to mean $ρ ∈ Γf$ and $u ∈ A(f,ρ)$. The
-restriction map is defined by $(ρ,x=u)g = (ρ g, x=ug)$.
+restriction map is defined by $⟨ρ,x=u⟩g = ⟨ρ g, x=ug⟩$.
 
 \bigskip
 The above refinement on presheaves is necessary for the interpretation
@@ -643,7 +643,7 @@ ${{(\CTimes i {x:A} B[x])} \op i a = B[a]}$.
 \bigskip
 The semantics we define satisfies the substitution law. That is, if $Γ,x:A ⊢_I B$
 and $Γ ⊢_I a:A$ then for any $f : I → J$ and $ρ ∈ Γ f$ we have
-$B[a](f,ρ) = B(f,(ρ,x=a(f,ρ)))$.
+$B[a](f,ρ) = B(f,⟨ρ,x=a(f,ρ)⟩)$.
 It also satisfies the substitution law on colors, \ie, if $Γ ⊢_I A$ and
 $f : I → J$ then for any $g : J → K$ we have $Γ'g = Γ(fg)$,
 where $Γ'$ is the result of perfoming the substitution $f$ in $Γ$, and if
@@ -658,7 +658,7 @@ We proceed to interpret each of the type constructions.
     Assume $f : I → J$ and $ρ ∈ Γf$. We define $((x:A) → B)(f,ρ)$ as a $J$-set.
     A $J$-element of $((x:A) → B)(f,ρ)$ is defined as a tuple $λ = (λ_α)$,
     where each $λ_α$ is a family of elements indexed by a total map $g : J_α ↣ K$:
-    $$λ_{α g} ∈ \prod_{u : A(fα g,ραg)} B(fαg,⟨ραg,x=u⟩)$$
+    $$λ_{α g} ∈ \prod_{u ∈ A(fα g,ραg)} B(fαg,⟨ραg,x=u⟩)$$
     such that
     $\app{λ_{αg}}{u} h = \app{λ_{α gh}}{uh}$ for $g : J ↣ K$ total and \emph{any} $h : K → L$.
     Because any map $J → K$ has an unique decomposition as a projection and a total
@@ -714,7 +714,7 @@ We proceed to interpret each of the type constructions.
     Otherwise, if $f(i) = j ∈ J$, then we define $(\CTimes i {x:A} B)(f,ρ)$ to
     be the $J$-set of $(u,_j v)$ where $u$ is a $J\backslash\{j\}$-element in
     $A(ι_i f(j\,0),ρ(j\,0))$ and $v$ is an element in
-    $B(ι_i f(j\,0),(ρ(j\,0),x=u))$.
+    $B(ι_i f(j\,0),⟨ρ(j\,0),x=u⟩)$.
 \end{description}
 
 \begin{remark}
@@ -733,7 +733,7 @@ We now describe how to interpret terms.
     We define $x(f,ρ)$ to be $ρ(x)$
 
   \item[\sc Lam.]
-    We define $\app{(λ x:A.b)(f,ρ)_{α f}}{u}$ to be $b(f,(ρα f,x=u))$
+    We define $\app{(λ x:A.b)(f,ρ)_{α f}}{u}$ to be $b(f,⟨ρα f,x=u⟩)$
 
   \item[\sc App.]
     We define $(t\,u)(f,ρ)$ to be $\app{t(f,ρ)_1}{u(f,ρ)}$
@@ -775,7 +775,7 @@ We now describe how to interpret terms.
   \begin{itemize}
     \item $\app{λt}{u}(f,ρ) = t[u](f,ρ)$,
  %     where $[u]$ is the map $Γ → Γ.A$, $[u]ρ ↦ ⟨ρ,uρ⟩$
-    \item $({(\CTimes {x:A} i B)} \op {i} a)(f,ρ) = B(f,(\rho,x=a(f,\rho))) = B[a] (f,ρ)$
+    \item $({(\CTimes {x:A} i B)} \op {i} a)(f,ρ) = B(f,⟨ρ,x=a(f,ρ)⟩) = B[a] (f,ρ)$
   \end{itemize}
 \end{theorem}
 \begin{proof}
@@ -786,9 +786,9 @@ We now describe how to interpret terms.
     ({((x:A)\times_i B)} \op {i} a)(f,ρ)
     &= \left\{ v \mid (a(f,ρ) ,_j v) ∈ (\CTimes {x:A} i B)g \right\}
     \\
-    &= \left\{ v \mid (a(f,ρ) ,_j v) ∈ \left\{ (u ,_j w) \mid u ∈ A(f,ρ), w ∈ B(f,(ρ,x=u)) \right\} \right\}
+    &= \left\{ v \mid (a(f,ρ) ,_j v) ∈ \left\{ (u ,_j w) \mid u ∈ A(f,ρ), w ∈ B(f,⟨ρ,x=u⟩) \right\} \right\}
     \\
-    &= \left\{ v \mid v ∈ B(f,(ρ,x=a(f,ρ)) \right\}
+    &= \left\{ v \mid v ∈ B(f,⟨ρ,x=a(f,ρ)⟩) \right\}
     \\
     &= \left\{ v \mid v ∈ B[a](f,ρ) \right\}
     \\
