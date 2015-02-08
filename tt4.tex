@@ -52,7 +52,7 @@
   comes with a denotational semantics which is a refinement of the
   standard presheaf semantics of dependent type theory. Further, this
   presheaf semantics is a refinement of the one used to interpret
-  nominal sets with restriction.  This calculus is a candidate for the
+  nominal sets with restriction.  The present calculus is a candidate for the
   core of a proof assistant with internalized parametricity.
 \end{abstract}
 
@@ -82,14 +82,14 @@ where types are interpreted as predicates and functions are interpreted
 by predicate-preserving functions.
 
 In this paper, we propose an extension of Reynolds' model, where a
-type is interpreted as a hypercube of sets, predicates, relations,
-relations between relations and so on. Our model
-supports the interpretation dependent type-theories, and of
-parametricity itself (parametricity is parametric).  We take advantage of this
-closure property by intergrating parametricity into the syntax of the
-type-theory being interpreted.  This means that the user of the logic
-can prove any parametricity result directly in the logic, rather than
-having to resort to an external semantic justification.
+type is interpreted as a hypercube of sets, predicates, relations and
+so on. Our model supports the interpretation dependent type-theories,
+and of parametricity itself (parametricity is parametric).  We take
+advantage of this closure property by intergrating parametricity into
+the syntax of the type-theory being interpreted.  This means that the
+user of the logic can prove any parametricity result directly in the
+logic, rather than having to resort to an external semantic
+justification.
 
 Our technical contributions are as follows:
 \begin{itemize}
@@ -145,7 +145,7 @@ We give a few intuitions to interpret the novel syntax, before giving formally t
 \item In the above, the term $\proj i a$ denotes a realiser of $a$,
   obtained by erasing the color $i$ (Erasure is detailed in
   \fref{def:color-subst}).
-\item The forms $\CP i t u$, $\CTimes i A B$ and $\fp i t u$ allow to
+\item The forms $\CP i t u$, $\CTimes i {x:A} B$ and $\fp i t u$ allow to
   locally associate parametricity proofs with a given realizer.
 \end{enumerate}
 
@@ -236,7 +236,7 @@ to keep the presentation concise, we leave it implicit in the syntax.
 We note
 \begin{itemize}
 \item $(i\,0) : I,i → I$ the partial identity: $(i\,0)(i) = 0$ and $(i\,0)(j) = j$ for each $j ∈ I$; 
-\item $ι_i : I → I,i$ the inclusion: $ι_i(i) =i$ for all $i ∈ I$.
+\item $ι_i : I → I,i$ the inclusion: $ι_i(i) =i$ for all $i ∈ I$. \todo{$i$ is used both free and bound? $ι_i(j) =i$ for all $j ∈ I$? }
 \end{itemize}
 Furthermore for each color map $f : I → J$, $i ∉ I$ and $j ∉ J$, we
 note $f^{ij} : I,i → J,j$ the color map such that
@@ -709,7 +709,7 @@ We proceed to interpret each of the type constructions.
   \item[\sc In-Pred.]
     Assume $f : I,i → J$, and $ρ ∈ Γ(ι_if)$.  We need to define the $J$-set
     $(\CTimes i {x:A} B)(f,ρ)$.
-    Let $ι_i : I → I,i$ be the inclusion. There are two cases. If $f(i) = 0$
+    Recall that $ι_i : I → I,i$ is the inclusion map. There are two cases. If $f(i) = 0$
     then $(\CTimes i {x:A} B)(f,ρ)$ is defined to be the $J$-set $A(ι_i f)$.
     Otherwise, if $f(i) = j ∈ J$, then we define $(\CTimes i {x:A} B)(f,ρ)$ to
     be the $J$-set of $(u,_j v)$ where $u$ is a $J\backslash\{j\}$-element in
