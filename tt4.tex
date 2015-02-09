@@ -57,51 +57,56 @@
 \end{abstract}
 
 \section{Introduction}
-In lambda-calculi, every type can be interpreted as a predicate, which
-its inhabitants are guaranteed to satisfy.
+\cite{reynolds_types_1983} proved a general ``abstraction theorem'' or
+``parametricity theorem''
+about polymorphic functions. His argument is about a set theoretic semantic.
+As he stated it, {\em the underlying idea is that the meaning of an expression
+in ``related'' environments will be ``related'' value}.
+For instance, he proves that if $t_X$ is a term
+of type $X → X$ with and if we consider two sets $A_0$, $A_1$
+and a relation $R ⊆ A_0 × A_1$ then we have
+$R([t_X]_{X=A_0}(a_0),[t_X]_{X=A_1}(a_1))$ whenever $R(a_0,a_1)$,
+where $[t_X]_{X=A}$ denotes the meaning of the expression $t_X$ where $X$
+is interpreted by the set $A$. As he noted, one can replace in this statement
+binary relation by multinary relation, and so unary relation. In this case, the
+statement will be that if $A$ is a set and $P$ a predicate on $A$, then we have
+$P([t_X]_{X=A}(a))$ whenever $P(a)$ holds.
+\cite{wadler_theorems_1989} illustrates by many examples how this result is
+useful for reasoning about functional programs.
+
+The argument and result of Reynolds were model theoretic in nature.
+In lambda-calculi with dependent types, it is possible to state such an
+abstraction result in a purely syntactical way.
+We will state for example that if a function $f$ has type
+$(A : U) → U → U$ --- the type of the polymorphic identity --- then the
+following proposition holds:
+$$ (A : U) → (P : A → U) → (x : A) → P x → P (f A x) $$
 %
-A simple example is that if a function $f$ has type $(A : U) → U → U$ ---
-the type of the polymorphic identity --- then the following
-proposition holds:
+Indeed the paper \cite{bernardy_proofs_2012} proves such a result as a
+(syntactical) metatheorem about type system. Notice however that this result is
+not provable ``internally'' in the form that
+$$ (f : (A:U) → A → A) →  (A : U) → (P : A → U) → (x : A) → P x → P (f A x) $$
 %
-\[
-  (A : U) → (P : A → U) → (x : A) → P x → P (f A x)
-\]
-%
-(which implies that $f$ must return exactly its argument).
-The above result, \emph{abstraction}, has proved useful for reasoning
-about functional programs \citep{wadler_theorems_1989}. It also has deep
-theoretical implications: for example, the induction principle over Church numerals
-can be deduced from it \citep{wadler_girardreynolds_2007}.
+is provable.
 
-
-The abstraction theorem is an invention of
-\citet{reynolds_types_1983}, which he used to give formal meaning to
-polymorphism in the λ-calculus. He does so by a model construction
-where types are interpreted as predicates and functions are interpreted
-by predicate-preserving functions.
-
-In this paper, we propose an extension of Reynolds' model, where a
-type is interpreted as a hypercube of sets, predicates, relations and
-so on. Our model supports the interpretation dependent type-theories,
-and of parametricity itself (parametricity is parametric).  We take
-advantage of this closure property by intergrating parametricity into
-the syntax of the type-theory being interpreted.  This means that the
-user of the logic can prove any parametricity result directly in the
-logic, rather than having to resort to an external semantic
-justification.
-
+Several attempts have been made
+\citep{bernardy_computational_2012,bernardy_type-theory_2013} -- or are currently
+developped \citep{altenkirch2014syntax} ---
+for designing an extension of dependent type theory in which such internal form of
+parametricity holds. We suggest such a system here.
 Our technical contributions are as follows:
 \begin{itemize}
-\item We propose a novel type-theory (\fref{sec:syntax}), and show
-  that it internalises parametricity (\fref{sec:parametricity}).
-  % In particular, we show that the calculus internalizes parametricity. 
+\item We present a type-theory (\fref{sec:syntax}) which internalises parametricity (\fref{sec:parametricity})
+  and can be seen as a simplification of the systems from
+  \cite{bernardy_computational_2012,bernardy_type-theory_2013}
+  % In particular, we show that the calculus internalizes parametricity.
   % in \fref{sec:abstraction}. \comment{Much of this is now in the appendix...}
-\item We provide a presheaf model for this type-theory (\fref{sec:model}).
+\item We provide a \emph{denotational} semantics, in the form of a presheaf model for this type-theory (\fref{sec:model}).
       This model is refinement of the presheaf semantics used to
       interpret nominal sets with
       restrictions~\citep{bezem2014model,DBLP:journals/corr/Pitts14}.
 \end{itemize}
+We conjecture that conversion and type-checking are decidable for this system.
 
 \section{Syntax}
 \label{sec:syntax}
