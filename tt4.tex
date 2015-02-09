@@ -697,13 +697,14 @@ We proceed to interpret each of the type constructions.
 
   \item[\sc Out.]
     Assume $f : I → J$ and assume $ρ ∈ Γf$.  We need to define the $J$-set $(P \op {i} a)(f,ρ)$.
-    Let $j = \fresh J$ and $ι_i : I → I,i$, $ι_j : J → J,j$ the inclusions.
-    We can consider the $J,j$-set $P(f^{ij},ρι_i)$, and $a(f,ρ)$ a ($J$-)element of
-    $P(i\,0)(f,ρ) = P((i\,0)f,ρ) = P(ι_i f,ρι_j)(j\,0)$.
+    Let $j = \fresh J$.
+    Recall that we note the inclusions $ι_i : I → I,i$ and $ι_j : J → J,j$.
+    By the induction hypotheses we get a $(J,j)$-set $P(f^{ij},ρι_i)$, and $a(f,ρ)$
+    a $J$-element of $P(i\,0)(f,ρ) = P((i\,0)f,ρ) = P(ι_i f,ρι_j)(j\,0)$.
     We define $(P \op {i} a)(f,ρ)$ to be the set of $J$-elements $v$ such that
-    $(a(f,ρ),_j v) ∈ P(ι_i f,ρι_j)$. If $v$ is such an element and $g : J → K$
+    $(a(f,ρ),_j v) ∈ P(ι_i f^{ij},ρι_j)$. If $v$ is such an element and $g : J → K$
     and $k=\fresh K$, then $vg$ is defined by the equation
-    $(a(f,ρ)g,_k vg) = (a(f,ρ)g,_k v) g^{jk}$.
+    $(a(f,ρ)g,_k vg) = (a(f,ρ) ,_j v) g^{jk}$.
 
 
   \item[\sc In-Pred.]
