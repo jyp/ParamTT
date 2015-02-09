@@ -39,6 +39,8 @@
 \def\opp{\mathrm{op}}
 
 \newtheorem{conjecture}[theorem]{Conjecture}
+\newboolean{tikz}
+\setboolean{tikz}{false} % XXX set to true for diagrams
 
 \title{A presheaf model of parametric type theory}
 
@@ -239,8 +241,26 @@ to keep the presentation concise, we leave it implicit in the syntax.
 We note
 \begin{itemize}
 \item $(i\,0) : I,i → I$ the partial identity: $(i\,0)(i) = 0$ and $(i\,0)(j) = j$ for each $j ∈ I$; 
-\item $ι_i : I → I,i$ the inclusion: $ι_i(j) =j$ for all $j ∈ I$.
+\item $ι_i : I → I,i$ the inclusion: $ι_i(j) = j$ for all $j ∈ I$.
 \end{itemize}
+Furthermore for each color map $f : I → J$, $i ∉ I$ and $j ∉ J$, we
+note $f^{ij} : I,i → J,j$ the color map such that
+$f^{ij}(i) = j$ and $f^{ij}(k) = f(k)$ for all $k ∈ I$.
+\ifthenelse{\boolean{tikz}}{
+\begin{center}%
+\begin{tikzpicture}[node distance=4\baselineskip]%
+  \node              (Ii) {$I,i$};
+  \node[below of=Ii] (I)  {$I$};
+  \node[right of=Ii] (Jj) {$J,i$};
+  \node[below of=Jj] (J)  {$J$};
+
+  \draw[->] (Ii) to node[above]  {$f^{ij}$}(Jj);
+  \draw[->] (Ii) to node[left]  {$(i\,0)$} (I);
+  \draw[->] (Jj) to node[right] {$(j\,0)$} (J);
+  \draw[->] (I) to node[below]  {$f$} (J);
+\end{tikzpicture}%
+\end{center}%
+}{}
 
 \begin{definition}[Color substitution]~
   \label{def:color-subst}
@@ -580,15 +600,19 @@ Recall \pI{} (\fref{def:pI}), the category of color maps.
   Any morphism $f : I → J$ has a
   unique decomposition into a projection map
   $α : I → I_α$ and a total map $h : I_α ↣ J$.
-%  \begin{tikzpicture}[node distance=4\baselineskip]
-%    \node              (I)  {$I$};
-%    \node[below of=I]  (Ia) {$I_α$};
-%    \node[right of=Ia] (J)  {$J$};
-%
-%    \draw[->] (I) to node[left] {$α$} (Ia);
-%    \draw[->] (I) to node[above right] {$f$} (J);
-%    \draw[to reversed->] (Ia) to node[below] {$h$} (J);
-%  \end{tikzpicture}
+  \ifthenelse{\boolean{tikz}}{
+  \begin{center}%
+  \begin{tikzpicture}[node distance=4\baselineskip]%
+      \node              (I)  {$I$};
+      \node[below of=I]  (Ia) {$I_α$};
+      \node[right of=Ia] (J)  {$J$};
+
+      \draw[->] (I) to node[left] {$α$} (Ia);
+      \draw[->] (I) to node[above right] {$f$} (J);
+      \draw[to reversed->] (Ia) to node[below] {$h$} (J);
+  \end{tikzpicture}%
+  \end{center}%
+  }{}
   \end{remark}
 
 \begin{definition}[$f^{ij}$]
