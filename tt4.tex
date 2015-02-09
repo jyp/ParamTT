@@ -38,7 +38,7 @@
 \def\El#1{\mathrm{El}(#1)}
 \def\opp{\mathrm{op}}
 
-\title{A presheaf model of parametric type-theory}
+\title{A presheaf model of parametric type theory}
 
 \author{}
 \date{\today}
@@ -47,7 +47,7 @@
 \maketitle
 
 \begin{abstract}
-  We propose a new type-theory with internalized
+  We propose a new type theory with internalized
   parametricity. Compared to previous similar proposals, this version
   comes with a denotational semantics which is a refinement of the
   standard presheaf semantics of dependent type theory. Further, this
@@ -94,10 +94,10 @@ for designing an extension of dependent type theory in which such an internal fo
 parametricity holds. We propose another such system here.
 Our technical contributions are as follows:
 \begin{itemize}
-\item We present a type-theory (\fref{sec:syntax}) which internalises parametricity (\fref{sec:parametricity})
+\item We present a type theory (\fref{sec:syntax}) which internalises parametricity (\fref{sec:parametricity})
   and can be seen as a simplification and generalisation of the systems of
   \cite{bernardy_computational_2012,bernardy_type-theory_2013}
-\item We provide a \emph{denotational} semantics, in the form of a presheaf model for this type-theory (\fref{sec:model}).
+\item We provide a \emph{denotational} semantics, in the form of a presheaf model for this type theory (\fref{sec:model}).
       This model is refinement of the presheaf semantics used to
       interpret nominal sets with
       restrictions~\citep{bezem2014model,DBLP:journals/corr/Pitts14}.
@@ -107,7 +107,7 @@ Our technical contributions are as follows:
 \section{Syntax}
 \label{sec:syntax}
 In this section we define the syntax and typing rules of our
-parametric type-theory, as well as the equality judgement.
+parametric type theory, as well as the equality judgement.
 
 We assume a special symbol ‘0’, and a countable infinite set of other
 symbols, called \emph{colors}.
@@ -117,7 +117,7 @@ We suppose a fixed function $\fresh{·}$ such that
 % JP: I remove \emph{gensym} which occurs nowhere else in the text
 $\fresh{I} ∉ I$ for any finite color set $I$.
 %
-The main innovation of the type-theory
+The main innovation of the type theory
 presented here is that terms may depend on (a finite number of)
 colors.
 \begin{definition}[Syntax of terms and contexts]
@@ -553,7 +553,7 @@ generators of the symmetric group.
 
 \section{Presheaf model}
 \label{sec:model}
-In this section we show how to interpret our type-theory by a presheaf model.
+In this section we show how to interpret our type theory by a presheaf model.
 \todo{General idea for those who won't read it}
 Recall \pI{} (\fref{def:pI}), the category of color maps.
 
@@ -697,13 +697,14 @@ We proceed to interpret each of the type constructions.
 
   \item[\sc Out.]
     Assume $f : I → J$ and assume $ρ ∈ Γf$.  We need to define the $J$-set $(P \op {i} a)(f,ρ)$.
-    Let $j = \fresh J$ and $ι_i : I → I,i$, $ι_j : J → J,j$ the inclusions.
-    We can consider the $J,j$-set $P(f^{ij},ρι_i)$, and $a(f,ρ)$ a ($J$-)element of
-    $P(i\,0)(f,ρ) = P((i\,0)f,ρ) = P(ι_i f,ρι_j)(j\,0)$.
+    Let $j = \fresh J$.
+    Recall that we note the inclusions $ι_i : I → I,i$ and $ι_j : J → J,j$.
+    By the induction hypotheses we get a $(J,j)$-set $P(f^{ij},ρι_i)$, and $a(f,ρ)$
+    a $J$-element of $P(i\,0)(f,ρ) = P((i\,0)f,ρ) = P(ι_i f,ρι_j)(j\,0)$.
     We define $(P \op {i} a)(f,ρ)$ to be the set of $J$-elements $v$ such that
-    $(a(f,ρ),_j v) ∈ P(ι_i f,ρι_j)$. If $v$ is such an element and $g : J → K$
+    $(a(f,ρ),_j v) ∈ P(ι_i f^{ij},ρι_j)$. If $v$ is such an element and $g : J → K$
     and $k=\fresh K$, then $vg$ is defined by the equation
-    $(a(f,ρ)g,_k vg) = (a(f,ρ)g,_k v) g^{jk}$.
+    $(a(f,ρ)g,_k vg) = (a(f,ρ) ,_j v) g^{jk}$.
 
 
   \item[\sc In-Pred.]
@@ -869,17 +870,17 @@ of special-purpose ones. On the other hand, obtaining the classical
 parametric interpretation of types requires some purely mechanical
 work by the user of the logic.
 
-\subsection{Parametric Models of Type-Theory vs. Parametric Type-Theories}
+\subsection{Parametric Models of Type Theory vs. Parametric Type Theories}
 
 Two pieces of work propose alternative parametric models of
-type-theory
+type theory
 \citep{atkey_relationally_2014,krishnaswami_internalizing_2013}, but
 do not integrate parametricity in the syntax of the calculus. This
 means that, while certain consequences of parametricity can be made
 available in the logic, via constants validated by the model,
 parametricity itself is not available. In this paper, we not only
 propose a parametric model, but also show how it can be used to
-interpret parametricity straight up in the syntax of the type-theory.
+interpret parametricity straight up in the syntax of the type theory.
 
 
 \subsection{Various kinds of models}
@@ -896,7 +897,7 @@ an underlying calculus, while in the present work they refine a presheaf structu
 
 The presheaf construction used in this paper follows a known template,
 used for example by \citet{bezem2014model,DBLP:journals/corr/Pitts14}
-to model univalence in type-theory. Not only both models use a
+to model univalence in type theory. Not only both models use a
 presheaf, but they also have the same underlying category $\pI$.
 This means as all these models have an additional cubical structure.
 We find remarkable that cubical structures are useful for modeling both
@@ -909,11 +910,11 @@ $I$-elements, which is essential to interpret our special-purpose
 pairing constructions.
 
 \section{Future work and conclusion}
-We have defined a new type-theory with internalised parametricity.
+We have defined a new type theory with internalised parametricity.
 Thanks to our model construction, we have proved the consistency of
 the system. The missing piece to construct a type-checker is a
 decision algorithm for the conversion relation.  This checker could
-then be used as a minimal proof assistant for a type-theory with
+then be used as a minimal proof assistant for a type theory with
 parametricity.
 
 \bibliographystyle{abbrvnat}
