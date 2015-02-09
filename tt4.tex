@@ -607,7 +607,7 @@ two further conditions:
 \end{enumerate}
 %
 Seeing an $I$-element $u$ as a tuple indexed by projection maps
-$α : I → I_α$, the second restriction can be written $(uα)_β = u_{αβ}$.
+$α : I → I_α$, the second requirement can be written $(uα)_β = u_{αβ}$.
 
 \bigskip
 A context $Γ ⊢_I$ is interpreted as a presheaf on the slice category
@@ -628,7 +628,6 @@ A term $Γ ⊢_I a : A$ is interpreted by a $J$-element $a(f,ρ) ∈ A(f,ρ)$
 for each $f: I → J$ and $ρ ∈ Γf$, such that
 $a(f,ρ)g = a(fg,ρg)$ for any $g : J → K$.
 
-
 \medskip
 If $Γ ⊢_I A$ we define the interpretation of $Γ,x:A ⊢_I$
 by taking $⟨ρ,x=u⟩ : (Γ,x:A)f$ to mean $ρ ∈ Γf$ and $u ∈ A(f,ρ)$. The
@@ -648,8 +647,7 @@ It also satisfies the substitution law on colors, \ie, if $Γ ⊢_I A$ and
 $f : I → J$ then for any $g : J → K$ we have $Γ'g = Γ(fg)$,
 where $Γ'$ is the result of perfoming the substitution $f$ in $Γ$, and if
 $ρ ∈ Γfg$ we have $Af (g,ρ) = A(fg,ρ)$.
-For establishing these properties, one way is to introduce an intermediate
-system with explicit substitution laws, as in \citep{dybjer_inductive_1994}.
+For establishing these properties, we proceed as in \citet{Aczel98onrelating}.
 
 \bigskip
 We proceed to interpret each of the type constructions.
@@ -703,18 +701,26 @@ We proceed to interpret each of the type constructions.
     We define $(P \op {i} a)(f,ρ)$ to be the set of $J$-elements $v$ such that
     $(a(f,ρ),_j v) ∈ P(ι_i f,ρι_j)$. If $v$ is such an element and $g : J → K$
     and $k=\fresh K$, then $vg$ is defined by the equation
-    $(a(f,ρ)g,_k vg) = (a(f,ρ)g,_k v) g'$ with $g' = (g,j=k)$.
+    $(a(f,ρ)g,_k vg) = (a(f,ρ)g,_k v) g^{jk}$.
 
 
   \item[\sc In-Pred.]
     Assume $f : I,i → J$, and $ρ ∈ Γ(ι_if)$.  We need to define the $J$-set
     $(\CTimes i {x:A} B)(f,ρ)$.
-    Recall that $ι_i : I → I,i$ is the inclusion map. There are two cases. If $f(i) = 0$
+    Let $ι_i : I → I,i$ be the inclusion. There are two cases. If $f(i) = 0$,
     then $(\CTimes i {x:A} B)(f,ρ)$ is defined to be the $J$-set $A(ι_i f)$.
     Otherwise, if $f(i) = j ∈ J$, then we define $(\CTimes i {x:A} B)(f,ρ)$ to
     be the $J$-set of $(u,_j v)$ where $u$ is a $J\backslash\{j\}$-element in
     $A(ι_i f(j\,0),ρ(j\,0))$ and $v$ is an element in
     $B(ι_i f(j\,0),⟨ρ(j\,0),x=u⟩)$.
+
+
+  \item[\sc Decode.]
+    Assume $f:I → J$ and $ρ ∈ Γf$.  We have $A(f,ρ) ∈ U(J)$ and we define
+    $\El{A}(f,ρ)$ to be the set $A(f,ρ)_1$.
+    The restriction map $\El{A}(f,ρ) → \El{A}(fg,ρ g)$, $u ↦ ug$ is defined
+    using the restriction map $A(f,ρ)_1 → A(f,ρ)_g$ and the fact that we have
+    $A(f,ρ)_g = A(fg,ρ g)_1$.
 \end{description}
 
 \begin{remark}
