@@ -38,6 +38,8 @@
 \def\El#1{\mathrm{El}(#1)}
 \def\opp{\mathrm{op}}
 
+\newtheorem{conjecture}[theorem]{Conjecture}
+
 \title{A presheaf model of parametric type theory}
 
 \author{}
@@ -342,7 +344,6 @@ inductively by the following rules.
 Additionally, all congruences yield conversion rules.
 \end{definition}
 
-
 \begin{corollary}[Any term can be seen as a pair of a realizer and a parametricity proof]~
   \label{cor:equalities}
   \begin{itemize}
@@ -352,10 +353,12 @@ Additionally, all congruences yield conversion rules.
   \end{itemize}
 \end{corollary}
 
-\begin{conjecture}
-  The conversion relation is decidable.
-\end{conjecture}
-\todo{Do we want any kind of argument here?}
+Our conversion relation is similar to the conversion relation is
+intentional for functions, but extensional when it comes to
+dependencies on colors. Because there is at any point only a finite
+number of colors to consider, we conjecture that our conversion
+relation is decidable.
+
 \section{Parametricity}
 \label{sec:parametricity}
 In this section we prove that our system properly internalises
@@ -616,7 +619,7 @@ satisfying $u1 = u$ and $(uf)g = u(fg)$. We refine this notion by requiring
 two further conditions:
 %
 \begin{enumerate}
-  \item for any $I ∈ \pI$, $F(I)$ is an $I$-set, and
+  \item for any $I ∈ \mathnormal{Objects}(\pI)$, $F(I)$ is an $I$-set, and
   \item for any projection map $α : I → I_α$, the restriction
     map $F(I) → F(I_α)$, $u ↦ uα$ is the projection operation, \ie,
     $uα_J = u_J$ for any $J ⊆ I$.
@@ -695,7 +698,7 @@ We proceed to interpret each of the type constructions.
     maps $A_{α f} → A_{α fg}$, $u ↦ ug$ for $f : I ↣ J$ total
     and $g : J → K$ arbitrary, such that $u1 = u$ and $(ug)h = u(gh)$.
 
-    As before, such a data defines a set $A_f$ for an arbitrary map $f : I → J$
+    As before, such data define a set $A_f$ for an arbitrary map $f : I → J$
     with restriction maps $A_f → A_{fg}$ if $g : J → K$.
 
     If $g : I → J$ is an arbitrary map, we define $Ag$ by taking $Ag_{βh}$
