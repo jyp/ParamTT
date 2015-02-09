@@ -60,15 +60,15 @@
 \cite{reynolds_types_1983} proved a general \emph{abstraction theorem} (sometimes called
 \emph{parametricity theorem}) about polymorphic functions. His argument is
 about a set theoretic semantic.  As he stated it, {\em the underlying
-  idea is that the meaning of an expression in ``related''
+  idea is that the meanings of an expression in ``related''
   environments will be ``related'' values}.  For instance, he proves
 that if $t_X$ is a term of type $X → X$ and if we consider two sets
 $A_0$, $A_1$ and a relation $R ⊆ A_0 × A_1$ then we have
 $R([t_X]_{X=A_0}(a_0),[t_X]_{X=A_1}(a_1))$ whenever $R(a_0,a_1)$,
 where $[t_X]_{X=A}$ denotes the meaning of the expression $t_X$ where
 $X$ is interpreted by the set $A$. As he noted, one can replace in
-this statement binary relations by n-ary relation, and in particular
-unary relations (predicates). In the latter case, the statement is that
+this statement binary relations by n-ary relations, and in particular
+unary relations (predicates). In the latter case, the statement is the following:
 if $A$ is a set and $P$ a predicate on $A$, then we have
 $P([t_X]_{X=A}(a))$ whenever $P(a)$ holds.
 \cite{wadler_theorems_1989} illustrates by many examples how this
@@ -82,7 +82,7 @@ $(A : U) → U → U$ --- the type of the polymorphic identity --- then the
 following proposition holds:
 $$ (A : U) → (P : A → U) → (x : A) → P x → P (f A x) $$
 %
-Indeed the paper \cite{bernardy_proofs_2012} proves such a result as a
+Indeed \citet{bernardy_proofs_2012} proves such a result as a
 (syntactical) meta-theorem about type systems. However this result is
 not provable internally, i.e. the following is not provable:
 $$ (f : (A:U) → A → A) →  (A : U) → (P : A → U) → (x : A) → P x → P (f A x) $$
@@ -91,7 +91,7 @@ Several attempts have been made
 \citep{bernardy_computational_2012,bernardy_type-theory_2013} --- or are currently
 developped \citep{altenkirch2014syntax} ---
 for designing an extension of dependent type theory in which such an internal form of
-parametricity holds. We suggest such a system here.
+parametricity holds. We propose another such system here.
 Our technical contributions are as follows:
 \begin{itemize}
 \item We present a type-theory (\fref{sec:syntax}) which internalises parametricity (\fref{sec:parametricity})
@@ -106,7 +106,7 @@ Our technical contributions are as follows:
 
 \section{Syntax}
 \label{sec:syntax}
-In the following section we define the syntax and typing-rules of our
+In this section we define the syntax and typing rules of our
 parametric type-theory, as well as the equality judgement.
 
 We assume a special symbol ‘0’, and a countable infinite set of other
