@@ -811,34 +811,47 @@ We now describe how to interpret terms.
     where $j = \fresh{J}$.
 \end{description}
 
-\begin{theorem}[Convertible terms are semantically equal]
+\begin{theorem}[Convertible terms are semantically equal]~
   \label{thm:convertible-in-model}
-  If $Γ ⊢_I a : A$ and $Γ ⊢_I b : A$ with $a = b$, then
-  $a(f,ρ) = b(f,ρ)$ for any $f : I → J$ and $ρ : Γf$.
-  In particular,
   \begin{itemize}
-    \item $\app{λt}{u}(f,ρ) = t[u](f,ρ)$,
- %     where $[u]$ is the map $Γ → Γ.A$, $[u]ρ ↦ ⟨ρ,uρ⟩$
-    \item $({(\CTimes i {x:A} B)} \op {i} a)(f,ρ) = B(f,⟨ρ,x=a(f,ρ)⟩) = B[a] (f,ρ)$
+    \item If $Γ ⊢_I A₁$ and $Γ ⊢_I A₂$ with $A₁ = A₂$, then
+      $A₁(f,ρ) = A₂(f,ρ)$ for any $f : I → J$ and $ρ : Γf$.
+    \item If $Γ ⊢_I a₁ : A$ and $Γ ⊢_I a₂ : A$ with $a₁ = a₂$, then
+      $a₁(f,ρ) = a₂(f,ρ)$ for any $f : I → J$ and $ρ : Γf$.
   \end{itemize}
 \end{theorem}
 \begin{proof}
-  \todo{We prove only so and so cases, the rest are similar or straightforward.}
-  Let $f : I → J$, $j = \fresh J$, $g = (f,i=j): I,i → J,j$. We have
-  We have
-  \begin{align*}
-    ({((x:A)\times_i B)} \op {i} a)(f,ρ)
-    &= \left\{ v \mid (a(f,ρ) ,_j v) ∈ (\CTimes i {x:A} B)g \right\}
-    \\
-    &= \left\{ v \mid (a(f,ρ) ,_j v) ∈ \left\{ (u ,_j w) \mid u ∈ A(f,ρ), w ∈ B(f,⟨ρ,x=u⟩) \right\} \right\}
-    \\
-    &= \left\{ v \mid v ∈ B(f,⟨ρ,x=a(f,ρ)⟩) \right\}
-    \\
-    &= \left\{ v \mid v ∈ B[a](f,ρ) \right\}
-    \\
-    &= B[a](f,ρ)
-  \qedhere
-  \end{align*}
+  By simultaneous induction on the derivation.
+  We only treat the conversion rules \textsc{Pair-Param} and
+  \textsc{Pair-Pred} here; other rules involving colors can be proven in
+  a similar fashion, while $β$ and $η$ can be proven in the usual way.
+
+  \begin{description}
+    \item[\sc Pair-Param.]
+      Let $f : I → J$, $j = \fresh J$.  We have
+      \begin{align*}
+        &v ∈ ({((x:A)\times_i B)} \op {i} a)(f,ρ)
+        \\
+        \text{ iff. }& (a(f,ρ) ,_j v) ∈ (\CTimes i {x:A} B)(f^{ij},ρι_j)
+        \\
+        \text{ iff. }& (a(f,ρ) ,_j v) ∈ \left\{ (u ,_j w) \mid u ∈ A(f,ρ), w ∈ B(f,⟨ρ,x=u⟩) \right\}
+        \\
+        \text{ iff. }& v ∈ B(f,⟨ρ,x=a(f,ρ)⟩)
+        \\
+        \text{ iff. }& v ∈ B[a](f,ρ)
+      \end{align*}
+
+    \item[\sc Pair-Pred.]
+      Let $f : I → J$, $j = \fresh J$.  We have
+      \begin{align*}
+         & ((a ,_i p) \param i)(f,ρ)
+      \\=~& (a ,_i p)(f^{ij}, ρι_j) · j
+      \\=~& (a(ι_i f^{ij}(j\,0), ρ) ,_j p(ι_i f^{ij}(j\,0), ρ)) · j
+      \\=~& (a(f, ρ) ,_j p(f, ρ)) · j
+      \\=~& p(f, ρ)
+      \qedhere
+      \end{align*}
+  \end{description}
 \end{proof}
 
 \todo{Remark: \LaTeX-ify the proof that
