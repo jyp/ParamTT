@@ -95,7 +95,7 @@ $A_0$, $A_1$ and a relation $R ⊆ A_0 × A_1$ then we have
 $R([t_X]_{X=A_0}(a_0),[t_X]_{X=A_1}(a_1))$ whenever $R(a_0,a_1)$,
 where $[t_X]_{X=A}$ denotes the meaning of the expression $t_X$ where
 $X$ is interpreted by the set $A$. As he noted, one can replace in
-this statement binary relations by n-ary relations, and in particular
+this statement binary relations by $n$-ary relations, and in particular
 unary relations (predicates). In the latter case, the statement is the following:
 if $A$ is a set and $P$ a predicate on $A$, then we have
 $P([t_X]_{X=A}(a))$ whenever $P(a)$ holds.
@@ -229,7 +229,7 @@ We mutually define three judgments:
          Γ ⊢_I u : (x:\proj i A) → (x':A \op i x) → P[\CP i x {x'}] \op i f x}
         {Γ ⊢_{I,i} \fp i t u : (x:A) → P[x]}
 
-    \inferrule[Color-elim]{Γ ⊢_{I,i} a : T}{Γ ⊢_I a \param i : T \op i {\proj i a}}
+    \inferrule[Color-Elim]{Γ ⊢_{I,i} a : T}{Γ ⊢_I a \param i : T \op i {\proj i a}}
   \end{mathpar}
 \end{definition}
 
@@ -256,7 +256,7 @@ to keep the presentation concise, we leave it implicit in the syntax.
   \label{def:pI}
   Let objets be objects be finite color sets
   and morphisms be color maps.
-  If $f : I → J$ and $g : J → k$, we define the composition $fg : I → K$
+  If $f : I → J$ and $g : J → K$, we define the composition $fg : I → K$
   as $fg(i) = 0$ if $f(i) = 0$ and $fg(i) = g(f(i))$ if $f(i) ∈ J$.
   We write $1_I : I → I$ for identity map, and define it as $1_I(i) = i$ for each $i ∈ I$.
   It is easy to check that we have a category (\cite[ex.~9.7 p.~176]{PittsAM:nomsns}).
@@ -265,7 +265,7 @@ to keep the presentation concise, we leave it implicit in the syntax.
 We note
 \begin{itemize}
 \item $(i\,0) : I,i → I$ the partial identity: $(i\,0)(i) = 0$ and $(i\,0)(j) = j$ for each $j ∈ I$; 
-\item $ι_i : I → I,i$ the inclusion: $ι_i(j) = j$ for all $j ∈ I$.
+\item $ι_i : I → I,i$ the inclusion: $ι_i(j) = j$ for each $j ∈ I$.
 \end{itemize}
 Furthermore for each color map $f : I → J$, $i ∉ I$ and $j ∉ J$, we
 note $f^{ij} : I,i → J,j$ the color map such that
@@ -456,7 +456,7 @@ $U \op i A$ is isomorphic to $A → U$.
 
 \begin{theorem}
 \label{thm:iso-fun}
-$((x:A) → B[x]) \op i f$ is isomorphic to $$(x:A) → (x' : A \op i x) → B[\CP i x {x'}] \op i {(f\, x)}$$.
+$((x:A) → B[x]) \op i f$ is isomorphic to $$(x:A) → (x' : A \op i x) → B[\CP i x {x'}] \op i {(f\, x)}$$
 \end{theorem}
 \begin{proof}~
   \begin{enumerate}
@@ -471,8 +471,8 @@ $((x:A) → B[x]) \op i f$ is isomorphic to $$(x:A) → (x' : A \op i x) → B[\
   \item $(\CP i f {\fp i f p \param i} \CP i x x') \param i = ({\fp i
       f p} \CP i x {x'}) \param i = \CP i {f\, x} {p\, x\, x'} \param i = p\, x\, x'$
   \item $\fp i f {λx x'. (\CP i f q \CP i x {x'}) \param i} \param i$
-    iff $\fp i f {λx x'. (\CP i f q \CP i x {x'}) \param i} = \CP i f
-    q$, which is true by the equality rule for function pairing.
+    iff. $\fp i f {λx x'. (\CP i f q \CP i x {x'}) \param i} = \CP i f q$,
+    which is true by the equality rule for function pairing.
   \qedhere
   \end{enumerate}
 \end{proof}
@@ -491,11 +491,11 @@ Proving (unary) parametricity for $N$ means that, assuming
 \item $A : U$
 \item $P : A → U$
 \item $z : A$
-\item $z' : P z$
+\item $z' : P\, z$
 \item $s : A → A$
-\item $s' : (x:A) → P x → P (s x)$
+\item $s' : (x:A) → P\, x → P\, (s\, x)$
 \end{itemize}
-we can prove $P (f A z s)$.
+we can prove $P\, (f\, A\, z\, s)$.
 
 Indeed, a proof term is the following:
 %
@@ -613,8 +613,10 @@ Recall \pI{} (\fref{def:pI}), the category of color maps.
 
 
  \begin{definition}[Projection]
-    We say that a morphism $α : I → I_α$ is a \emph{projection} if $I_α ⊆ I$,$α(i) = 0$
-    for each $i ∈ I \backslash I_α$ and $α(i) = i$ for each $i ∈ I_α$.
+    We say that a morphism $α : I → I_α$ is a \emph{projection} if
+    $I_α ⊆ I$,
+    $α(i) = 0$ for each $i ∈ I \backslash I_α$, and
+    $α(i) = i$ for each $i ∈ I_α$.
   \end{definition}
   \begin{definition}[Total maps]
   Injective morphisms, noted $h : I ↣ J$, are the \emph{total} ones, \ie,
