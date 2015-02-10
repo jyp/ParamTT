@@ -880,10 +880,47 @@ We now describe how to interpret terms.
   \end{description}
 \end{proof}
 
-\todo{Remark: \LaTeX-ify the proof that
-  $(U \op i (A,_j P) \op j Q)f ≠ (U \op j (A,_jQ) \op i Q)f$,
-  and explain why.
-}
+\begin{remark}
+  As noted earlier, the types
+  $U \op i (X ,_j P) \op j Q$ and $U \op j (X ,_i Q) \op i P$
+  are not convertible.
+  Their semantic interpretation are not equal either.  Indeed
+  for any $f : ∅ → J$, $k = \fresh J$ and $l = \fresh{J,k}$
+  we have
+  (leaving out the context interpretation $ρ$ for the sake of
+  readability)
+  on the one hand
+  \begin{align*}
+    &v ∈ (U \op i (X ,_j P) \op j Q) f
+    \\
+    \text{ iff. }& (Qf ,_k v) ∈ (U \op i (X ,_j P))f^{jk}
+    \\
+    \text{ iff. }& ((X ,_j P)f^{jk} ,_l (Qf ,_k v)) ∈ Uf^{jk,il}
+    \\
+    \text{ iff. }& ((Xf ,_k Pf) ,_l (Qf ,_k v)) ∈ Uf^{jk,il}
+  \end{align*}
+
+  and on the other hand
+  \begin{align*}
+    &v ∈ (U \op j (X ,_i Q) \op i P) f
+    \\
+    \text{ iff. }& (Pf ,_k v) ∈ (U \op j (X ,_i Q))f^{ik}
+    \\
+    \text{ iff. }& ((X ,_i Q)f^{ik} ,_l (Pf ,_k v)) ∈ Uf^{ik,jl}
+    \\
+    \text{ iff. }& ((Xf ,_k Qf) ,_l (Pf ,_k v)) ∈ Uf^{ik,jl}
+    \\
+    \text{ iff. }& ((Xf ,_l Qf) ,_k (Pf ,_l v)) ∈ Uf^{jk,il}
+  \end{align*}
+
+  Since the $(J,k,l)$-elements $((Xf ,_k Pf) ,_l (Qf ,_k v))$ and
+  $((Xf ,_l Qf) ,_k (Pf ,_l v))$ are not equal,
+  $(U \op i (X ,_j P) \op j Q) f = (U \op j (X ,_i Q) \op i P) f$
+  would imply (taking $f=1_∅$) that
+  $((a ,_k b) ,_l (c ,_k d)) ∈ U(k,l)$ iff.
+  $((a ,_l c) ,_k (b ,_l d)) ∈ U(k,l)$ for any $a,b,c,d$, which does not
+  hold by construction of $U(k,l)$.
+\end{remark}
 
 
 \begin{theorem}[Validity]
