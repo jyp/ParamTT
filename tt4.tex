@@ -117,13 +117,13 @@ $$ (f : (A:U) → A → A) →  (A : U) → (P : A → U) → (x : A) → P x �
 
 Several attempts have been made
 \citep{bernardy_computational_2012,bernardy_type-theory_2013} --- or are currently
-developped \citep{altenkirch2014syntax} ---
+developed \citep{altenkirch2014syntax} ---
 for designing an extension of dependent type theory in which such an internal form of
 parametricity holds. We propose another such system here.
 Our technical contributions are as follows:
 \begin{itemize}
-\item We present a type theory (\fref{sec:syntax}) which internalises parametricity (\fref{sec:parametricity})
-  and can be seen as a simplification and generalisation of the systems of
+\item We present a type theory (\fref{sec:syntax}) which internalizes parametricity (\fref{sec:parametricity})
+  and can be seen as a simplification and generalization of the systems of
   \cite{bernardy_computational_2012,bernardy_type-theory_2013}
 \item We provide a \emph{denotational} semantics, in the form of a presheaf model for this type theory (\fref{sec:model}).
       This model is refinement of the presheaf semantics used to
@@ -135,7 +135,7 @@ Our technical contributions are as follows:
 \section{Syntax}
 \label{sec:syntax}
 In this section we define the syntax and typing rules of our
-parametric type theory, as well as the equality judgement.
+parametric type theory, as well as the equality judgment.
 
 We assume a special symbol ‘0’, and a countable infinite set of other
 symbols, called \emph{colors}.
@@ -171,7 +171,7 @@ We give a few intuitions to interpret the novel syntax, before giving formally t
 \item The type $A \op i u$ expresses that $u$ satisfies the
   parametricity predicate associated with the type $A$ on color $i$.
 \item The term $a \param i$ yields a proof of $A \op i \proj i a$.
-\item In the above, the term $\proj i a$ denotes a realiser of $a$,
+\item In the above, the term $\proj i a$ denotes a realizer of $a$,
   obtained by erasing the color $i$ (Erasure is detailed in
   \fref{def:color-subst}).
 \item The forms $\CP i t u$, $\CTimes i {x:A} B$ and $\fp i t u$ allow to
@@ -247,14 +247,14 @@ to keep the presentation concise, we leave it implicit in the syntax.
 % 'Morphism' means something only in the context of a category; hence Morphism application ==> Color substitution
 \begin{definition}
   A \emph{color map} $f : I → J$ is a function $I → J ∪ \{0\}$ such that
-  $f(i_1) = f(i_2)$ iff $i_1 = i_2$ whenever $f(i_1) = f(i_2) ∈ J$.
+  $f(i_1) = f(i_2)$ iff. $i_1 = i_2$ whenever $f(i_1) = f(i_2) ∈ J$.
 %
 %
 \end{definition}
 
 \begin{definition}[Category $\pI{}$]
   \label{def:pI}
-  Let objets be objects be finite color sets
+  Let objects be objects be finite color sets
   and morphisms be color maps.
   If $f : I → J$ and $g : J → K$, we define the composition $fg : I → K$
   as $fg(i) = 0$ if $f(i) = 0$ and $fg(i) = g(f(i))$ if $f(i) ∈ J$.
@@ -337,7 +337,7 @@ term but is not in the domain of $f$.
 $af$ is defined and $Γ f ⊢_J af : Af$
 \end{theorem}
 \begin{proof}
-  By induction on the typing judgement.
+  By induction on the typing judgment.
 \end{proof}
 
 \comment{
@@ -356,7 +356,7 @@ $af$ is defined and $Γ f ⊢_J af : Af$
 
 \begin{definition}[Conversion]~
 \label{def:conversion}
-The convertibity of types used in the {\sc Conv} rule is defined
+The convertibility of types used in the {\sc Conv} rule is defined
 inductively by the following rules.
 \begin{mathpar}
   \inferrule[Pair-App]{}{{\fp i t u} \, a      = (t\,{\proj i a} ,_i u\,{\proj i a}\,{(a \param i)})}
@@ -405,14 +405,14 @@ relation is decidable.
 
 \section{Parametricity}
 \label{sec:parametricity}
-In this section we prove that our system properly internalises
+In this section we prove that our system properly internalizes
 parametricity. We also illustrate the system by giving a few simple
 proofs relying on parametricity (including iterated parametricity).
 
 Contrary to previous type theories with internalized parametricity
 \citep{bernardy_computational_2012, bernardy_type-theory_2013}, the
 system presented here lacks equalities which allow to compute
-parametricity types. Expressed in our syntax, those equalites would become the conversion rules:
+parametricity types. Expressed in our syntax, those equalities would become the conversion rules:
 $$U \op i A = A → U$$
 and
 $$((x:A) → B[x]) \op i f = (x:A) → (x' : A \op i x) → B[\CP i x {x'}] \op i (f x).$$
@@ -585,7 +585,7 @@ We continue to reason by deduction:
 \end{remark}
 \begin{theorem}
   If the type $A$ and the term $x$ do not depend on either $i$ or $j$,
-  any proof of $A \op i x$ is related to the canonic proof ($x \param
+  any proof of $A \op i x$ is related to the canonical proof ($x \param
   i$), i.e. formally $A \op i \CP j x {x \param i} \op j x'$.
 \end{theorem}
 \begin{proof}
@@ -704,7 +704,7 @@ restriction map is defined by $⟨ρ,x=u⟩g = ⟨ρ g, x=ug⟩$.
 
 \bigskip
 The above refinement on presheaves is necessary for the interpretation
-of some of our styntactic constructions.  Indeed, without this refinement,
+of some of our syntactic constructions.  Indeed, without this refinement,
 it is not clear how to validate the equality
 ${{(\CTimes i {x:A} B[x])} \op i a = B[a]}$.
 
@@ -714,7 +714,7 @@ and $Γ ⊢_I a:A$ then for any $f : I → J$ and $ρ ∈ Γ f$ we have
 $B[a](f,ρ) = B(f,⟨ρ,x=a(f,ρ)⟩)$.
 It also satisfies the substitution law on colors, \ie, if $Γ ⊢_I A$ and
 $f : I → J$ then for any $g : J → K$ we have $Γ'g = Γ(fg)$,
-where $Γ'$ is the result of perfoming the substitution $f$ in $Γ$, and if
+where $Γ'$ is the result of performing the substitution $f$ in $Γ$, and if
 $ρ ∈ Γfg$ we have $Af (g,ρ) = A(fg,ρ)$.
 For establishing these properties, we proceed as in \citet{Aczel98onrelating}.
 
@@ -892,7 +892,7 @@ We now describe how to interpret terms.
 %  $Γf ⊢_J af : Af$).
 \end{theorem}
 \begin{proof}
-  By induction on the typing judgement.  We only prove the cases \textsc{In-Abs} and \textsc{Color-Elim}.  \textsc{In-Fun} is similar to the former, and the other
+  By induction on the typing judgment.  We only prove the cases \textsc{In-Abs} and \textsc{Color-Elim}.  \textsc{In-Fun} is similar to the former, and the other
   cases match the usual proof (using \fref{thm:convertible-in-model} for \textsc{Conv}).
   \begin{description}
     \item[\sc In-Abs.]
@@ -964,7 +964,7 @@ interpret parametricity straight up in the syntax of the type theory.
 
 
 \subsection{Various kinds of models}
-Another characterising feature of proposals for parametricity is the
+Another characterizing feature of proposals for parametricity is the
 kind of model underlying the
 semantics. \Citet{krishnaswami_internalizing_2013} propose a model
 based on Q-PER. \Citet{atkey_relationally_2014} propose a model based
@@ -990,7 +990,7 @@ $I$-elements, which is essential to interpret our special-purpose
 pairing constructions.
 
 \section{Future work and conclusion}
-We have defined a new type theory with internalised parametricity.
+We have defined a new type theory with internalized parametricity.
 Thanks to our model construction, we have proved the consistency of
 the system. The missing piece to construct a type-checker is a
 decision algorithm for the conversion relation.  This checker could
