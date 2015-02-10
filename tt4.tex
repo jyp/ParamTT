@@ -334,7 +334,7 @@ term but is not in the domain of $f$.
 
 \begin{theorem}[Color substitution preserves typing]
   If $Γ ⊢_I a : A$ then the term
-$af$ is defined and $Γ f ⊢_J af : Af$
+$af$ is defined and $Γ f ⊢_J af : Af$.
 \end{theorem}
 \begin{proof}
   By induction on the typing judgment.
@@ -576,7 +576,7 @@ We continue to reason by deduction:
  The answer is that the equation
   $$A \op i \CP j x y \op j z = A \op j \CP i x z \op i y$$  
   is inconsistent: in particular for $A = U$ one gets
-  $$U \op i \CP j X P \op j Q = U \op i \CP j X P \op j Q$$
+  $$U \op i \CP j X P \op j Q = U \op j \CP i X Q \op i P$$
   for arbitrary $P$ and $Q$ of type $U \op i X$.  The above equality
   in turn implies
   $$(x:X) → P x → Q x → U = (x:X) → Q x → P x → U$$
@@ -744,8 +744,8 @@ We proceed to interpret each of the type constructions.
   \item[\sc Universe.]
     The universe $U$ is interpreted as a presheaf over \pI. An element $A$ of
     $U(I)$ is a tuple $(A_α)$ where each $A_α$ is a family of sets
-    $A_{α f}$ for $f : I ↣ J$ \emph{total} together with restriction
-    maps $A_{α f} → A_{α fg}$, $u ↦ ug$ for $f : I ↣ J$ total
+    $A_{α f}$ for $f : I_α ↣ J$ \emph{total} together with restriction
+    maps $A_{α f} → A_{α fg}$, $u ↦ ug$ for $f : I_α ↣ J$ total
     and $g : J → K$ arbitrary, such that $u1 = u$ and $(ug)h = u(gh)$.
 
     As before, such data define a set $A_f$ for an arbitrary map $f : I → J$
@@ -769,7 +769,7 @@ We proceed to interpret each of the type constructions.
     By the induction hypotheses we get a $(J,j)$-set $P(f^{ij},ρι_i)$, and $a(f,ρ)$
     a $J$-element of $P(i\,0)(f,ρ) = P((i\,0)f,ρ) = P(ι_i f,ρι_j)(j\,0)$.
     We define $(P \op {i} a)(f,ρ)$ to be the set of $J$-elements $v$ such that
-    $(a(f,ρ),_j v) ∈ P(ι_i f^{ij},ρι_j)$. If $v$ is such an element and $g : J → K$
+    $(a(f,ρ),_j v) ∈ P(f^{ij},ρι_j)$. If $v$ is such an element and $g : J → K$
     and $k=\fresh K$, then $vg$ is defined by the equation
     $(a(f,ρ)g,_k vg) = (a(f,ρ) ,_j v) g^{jk}$.
 
