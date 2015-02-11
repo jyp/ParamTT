@@ -97,7 +97,7 @@ where $[t_X]_{X=A}$ denotes the meaning of the expression $t_X$ where
 $X$ is interpreted by the set $A$. As he noted, one can replace in
 this statement binary relations by $n$-ary relations, and in particular
 unary relations (predicates). In the latter case, the statement is the following:
-if $A$ is a set and $P$ a predicate on $A$, then we have
+if $A$ is a set and $P$ is a predicate on $A$, then we have
 $P([t_X]_{X=A}(a))$ whenever $P(a)$ holds.
 \cite{wadler_theorems_1989} illustrates by many examples how this
 result is useful for reasoning about functional programs.
@@ -122,11 +122,11 @@ for designing an extension of dependent type theory in which such an internal fo
 parametricity holds. We propose another such system here.
 Our technical contributions are as follows:
 \begin{itemize}
-\item We present a type theory (\fref{sec:syntax}) which internalizes parametricity (\fref{sec:parametricity})
+\item We present a type theory (\fref{sec:syntax}) which internalizes parametricity (as we show in \fref{sec:parametricity})
   and can be seen as a simplification and generalization of the systems of
   \cite{bernardy_computational_2012,bernardy_type-theory_2013}
-\item We provide a \emph{denotational} semantics, in the form of a presheaf model for this type theory (\fref{sec:model}).
-      This model is refinement of the presheaf semantics used to
+\item We provide a \emph{denotational} semantics, in the form of a presheaf model, for this type theory (\fref{sec:model}).
+      This model is a refinement of the presheaf semantics used to
       interpret nominal sets with
       restrictions~\citep{bezem2014model,DBLP:journals/corr/Pitts14}.
 \item We conjecture that conversion and type-checking are decidable for this system.
@@ -168,12 +168,16 @@ colors.
 
 We give a few intuitions to interpret the novel syntax, before giving formally the typing rules of the system. 
 \begin{enumerate}
-\item The type $A \op i u$ expresses that $u$ satisfies the
-  parametricity predicate associated with the type $A$ on color $i$.
+\item \citet{reynolds_types_1983} associates each type with a
+  predicate. Here, each type is associated not a single predicate, but
+  many: one for every color. Furthermore this predicate is accessible
+  from the logic. The type $A \op i u$ expresses that $u$ satisfies
+  the parametricity predicate associated with the type $A$ on color
+  $i$.
 \item The term $a \param i$ yields a proof of $A \op i \proj i a$.
 \item In the above, the term $\proj i a$ denotes a realizer of $a$,
-  obtained by erasing the color $i$ (Erasure is detailed in
-  \fref{def:color-subst}).
+  obtained by erasing the color $i$. (Erasure is detailed in
+  \fref{def:color-subst}.)
 \item The forms $\CP i t u$, $\CTimes i {x:A} B$ and $\fp i t u$ allow to
   locally associate parametricity proofs with a given realizer.
 \end{enumerate}
@@ -184,8 +188,8 @@ We give a few intuitions to interpret the novel syntax, before giving formally t
 We mutually define three judgments:
 \begin{itemize}
 \item $Γ⊢_I$ (Is the context $Γ$ is well-formed, assuming the color set $I$?).
-\item $Γ⊢_I A$  (Is the type $A$ well-formed in $Γ$ and assuming the color set $I$?)
-\item $Γ⊢_I a : A$  (Does the term $a$ have type $A$ in the context $Γ$ and assuming the color set $I$?)
+\item $Γ⊢_I A$  (Is the type $A$ well-formed in $Γ$, assuming the color set $I$?)
+\item $Γ⊢_I a : A$  (Does the term $a$ have type $A$ in the context $Γ$, assuming the color set $I$?)
 \end{itemize}
 
 \fbox{$Γ⊢_I$}
@@ -258,7 +262,7 @@ to keep the presentation concise, we leave it implicit in the syntax.
   and morphisms be color maps.
   If $f : I → J$ and $g : J → K$, we define the composition $fg : I → K$
   as $fg(i) = 0$ if $f(i) = 0$ and $fg(i) = g(f(i))$ if $f(i) ∈ J$.
-  We write $1_I : I → I$ for identity map, and define it as $1_I(i) = i$ for each $i ∈ I$.
+  We write $1_I : I → I$ for the identity map, and define it as $1_I(i) = i$ for each $i ∈ I$.
   It is easy to check that we have a category (\cite[ex.~9.7 p.~176]{PittsAM:nomsns}).
 \end{definition}
 
@@ -356,8 +360,9 @@ $af$ is defined and $Γ f ⊢_J af : Af$.
 
 \begin{definition}[Conversion]~
 \label{def:conversion}
-The convertibility of types used in the {\sc Conv} rule is defined
-inductively by the following rules.
+The convertibility of types used in the {\sc Conv} rule and written
+simply ($=$) is defined as the smallest congruence containing the
+following rules.
 \begin{mathpar}
   \inferrule[Pair-App]{}{{\fp i t u} \, a      = (t\,{\proj i a} ,_i u\,{\proj i a}\,{(a \param i)})}
 \and
@@ -385,7 +390,6 @@ inductively by the following rules.
     \and
     \inferrule[Trans]{a = b \\ b = c}{a = c}
   \end{mathpar}
-Additionally, all congruences yield conversion rules.
 \end{definition}
 
 \begin{corollary}[Any term can be seen as a pair of a realizer and a parametricity proof]~
@@ -397,11 +401,10 @@ Additionally, all congruences yield conversion rules.
   \end{itemize}
 \end{corollary}
 
-Our conversion relation is similar to the conversion relation is
-intentional for functions, but extensional when it comes to
-dependencies on colors. Because there is at any point only a finite
-number of colors to consider, we conjecture that our conversion
-relation is decidable.
+Our conversion relation is intentional for functions, but extensional
+when it comes to dependencies on colors. Because there is at any point
+only a finite number of colors to consider, we conjecture that our
+conversion relation is decidable.
 
 \section{Parametricity}
 \label{sec:parametricity}
@@ -484,7 +487,7 @@ parametricity for Church-encoded natural numbers.
 (For the sake of simplicity, in the remainder of this section, we leave out the
 distinction between types and their codes.)
 \begin{example}
-Let $N = ∀X. X → (X → X) → X$.
+Let $N = (X : U) → X → (X → X) → X$.
 Proving (unary) parametricity for $N$ means that, assuming
 \begin{itemize}
 \item $f : N$
@@ -512,7 +515,7 @@ p\, x &= x\param i
 \end{align*}
 We have already seen that $A \op i $ corresponds to the parametricity
 predicate for type $A$. We can iterate this operator to construct
-relations. That is, given
+relations between parametricity witnesses. That is, given
 \begin{align*}
   x & :A \\
   y & : A \op i x\\
@@ -585,8 +588,9 @@ We continue to reason by deduction:
 \end{remark}
 \begin{theorem}
   If the type $A$ and the term $a$ do not depend on either $i$ or $j$,
-  any proof $a'$ of $A \op i a$ is related to the canonical proof ($a \param
-  i$), i.e. formally $A \op i \CP j a {a \param i} \op j a'$.
+  any proof $a'$ of $A \op i a$ (not depending on $i$ or $j$ either)
+  is related to the canonical proof ($a \param i$), i.e. formally $A
+  \op i \CP j a {a \param i} \op j a'$.
 \end{theorem}
 \begin{proof}
 We can construct the following closed term:
