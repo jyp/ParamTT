@@ -540,17 +540,18 @@ We continue to reason by deduction:
   inconsistent.
 \end{remark}
 \begin{theorem}
-  If the type $A$ and the term $x$ do not depend on either $i$ or $j$,
-  any proof of $A \op i x$ is related to the canonic proof ($x \param
-  i$), i.e. formally $A \op i \CP j x {x \param i} \op j x'$.
+  If the type $A$ and the term $a$ do not depend on either $i$ or $j$,
+  any proof $a'$ of $A \op i a$ is related to the canonic proof ($a \param
+  i$), i.e. formally $A \op i \CP j a {a \param i} \op j a'$.
 \end{theorem}
 \begin{proof}
+We can construct the following closed term:
   \begin{align*}
     &q   : (A:U) → (x:A) → (x':A \op i x) → A \op i \CP j x {x \param i} \op j x'\\
     &q   : (A:U) → (x:A) → (x':A \op i x) → A \op i x \op j x' &\text {by \fref{cor:equalities}}\\
     &q\, A\, x\, x' = x' \param j
-  \qedhere
   \end{align*}
+The result is obtained by substituting $a$ for $x$ and $a'$ for $x'$.
 \end{proof}
 
 To conclude the section we note that by iterating parametricity $n$
