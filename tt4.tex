@@ -925,12 +925,13 @@ We now describe how to interpret terms.
 
 
 \begin{theorem}[Validity]
-  If $Γ ⊢_I a : A$, $f : I → J$, $ρ ∈ Γf$, then $a(f,ρ) ∈ A(f,ρ)$.
+  For any $f : I → J$ and any $ρ ∈ Γf$,\\
+    if $Γ ⊢_I a : A$ then $a(f,ρ) ∈ A(f,ρ)$.
 %  Furthermore $af(1,ρ) = a(f,ρ)$ (using the interpretation of
 %  $Γf ⊢_J af : Af$).
 \end{theorem}
 \begin{proof}
-  By induction on the typing judgment.  We only prove the cases \textsc{In-Abs} and \textsc{Color-Elim}.  \textsc{In-Fun} is similar to the former, and the other
+  By induction on the typing judgment.  We only show the cases \textsc{In-Abs} and \textsc{Color-Elim}.  \textsc{In-Fun} is similar to the former, and the other
   cases match the usual proof (using \fref{thm:convertible-in-model} for \textsc{Conv}).
   \begin{description}
     \item[\sc In-Abs.]
