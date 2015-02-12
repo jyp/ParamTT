@@ -36,7 +36,7 @@
 \def\ie{\textit{i.e.}}
 \def\app#1#2{\mathsf{app}(#1,#2)}
 \def\El#1{\mathrm{El}(#1)}
-\def\opp{\mathrm{op}}
+\def\opp{\mathrm{opp}}
 
 \newtheorem{conjecture}[theorem]{Conjecture}
 \newboolean{tikz}
@@ -251,8 +251,6 @@ to keep the presentation concise, we leave it implicit in the syntax.
 \begin{definition}
   A \emph{color map} $f : I → J$ is a function $I → J ∪ \{0\}$ such that
   $f(i_1) = f(i_2)$ iff. $i_1 = i_2$ whenever $f(i_1) = f(i_2) ∈ J$.
-%
-%
 \end{definition}
 
 \begin{definition}[Category $\pI{}$]
@@ -262,7 +260,8 @@ to keep the presentation concise, we leave it implicit in the syntax.
   If $f : I → J$ and $g : J → K$, we define the composition $fg : I → K$
   as $fg(i) = 0$ if $f(i) = 0$ and $fg(i) = g(f(i))$ if $f(i) ∈ J$.
   We write $1_I : I → I$ for the identity map, and define it as $1_I(i) = i$ for each $i ∈ I$.
-  It is easy to check that \pI{} is a category \cite[ex.~9.7 p.~176]{PittsAM:nomsns},
+  It is easy to check that \pI{} is a category (see \cite[ex.~9.7
+  p.~176]{PittsAM:nomsns} for another description of this category),
   which is is equivalent to the category $\mathbf{Res}$ of nominal
   restriction sets \cite[rem.~9.9 p.~161]{PittsAM:nomsns}.
 \end{definition}
@@ -648,10 +647,10 @@ Recall \pI{} (\fref{def:pI}), the category of color maps.
   (Hence by definition $u = (u (i\,0) ,_i u · i)$.)
 
 \bigskip
-Recall that a \emph{presheaf} $F$ on \pI{} is given by a family of sets $F(I)$ together
-with restriction maps $F(I) → F(J)$, $u ↦ uf$ for $f : I → J$
-satisfying $u1 = u$ and $(uf)g = u(fg)$. We use a refined presheaf on
-\pI{} by requiring two further conditions:
+Recall that a \emph{presheaf} $F$ on $\pI^\opp$ is given by a family of
+sets $F(I)$ together with restriction maps $F(I) → F(J)$, $u ↦ uf$ for
+$f : I → J$ satisfying $u1 = u$ and $(uf)g = u(fg)$. We use a refined
+presheaf on $\pI^\opp$ by requiring two further conditions:
 %
 \begin{enumerate}
   \item for any object $I$, $F(I)$ is an $I$-set; and
@@ -684,8 +683,9 @@ $a(f,ρ)g = a(fg,ρg)$ for any $g : J → K$.
 
 \medskip
 If $Γ ⊢_I A$ we define the interpretation of $Γ,x:A ⊢_I$
-by taking $⟨ρ,x=u⟩ : (Γ,x:A)f$ to mean $ρ ∈ Γf$ and $u ∈ A(f,ρ)$. The
-restriction map is defined by $⟨ρ,x=u⟩g = ⟨ρ g, x=ug⟩$.
+by taking $⟨ρ,x=u⟩_α = ⟨ρ_α,x=u_α⟩$, where and $ρ ∈ Γf$ and
+$u ∈ A(f,ρ)$.
+The restriction map is defined by $⟨ρ,x=u⟩g = ⟨ρ g, x=ug⟩$.
 
 \bigskip
 The above refinement on presheaves is necessary for the interpretation
@@ -799,7 +799,7 @@ We now describe how to interpret terms.
     We define $x(f,ρ)$ to be $ρ(x)$
 
   \item[\sc Lam.]
-    We define $\app{(λ x:A.b)(f,ρ)_{α f}}{u}$ to be $b(f,⟨ρα f,x=u⟩)$
+    We define $\app{(λ x:A.b)(f,ρ)_g}{u}$ to be $b(f,⟨ρg,x=u⟩)$
 
   \item[\sc App.]
     We define $(t\,u)(f,ρ)$ to be $\app{t(f,ρ)_1}{u(f,ρ)}$
@@ -1018,6 +1018,14 @@ the system. The missing piece to construct a type-checker is a
 decision algorithm for the conversion relation.  This checker could
 then be used as a minimal proof assistant for a type theory with
 parametricity.
+
+\bigskip
+\noindent
+\textbf{Acknowledgment:}
+The fact that the category of partial bijections \pI{} should be
+relevant for internalization of parametricity became apparent through
+discussions between Thorsten Altenkirch and the second  author about
+the paper \citep{bernardy_computational_2012}.
 
 \bibliographystyle{abbrvnat}
 \bibliography{PaperTools/bibtex/jp,tt}
