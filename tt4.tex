@@ -893,17 +893,14 @@ We now describe how to interpret terms.
     \text{ iff. }& ((X ,_i Q)f^{ik} ,_l (Pf ,_k v)) ∈ Uf^{ik,jl}
     \\
     \text{ iff. }& ((Xf ,_k Qf) ,_l (Pf ,_k v)) ∈ Uf^{ik,jl}
-    \\
-    \text{ iff. }& ((Xf ,_l Qf) ,_k (Pf ,_l v)) ∈ Uf^{jk,il}
   \end{align*}
 
-  Because the $(J,k,l)$-elements $((Xf ,_k Pf) ,_l (Qf ,_k v))$ and
-  $((Xf ,_l Qf) ,_k (Pf ,_l v))$ are not equal,
-  $(U \op i (X ,_j P) \op j Q) f = (U \op j (X ,_i Q) \op i P) f$
-  would imply (taking $f=1_∅$) that
-  $((a ,_k b) ,_l (c ,_k d)) ∈ U(k,l)$ iff.
-  $((a ,_l c) ,_k (b ,_l d)) ∈ U(k,l)$ for any $a,b,c,d$, which does not
-  hold by construction of $U(k,l)$.
+  Let $w  = ((Xf ,_k Pf) ,_l (Qf ,_k v))$
+  and $w' = ((Xf ,_k Qf) ,_l (Pf ,_k v))$.
+  We have $w(l\,0) = (Xf ,_k Pf)$ and $w'(l\,0) = (Xf ,_k Qf)$.
+  But an element of $U(k,l)$ is a tuple $(A_∅, A_k, A_l, A_{kl})$
+  $(Xf ,_k Pf) ∈ A_k $ iff. $(Xf ,_k Qf) ∈ A_k$ does not hold for
+  abitrary $P$ and $Q$.
 \end{remark}
 
 
