@@ -648,11 +648,11 @@ Recall \pI{} (\fref{def:pI}), the category of color maps.
 \bigskip
 Recall that a \emph{presheaf} $F$ on \pI{} is given by a family of sets $F(I)$ together
 with restriction maps $F(I) → F(J)$, $u ↦ uf$ for $f : I → J$
-satisfying $u1 = u$ and $(uf)g = u(fg)$. We refine this notion by requiring
-two further conditions:
+satisfying $u1 = u$ and $(uf)g = u(fg)$. We use a refined presheaf on
+\pI{} by requiring two further conditions:
 %
 \begin{enumerate}
-  \item for any $I ∈ \mathnormal{Objects}(\pI)$, $F(I)$ is an $I$-set, and
+  \item for any object $I$, $F(I)$ is an $I$-set, and
   \item for any projection map $α : I → I_α$, the restriction
     map $F(I) → F(I_α)$, $u ↦ uα$ is the projection operation, \ie,
     $uα_J = u_J$ for any $J ⊆ I$.
@@ -670,7 +670,7 @@ Furthermore the map $Γf → Γ(fα)$, $ρ ↦ ρα$ is the projection operation
 
 \medskip
 A type $Γ ⊢_I A$ is interpreted as follows.
-For each map $f : I → J$, and $ρ ∈ Γf$ we give a $J$-set $A(f,ρ)$
+For each map $f : I → J$ and $ρ ∈ Γf$ we give a $J$-set $A(f,ρ)$
 together with restriction maps $A(f,ρ) → A(fg,ρg)$, $u ↦ ug$ if $g : J → K$
 satisfying $u1 = u$ and $(ug)h = u(gh)$ for any $h : K → L$.
 Furthermore the map $A(f,ρ) → A(fα,ρα)$, $u ↦ uα$ is the projection operation.
@@ -699,10 +699,10 @@ It also satisfies the substitution law on colors, \ie, if $Γ ⊢_I A$ and
 $f : I → J$ then for any $g : J → K$ we have $Γ'g = Γ(fg)$,
 where $Γ'$ is the result of performing the substitution $f$ in $Γ$, and if
 $ρ ∈ Γfg$ we have $Af (g,ρ) = A(fg,ρ)$.
-For establishing these properties, we proceed as in \citet{Aczel98onrelating}.
+For establishing these properties, we proceed as \citet{Aczel98onrelating}.
 
 \bigskip
-We proceed to interpret each of the type constructions.
+We proceed to interpret each type construction.
 \begin{description}
   \item[\sc Pi.]
     Assume $f : I → J$ and $ρ ∈ Γf$. We define $((x:A) → B)(f,ρ)$ as a $J$-set.
@@ -710,18 +710,23 @@ We proceed to interpret each of the type constructions.
     where each $λ_α$ is a family of elements indexed by a total map $g : J_α ↣ K$:
     $$λ_{α g} ∈ \prod_{u ∈ A(fα g,ραg)} B(fαg,⟨ραg,x=u⟩)$$
     such that
-    $\app{λ_{αg}}{u} h = \app{λ_{α gh}}{uh}$ for $g : J ↣ K$ total and \emph{any} $h : K → L$.
+    $\app{λ_{αg}}{u} h = \app{λ_{α gh}}{uh}$ for $g : J ↣ K$ total and
+    for \emph{any} $h : K → L$.
     Because any map $J → K$ has an unique decomposition as a projection and a total
     map, we can consider $λ_h$ for an arbitrary map $h : J → K$.
 
     If $g : J → K$ is an arbitrary map, we define $λ g$ to be the tuple
     $(λ g_β)$ where $λ g_β$ is the family $λ g_{βh} = λ_{gβh}$.
 
-    With such a definition, we directly have $λα_{β} = λ_{αβ}$.
+    With this definition, we directly have $λα_{β} = λ_{αβ}$.
 
     This is similar to the usual interpretation of dependent product in
-    presheaf models \citep{Hofmann97syntaxand,bezem2014model} except that we
-    have to present each element as a tuple, which can be done in a natural way.
+    presheaf models \citep{Hofmann97syntaxand,bezem2014model}; but to
+    satisfy our first extra condition on presheaves we present
+    each element as a tuple, which can be done naturally by repartioning
+    the family as follows:
+    $(λ_f)_{f : I → J} = (λ_{αg})_{I_α ⊆ I, g : I_α ↣ J} ≅
+     ((λ_{αg})_{g : I_α ↣ J})_{I_α ⊆ I}$
 
 
   \item[\sc Universe.]
@@ -740,9 +745,8 @@ We proceed to interpret each of the type constructions.
 
     We can then check, as before, that we have $Aα_{β} = A_{αβ}$
 
-    This is similar to the usual interpretation of universe in
-    presheaf models \citep{Hofmann97syntaxand,bezem2014model} except that we
-    have to present each element as a tuple, which again can be done in a natural way.
+    As before, this is similar to the usual interpretation of universe in
+    presheaf models, where each element is presented as a tuple.
 
 
   \item[\sc Out.]
@@ -799,13 +803,13 @@ We now describe how to interpret terms.
 
   \item[\sc In-Abs.]
     Let $f:I,i → J$ and $ρ ∈ Γι_i f$ be given.
-    We define $(a ,_i p)(f,ρ)$ by case on $f(i)$.
+    We define $(a ,_i p)(f,ρ)$ by case analysis on $f(i)$.
     If $f(i) = 0$, we take $(a,_ip)(f,ρ)$ to be $a(ι_i f,ρ)$.
     If $f(i) = j ∈ J$, we take $(a,_ip)(f,ρ)$ to be $(a(ι_if(j0),ρ),_j p(ι_if(j0),ρ))$
 
   \item[\sc In-Fun.]
     Let $f:I,i → J$ and $ρ ∈ Γι_i f$ be given.
-    We define ${\fp i t u}(f,ρ)_g$ by case on $g(f(i))$.
+    We define ${\fp i t u}(f,ρ)_g$ by case analysis on $g(f(i))$.
     If $g(f(i)) = 0$, we take ${\fp i t u}(f,ρ)_g$ to be $t(ι_i f,ρ)_g$.
     If $g(f(i)) = j ∈ K$, we define $w = {\fp i t u}(f,ρ)_g$ by
     $$\app{w}{(a ,_j b)} =
@@ -831,7 +835,7 @@ We now describe how to interpret terms.
 \end{theorem}
 \begin{proof}
   By simultaneous induction on the derivation.
-  We only treat the conversion rules \textsc{Pair-Param} and
+  We only show the conversion rules \textsc{Pair-Param} and
   \textsc{Pair-Pred} here; other rules involving colors can be proven in
   a similar fashion, while $β$ and $η$ can be proven in the usual way.
 
