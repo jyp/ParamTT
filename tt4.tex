@@ -112,7 +112,7 @@ $$ (A : U) → (P : A → U) → (x : A) → P x → P (f A x) $$
 %
 Indeed \citet{bernardy_proofs_2012} proves such a result as a
 (syntactical) meta-theorem about type systems. However this result is
-not provable internally, i.e. the following is not provable:
+not provable internally, \ie, the following is not provable:
 $$ (f : (A:U) → A → A) →  (A : U) → (P : A → U) → (x : A) → P x → P (f A x) $$
 
 Several attempts have been made
@@ -268,7 +268,7 @@ to keep the presentation concise, we leave it implicit in the syntax.
 We note
 \begin{itemize}
 \item $(i\,0) : I,i → I$ the partial identity: $(i\,0)(i) = 0$ and $(i\,0)(j) = j$ for each $j ∈ I$; 
-\item $ι_i : I → I,i$ the inclusion: $ι_i(j) = j$ for each $j ∈ I$;
+\item $ι_i : I → I,i$ the inclusion: $ι_i(j) = j$ for each $j ∈ I$; and
 \item $f^{ij} : I,i → J,j$ the color map such that $f^{ij}(i) = j$
   and $f^{ij}(k) = f(k)$ for all $k ∈ I$
   (if $f : I → J$ with $i ∉ I$ and $j ∉ J$).
@@ -573,7 +573,7 @@ We continue to reason by deduction:
 \begin{theorem}
   If the type $A$ and the term $a$ do not depend on either $i$ or $j$,
   any proof $a'$ of $A \op i a$ (not depending on $i$ or $j$ either)
-  is related to the canonical proof ($a \param i$), i.e. formally $A
+  is related to the canonical proof ($a \param i$), \ie, formally $A
   \op i \CP j a {a \param i} \op j a'$.
 \end{theorem}
 \begin{proof}
@@ -652,7 +652,7 @@ satisfying $u1 = u$ and $(uf)g = u(fg)$. We use a refined presheaf on
 \pI{} by requiring two further conditions:
 %
 \begin{enumerate}
-  \item for any object $I$, $F(I)$ is an $I$-set, and
+  \item for any object $I$, $F(I)$ is an $I$-set; and
   \item for any projection map $α : I → I_α$, the restriction
     map $F(I) → F(I_α)$, $u ↦ uα$ is the projection operation, \ie,
     $uα_J = u_J$ for any $J ⊆ I$.
@@ -753,8 +753,9 @@ We proceed to interpret each type construction.
     Assume $f : I → J$ and assume $ρ ∈ Γf$.  We need to define the $J$-set $(P \op {i} a)(f,ρ)$.
     Let $j = \fresh J$.
     Recall that we note the inclusions $ι_i : I → I,i$ and $ι_j : J → J,j$.
-    By the induction hypotheses we get a $(J,j)$-set $P(f^{ij},ρι_i)$, and $a(f,ρ)$
-    a $J$-element of $P(i\,0)(f,ρ) = P((i\,0)f,ρ) = P(ι_i f,ρι_j)(j\,0)$.
+    By the induction hypotheses we get a $(J,j)$-set $P(f^{ij},ρι_i)$,
+    and the $J$-element $a(f,ρ)$ belongs to
+    $P(i\,0)(f,ρ) = P((i\,0)f,ρ) = P(ι_i f,ρι_j)(j\,0)$.
     We define $(P \op {i} a)(f,ρ)$ to be the set of $J$-elements $v$ such that
     $(a(f,ρ),_j v) ∈ P(f^{ij},ρι_j)$. If $v$ is such an element and $g : J → K$
     and $k=\fresh K$, then $vg$ is defined by the equation
@@ -841,7 +842,7 @@ We now describe how to interpret terms.
 
   \begin{description}
     \item[\sc Pair-Param.]
-      Let $f : I → J$, $j = \fresh J$.  We have
+      Let $f : I → J$ and $j = \fresh J$.  We have
       \begin{align*}
         &v ∈ ({((x:A)\times_i B)} \op {i} a)(f,ρ)
         \\
@@ -855,7 +856,7 @@ We now describe how to interpret terms.
       \end{align*}
 
     \item[\sc Pair-Pred.]
-      Let $f : I → J$, $j = \fresh J$.  We have
+      Let $f : I → J$ and $j = \fresh J$.  We have
       \begin{align*}
          & ((a ,_i p) \param i)(f,ρ)
       \\=~& (a ,_i p)(f^{ij}, ρι_j) · j
