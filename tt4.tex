@@ -872,7 +872,7 @@ We now describe how to interpret terms.
   $U \op i (X ,_j P) \op j Q$ and $U \op j (X ,_i Q) \op i P$
   are not convertible.
   Their semantic interpretations are not equal either.  Indeed
-  for any $f : ∅ → J$, $k = \fresh J$ and $l = \fresh{J,k}$
+  taking $f = 1_∅$, $k = \fresh{∅}$ and $l = \fresh{\{k\}}$,
   we have
   (leaving out the context interpretation $ρ$ for the sake of
   readability)
@@ -882,11 +882,9 @@ We now describe how to interpret terms.
     \\
     \text{ iff. }& (Qf ,_k v) ∈ (U \op i (X ,_j P))f^{jk}
     \\
-    \text{ iff. }& ((X ,_j P)f^{jk} ,_l (Qf ,_k v)) ∈ Uf^{jk,il}
+    \text{ iff. }& ((X ,_j P)f^{jk} ,_l (Qf ,_k v)) ∈ U(l,k)
     \\
-    \text{ iff. }& ((Xf ,_k Pf) ,_l (Qf ,_k v)) ∈ Uf^{jk,il}
-    \\
-    \text{ iff. }& ((Xf ,_k Pf) ,_l (Qf ,_k v)) ∈ Uf^{ik,jl} & \text{Because neither $i$ or $j$ occur in $U$}
+    \text{ iff. }& ((X ,_k P) ,_l (Q ,_k v)) ∈ U(l,k)
   \end{align*}
 
   and on the other hand
@@ -895,17 +893,14 @@ We now describe how to interpret terms.
     \\
     \text{ iff. }& (Pf ,_k v) ∈ (U \op j (X ,_i Q))f^{ik}
     \\
-    \text{ iff. }& ((X ,_i Q)f^{ik} ,_l (Pf ,_k v)) ∈ Uf^{ik,jl}
+    \text{ iff. }& ((X ,_i Q)f^{ik} ,_l (Pf ,_k v)) ∈ U(k,l)
     \\
-    \text{ iff. }& ((Xf ,_k Qf) ,_l (Pf ,_k v)) ∈ Uf^{ik,jl}
+    \text{ iff. }& ((X ,_k Q) ,_l (P ,_k v)) ∈ U(k,l)
   \end{align*}
 
-  Let $w  = ((Xf ,_k Pf) ,_l (Qf ,_k v))$
-  and $w' = ((Xf ,_k Qf) ,_l (Pf ,_k v))$.
-  We have $w(l\,0) = (Xf ,_k Pf)$ and $w'(l\,0) = (Xf ,_k Qf)$.
-  But an element of $U(k,l)$ is a tuple $(A_∅, A_k, A_l, A_{kl})$
-  $(Xf ,_k Pf) ∈ A_k $ iff. $(Xf ,_k Qf) ∈ A_k$ does not hold for
-  abitrary $P$ and $Q$.
+  Hence $(U \op i (X ,_j P) \op j Q) f ≠ (U \op j (X ,_i Q) \op i P) f$
+  since the map $U(l,k) → U(k,l)$, $u ↦ ug$ where $g(k) = l$ and $g(l)=k$
+  is not the identity.
 \end{remark}
 
 
