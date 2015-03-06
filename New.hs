@@ -14,25 +14,68 @@ data Term = TU
 
     Γ ⊢ a : T0     Γ ⊢ p : <i>T ∋ a
 --------------------------------------
-     Γ ⊢ (a,p) : <i>T
+     Γ ⊢ (a,p) : [i]T
 
 -}
           | TCPair Term Term
+{-
+  Γ ⊢{I} t : [i]A
+------------------------
+  Γ ⊢{I,i} ti : A
+-}
           | TCApp Term CVal
+{-
+  Γ ⊢{I,i} t : A
+------------------------
+  Γ ⊢{I} <i>t : [i]A
+-}
           | TCLam Color Term
-          | TCPi Term
+          | TCPi Term -- [i]A = Π<i>A
+{-
+  Γ ⊢ u:A0  Γ ⊢ A:[i]U
+------------------------
+  Γ ⊢ A ∋ u : U
+-}
           | TNi Term Term
+{-
+
+    Γ ⊢ P : A -> U
+------------------------
+  Γ ⊢ Ψ P : <i>U ∋ A
+
+-}
           | TPsi Term
 {-
 
     Γ ⊢ g : (x:[i]A) -> B[xi/x] ∋ f(x0)
 --------------------------------------
-     Γ ⊢ phi g : <i>(x:A) -> B ∋ f
+     Γ ⊢ φ g : <i>(x:A) -> B ∋ f
 
 -}
             
           | TPhi Term
   deriving Show
+
+-- It's tempting to try to define φg:
+-- (f,φg)i a = (f a(i0), g (<i>a))i
+-- (f,φg)i = λx. (f x(i0), g (<i>x))i -- but: not valid
+-- (f,φg) = <i> (λx. (f x(i0), g (<i>x))i)
+-- φg = <i> (λx. (f x(i0), g (<i>x))i)!
+
+-- It should probably be so: if one abstracts over A[i], one can get instead [i]A:
+
+--     Γ,(x:[J]A) ⊢{I,J} t : B
+-- --------------------------------------
+--      Γ ⊢{I,J} : λ{J}x. t : (x:A) -> B
+
+-- Then:
+-- φg = <i> (λ{i}x. (f x0, g x))i)!
+
+
+-- An alternative is a way to transform variables of A[i] to [i]A:
+-- Γ ⊢{I,i} A  x:A ∈ Γ
+-- --------------------
+-- Γ ⊢{I} x/i:[i]A
 
 type Env = [(String,Val)]
 
@@ -60,6 +103,7 @@ eval t0 rho =
   TVar x -> Var x
   TCPair a b -> cpair (ev a) (ev b)
   TCApp f i -> capp (ev f) i
+  TCLam xi (TCApp a (CVar xj)) | xi == xj -> ev a -- eta contraction (no need for occurs check!)
   TCLam xi a -> CLam (\i -> ceval (ev a) xi i)
   TCPi a -> CPi (ev a)
   TNi a b -> ni (ev a) (ev b)
@@ -91,7 +135,7 @@ proj i a = ceval a i Zero
 param i a = ceval a i Param
 
 app (Lam f) a = f a
-app (CApp (CPair f (Phi g)) (CVar i)) a = CPair (f `app` proj i a) (g `app` CLam (\j -> ceval a i j))
+app (CApp (CPair f (Phi g)) (CVar i)) a = CPair (f `app` proj i a) (g `app` CLam (\j -> ceval a i j)) `capp` CVar i
 app f a = App f a
 
 capp (CLam f) x = f x
@@ -99,5 +143,5 @@ capp (CPair a _) Zero = a
 capp (CPair _ b) Param = b
 capp f a = CApp f a
 
-ni (Psi p) a = app p a
+ni (CPair _ (Psi p)) a = app p a
 ni a b = Ni a b
