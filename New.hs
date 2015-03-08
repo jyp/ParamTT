@@ -55,6 +55,11 @@ data Term = TU
 
           | TPhi Term
           | TParam Term
+--     Γ,(x:[i]A) ⊢{I,i} t : B
+-- --------------------------------------
+--      Γ ⊢{I,i} : λ{i}x. t : (x:A) -> B
+
+          | TILam Color Name Term
   deriving Show
 
 -- It's tempting to try to define φg:
@@ -70,8 +75,15 @@ data Term = TU
 --      Γ ⊢{I,J} : λ{J}x. t : (x:A) -> B
 
 -- Then:
--- φg = <i> (λ{i}x. (f x0, g x))i)!
+-- φg = <i> (λ{i}x. (f x0, g x)i)!
 
+
+tphi :: Term -> Term -> Term
+tphi f g = TParam (TCLam "i" $ TILam "i" "x" $ TCPair (f `TApp` (TVar "x" `TCApp` Zero)) (g `TApp` TVar "x"))
+
+
+-- Natural numbers example:
+-- (<i> f ((A,ΨP)i) ((z,z')i) (λ{i}x. (s x0, s x0 x!)i))!
 
 -- An alternative is a way to transform variables of A[i] to [i]A:
 -- Γ ⊢{I,i} A  x:A ∈ Γ
@@ -86,7 +98,7 @@ data Val = Var String
          | U
          | Lam (Val -> Val)
          | CPair Val Val
-         | CApp Val Color
+         | CApp Val CVal
          | Param Val
          | CLam (CVal -> Val)
          | CPi Val
@@ -111,25 +123,33 @@ eval t0 rho =
   TPsi a -> Psi (ev a)
   TPhi a -> Phi (ev a)
   TParam a -> param (ev a)
+  TILam i x a -> Lam (\v -> eval a ((x,CLam $ \j -> ceval i j v):rho))
 
-clam' f | (CApp a "_") <- f (CVar "_") = a
+clam' :: (CVal -> Val) -> Val
+clam' f | (CApp a (CVar "__RESERVED__")) <- f (CVar "__RESERVED__") = a
    -- eta contraction (no need for occurs check!)
 
-clam xi t = clam' (\i -> ceval t xi i)
+clam :: Color -> Val -> Val
+clam xi t = clam' (\i -> ceval xi i t)
 
+cpair :: Val -> Val -> Val
 cpair _ (Param t) = t
 cpair a b = CPair a b
 
-ceval :: Val -> Color -> CVal -> Val
-ceval v0 i e =
-  let ev v = ceval v i e in
+ceval :: Color -> CVal -> Val -> Val
+ceval i p = ceval' (\j -> if i==j then p else CVar j)
+
+ceval' :: (Color -> CVal) -> Val -> Val
+ceval' s v0 =
+  let ev = ceval' s in
   case v0 of
     Pi a b -> Pi (ev a) (ev b)
     App a b -> app (ev a) (ev b)
     U -> U
     Lam f -> Lam (ev . f)
     CPair a b -> cpair (ev a) (ev b)
-    CApp a b -> capp (ev a) (CVar b)
+    CApp a Zero -> capp (ev a) Zero
+    CApp a (CVar i) -> capp (ev a) (s i)
     CPair a b -> cpair (ev a) (ev b)
     CLam f -> clam' (ev . f)
     CPi x -> CPi (ev x)
@@ -138,18 +158,23 @@ ceval v0 i e =
     Ni a b -> ni (ev a) (ev b)
     Param a -> param (ev a)
 
+param :: Val -> Val
 param (CPair _ p) = p
 param x = Param x
 
-proj i a = ceval a i Zero
+proj :: Color -> Val -> Val
+proj i = ceval i Zero
 
+app :: Val -> Val -> Val
 app (Lam f) a = f a
-app (CApp (CPair f (Phi g)) i) a = CPair (f `app` proj i a) (g `app` CLam (\j -> ceval a i j)) `capp` CVar i
+app (CApp (CPair f (Phi g)) (CVar i)) a = CPair (f `app` proj i a) (g `app` CLam (\j -> ceval i j a)) `capp` CVar i
 app f a = App f a
 
+capp :: Val -> CVal -> Val
 capp (CLam f) x = f x
 capp (CPair a _) Zero = a
-capp f (CVar a) = CApp f a
+capp f (CVar a) = CApp f (CVar a)
 
+ni :: Val -> Val -> Val
 ni (CPair _ (Psi p)) a = app p a
 ni a b = Ni a b
