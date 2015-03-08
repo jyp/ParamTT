@@ -1,7 +1,7 @@
 module New where
 
 type Color = String
-data CVal = CVar String | Zero | Param
+data CVal = CVar String | Zero
   deriving Show
 type Name = String
 
@@ -52,8 +52,9 @@ data Term = TU
      Γ ⊢ φ g : <i>(x:A) -> B ∋ f
 
 -}
-            
+
           | TPhi Term
+          | TParam Term
   deriving Show
 
 -- It's tempting to try to define φg:
@@ -85,7 +86,8 @@ data Val = Var String
          | U
          | Lam (Val -> Val)
          | CPair Val Val
-         | CApp Val CVal
+         | CApp Val Color
+         | Param Val
          | CLam (CVal -> Val)
          | CPi Val
          | Phi Val
@@ -103,14 +105,19 @@ eval t0 rho =
   TVar x -> Var x
   TCPair a b -> cpair (ev a) (ev b)
   TCApp f i -> capp (ev f) i
-  TCLam xi (TCApp a (CVar xj)) | xi == xj -> ev a -- eta contraction (no need for occurs check!)
-  TCLam xi a -> CLam (\i -> ceval (ev a) xi i)
+  TCLam xi a -> clam xi (ev a)
   TCPi a -> CPi (ev a)
   TNi a b -> ni (ev a) (ev b)
   TPsi a -> Psi (ev a)
   TPhi a -> Phi (ev a)
+  TParam a -> param (ev a)
 
-cpair _ (CApp t Param) = t
+clam' f | (CApp a "_") <- f (CVar "_") = a
+   -- eta contraction (no need for occurs check!)
+
+clam xi t = clam' (\i -> ceval t xi i)
+
+cpair _ (Param t) = t
 cpair a b = CPair a b
 
 ceval :: Val -> Color -> CVal -> Val
@@ -122,26 +129,27 @@ ceval v0 i e =
     U -> U
     Lam f -> Lam (ev . f)
     CPair a b -> cpair (ev a) (ev b)
-    CApp a (CVar j) | i==j -> capp a e -- i is not in scope in a
-    CApp a b -> capp (ev a) b
+    CApp a b -> capp (ev a) (CVar b)
     CPair a b -> cpair (ev a) (ev b)
-    CLam f -> CLam (ev . f)
+    CLam f -> clam' (ev . f)
     CPi x -> CPi (ev x)
     Phi a -> Phi (ev a)
     Psi a -> Psi (ev a)
     Ni a b -> ni (ev a) (ev b)
+    Param a -> param (ev a)
+
+param (CPair _ p) = p
+param x = Param x
 
 proj i a = ceval a i Zero
-param i a = ceval a i Param
 
 app (Lam f) a = f a
-app (CApp (CPair f (Phi g)) (CVar i)) a = CPair (f `app` proj i a) (g `app` CLam (\j -> ceval a i j)) `capp` CVar i
+app (CApp (CPair f (Phi g)) i) a = CPair (f `app` proj i a) (g `app` CLam (\j -> ceval a i j)) `capp` CVar i
 app f a = App f a
 
 capp (CLam f) x = f x
 capp (CPair a _) Zero = a
-capp (CPair _ b) Param = b
-capp f a = CApp f a
+capp f (CVar a) = CApp f a
 
 ni (CPair _ (Psi p)) a = app p a
 ni a b = Ni a b
