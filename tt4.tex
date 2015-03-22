@@ -51,7 +51,7 @@
 \affil{Chalmers University of Technology and University of Gothenburg \\
 \texttt{\{bernardy,coquand,mouling\}@chalmers.se}}
 \authorrunning{J-P. Bernardy, T. Coquand and G. Moulin}
-\Copyright{J-P. Bernardy, T. Coquand and G. Moulin}
+\Copyright[-nd]{J-P. Bernardy, T. Coquand and G. Moulin}
 % JP: I prefer by-sa if possible
 \subjclass{{F.4.1.} {Mathematical logic.} {Lambda calculus and related
   systems.}}
@@ -435,9 +435,10 @@ $U \op i A$ is isomorphic to $A → U$.
       g &: (P : A → U) → U \op i A\\
       g &P = (\CTimes i {x:A} (P x)) \param i
     \end{array}$
-  \item $\CP i A {(\CTimes i {y:A} (P y)) \param i} \op i x = (\CTimes i
-    {y:A} (P x) \op i x = P x$ By $η$-contraction we get the desired result.
-  \item $(\CTimes i {x:A} {\CP i A Q \op i x}).i = Q$ if $\CTimes i {x:A} {\CP i A Q \op i x} = \CP i A Q$. We then use equality for $×_i$. The first components are obviously equal. For the second components we are left with $\CP i A Q \op i x = \CP i A Q \op i x$, which holds by reflexivity.
+  \item $\CP i A {(\CTimes i {y:A} (P y)) \param i} \op i x = (\CTimes i {y:A} (P y)) \op i x = P x$.
+    By $η$-contraction we get the desired result.
+  \item $(\CTimes i {x:A} {\CP i A Q \op i x}) \param i = {\CP i A Q} \param i = Q$
+    by \fref{cor:equalities} for $×_i$.
   \qedhere
   \end{enumerate}
 \end{proof}
@@ -458,9 +459,9 @@ $((x:A) → B[x]) \op i f$ is isomorphic to $$(x:A) → (x' : A \op i x) → B[\
     \end{array}$
   \item $(\CP i f {\fp i f p \param i} \CP i x x') \param i = ({\fp i
       f p} \CP i x {x'}) \param i = \CP i {f\, x} {p\, x\, x'} \param i = p\, x\, x'$
-  \item $\fp i f {λx x'. (\CP i f q \CP i x {x'}) \param i} \param i$
-    iff. $\fp i f {λx x'. (\CP i f q \CP i x {x'}) \param i} = \CP i f q$,
-    which is true by the equality rule for function pairing.
+  \item $\fp i f {λx x'. (\CP i f q \CP i x {x'}) \param i} \param i =
+         {\CP i f q} \param i = q$
+    by \fref{cor:equalities} for function pairing.
   \qedhere
   \end{enumerate}
 \end{proof}
