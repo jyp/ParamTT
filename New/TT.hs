@@ -1,8 +1,8 @@
-module New where
+module TT where
 
 type Color = String
 data CVal = CVar String | Zero
-  deriving Show
+  deriving (Show,Eq)
 type Name = String
 
 data Term = TU
@@ -170,6 +170,9 @@ app (Lam f) a = f a
 app (CApp (CPair f (Phi g)) (CVar i)) a = CPair (f `app` proj i a) (g `app` CLam (\j -> ceval i j a)) `capp` CVar i
 app f a = App f a
 
+face :: Val -> Val
+face x = capp x Zero
+
 capp :: Val -> CVal -> Val
 capp (CLam f) x = f x
 capp (CPair a _) Zero = a
@@ -178,3 +181,24 @@ capp f (CVar a) = CApp f (CVar a)
 ni :: Val -> Val -> Val
 ni (CPair _ (Psi p)) a = app p a
 ni a b = Ni a b
+
+conv :: [String] -> Val -> Val -> Bool
+conv (n:ns) t0 t'0 = eq t0 t'0 where
+  (===) = conv (n:ns)
+  eq (Var x) (Var y) = x == y
+  eq (Pi a b) (Pi a' b') = a === a' && b === b'
+  eq (Lam f) (Lam f') = conv ns (f (Var n)) (f' (Var n))
+  eq (Lam f) t = conv ns (f (Var n)) (app t (Var n))
+  eq t (Lam f) = conv ns (f (Var n)) (app t (Var n))
+  eq (App a b) (App a' b') = a === a' && b === b'
+  eq U U = True
+  eq (Param a) (Param a') = a === a'
+  eq (CPair a b) (CPair a' b') =  a === a' && b === b'
+  eq (CApp a b) (CApp a' b') = a === a' && b == b'
+  eq (CLam f) (CLam f') = conv ns (f (CVar n)) (f' (CVar n))
+  eq (CLam f) t = conv ns (f (CVar n)) (capp t (CVar n))
+  eq t (CLam f) = conv ns (f (CVar n)) (capp t (CVar n))
+  eq (CPi a) (CPi a') = a === a'
+  eq (Psi a) (Psi a') = a === a'
+  eq (Ni a b)(Ni a' b') =  a === a' && b === b'
+  eq _ _ = False
