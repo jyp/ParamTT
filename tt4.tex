@@ -137,8 +137,8 @@ Our technical contributions are as follows:
 In this section we define the syntax and typing rules of our
 parametric type theory, as well as the equality judgment.
 
-We assume a special symbol ‘0’, and a countable infinite set of other
-symbols, called \emph{colors}.
+We assume a special symbol ‘0’, and a countable infinite set $𝕀$ of
+other symbols, called \emph{colors}.
 The metasyntactic variables $i,j,\ldots$ range over colors, while
 $I,J,…$ range over \emph{finite} sets of colors.
 We further assume a fixed function $\fresh{·}$ such that
@@ -162,7 +162,7 @@ colors.
             & \mid \fp i t u & \text{colored function pair}\\
             & \mid A \op i u & \text{parametricity type} \\
             & \mid t \param i & \text{parametricity proof} \\
-    \Gamma,\Delta & \coloneqq () \mid \Gamma,x:A
+    \Gamma,\Delta & \coloneqq () \mid \Gamma,x:A \mid \Gamma,i:𝕀
   \end{align*}
 \end{definition}
 
@@ -185,55 +185,49 @@ We give a few intuitions to interpret the novel syntax, before giving formally t
 
 
 \begin{definition}[Typing judgements — à la Tarski]
-We mutually define three judgments:
-\begin{itemize}
-\item $Γ⊢_I$ (Is the context $Γ$ is well-formed, assuming the color set $I$?).
-\item $Γ⊢_I A$  (Is the type $A$ well-formed in $Γ$, assuming the color set $I$?)
-\item $Γ⊢_I a : A$  (Does the term $a$ have type $A$ in the context $Γ$, assuming the color set $I$?)
-\end{itemize}
 
-\fbox{$Γ⊢_I$}
+\fbox{$Γ⊢$}
   \begin{mathpar}
-    \inferrule[Empty]{~}{() ⊢_I }
+    \inferrule[Empty]{~}{() ⊢ }
 
-    \inferrule[NewVar]{Γ⊢_I \\ Γ ⊢_I A }{ Γ,x:A ⊢_I }
+    \inferrule[NewVar]{Γ⊢ \\ Γ ⊢ A }{ Γ,x:A ⊢ }
 
+    \inferrule[NewCol]{Γ⊢ \\ Γ ⊢ }{ Γ,i:𝕀 ⊢ }
   \end{mathpar}
  
-\fbox{$Γ⊢_I A$}
+\fbox{$Γ⊢ A$}
  \begin{mathpar}
+    \inferrule[Universe]{~}{Γ ⊢ U}
 
-    \inferrule[Universe]{~}{Γ ⊢_I U}
-
-    \inferrule[Decode]{Γ ⊢_I A : U}{Γ ⊢_I \El{A}}
+    \inferrule[Decode]{Γ ⊢ A : U}{Γ ⊢ \El{A}}
     \\
-    \inferrule[Pi]{Γ ⊢_I A \\ Γ,x:A ⊢_I B}{Γ ⊢_I (x:A) → B}
+    \inferrule[Pi]{Γ ⊢ A \\ Γ,x:A ⊢ B}{Γ ⊢ (x:A) → B}
 
-    \inferrule[Out]{Γ ⊢_{I,i} T \\ Γ ⊢_I a : \proj i T}{Γ ⊢_I T \op i  a}
+    \inferrule[Out]{Γ, i:𝕀 ⊢ T \\ Γ ⊢ a : \proj i T}{Γ ⊢ T \op i  a}
 
-    \inferrule[In-Pred]{Γ ⊢_{I} A \\ Γ,x:A ⊢_{I} B}{Γ ⊢_{I,i} \CTimes i {x:A} B}
+    \inferrule[In-Pred]{Γ ⊢ A \\ Γ,x:A ⊢ B}{Γ, i:𝕀 ⊢ \CTimes i {x:A} B}
  \end{mathpar}
 
-\fbox{$Γ⊢_I a : A$}
+\fbox{$Γ⊢ a : A$}
   \begin{mathpar}
-    \inferrule[Conv]{Γ ⊢_I t:A \\ A = B}{Γ ⊢_I t : B}
+    \inferrule[Conv]{Γ ⊢ t:A \\ A = B}{Γ ⊢ t : B}
 
-    \inferrule[Var]{Γ ⊢_I \\ x : A ∈ Γ}{Γ ⊢_I x : A}
+    \inferrule[Var]{Γ ⊢ \\ x : A ∈ Γ}{Γ ⊢ x : A}
 
-    \inferrule[Code]{Γ ⊢_I A }{Γ ⊢_I |A| : U}
+    \inferrule[Code]{Γ ⊢ A }{Γ ⊢ |A| : U}
 
-    \\\inferrule[Lam]{Γ,x:A ⊢_I b : B}{Γ ⊢_I λx:A.b : (x:A) → B}
+    \\\inferrule[Lam]{Γ,x:A ⊢ b : B}{Γ ⊢ λx:A.b : (x:A) → B}
  
-    \inferrule[App]{Γ ⊢_I t : (x:A) → B[x] \\ Γ ⊢_I u : A}{Γ ⊢_I t u: B[u]}
+    \inferrule[App]{Γ ⊢ t : (x:A) → B[x] \\ Γ ⊢ u : A}{Γ ⊢ t u: B[u]}
 
-    \\\inferrule[In-Abs]{Γ ⊢_I a : \proj i T \\Γ ⊢_I p : T \op i a}{Γ ⊢_{I,i} \CP i a p : T}
+    \\\inferrule[In-Abs]{Γ ⊢ a : \proj i T \\Γ ⊢ p : T \op i a}{Γ, i:𝕀 ⊢ \CP i a p : T}
 
     \inferrule[In-Fun]
-        {Γ ⊢_I t : \projp i {(x:A) → P[x]}\\\\
-         Γ ⊢_I u : (x:\proj i A) → (x':A \op i x) → P[\CP i x {x'}] \op i t x}
-        {Γ ⊢_{I,i} \fp i t u : (x:A) → P[x]}
+        {Γ ⊢ t : \projp i {(x:A) → P[x]}\\\\
+         Γ ⊢ u : (x:\proj i A) → (x':A \op i x) → P[\CP i x {x'}] \op i t x}
+        {Γ, i:𝕀 ⊢ \fp i t u : (x:A) → P[x]}
 
-    \inferrule[Color-Elim]{Γ ⊢_{I,i} a : T}{Γ ⊢_I a \param i : T \op i {\proj i a}}
+    \inferrule[Color-Elim]{Γ, i:𝕀 ⊢ a : T}{Γ ⊢ a \param i : T \op i {\proj i a}}
   \end{mathpar}
 \end{definition}
 
@@ -664,29 +658,33 @@ Seeing an $I$-element $u$ as a tuple indexed by projection maps
 $α : I → I_α$, the second requirement can be written $(uα)_β = u_{αβ}$.
 
 \bigskip
-A context $Γ ⊢_I$ is interpreted as a presheaf on the slice category
-$\pI^\opp/I$, \ie, by a family of $J$-sets $Γf$ for any map $f : I → J$
-together with restriction maps $Γ f → Γ fg$, $ρ ↦ ρg$
-for $g : J → K$ satisfying the conditions $ρ 1 = ρ$ and $(ρg)h = ρ(gh)$.
-Furthermore the map $Γf → Γ(fα)$, $ρ ↦ ρα$ is the projection operation.
+A context $Γ ⊢$ is interpreted as a (usual) presheaf on $\pI^\opp$, \ie,
+by a family of sets $Γ(I)$ for $I ∈ 𝕀$, together with restriction maps
+$Γ(I) → Γ(J)$, $ρ ↦ ρf$ for $f : I → J$ satisfying the conditions
+$ρ1 = ρ$ and $(ρf)g = ρ(fg)$.
 
 \medskip
-A type $Γ ⊢_I A$ is interpreted as follows.
-For each map $f : I → J$ and $ρ ∈ Γf$ we give a $J$-set $A(f,ρ)$
-together with restriction maps $A(f,ρ) → A(fg,ρg)$, $u ↦ ug$ if $g : J → K$
-satisfying $u1 = u$ and $(ug)h = u(gh)$ for any $h : K → L$.
-Furthermore the map $A(f,ρ) → A(fα,ρα)$, $u ↦ uα$ is the projection operation.
+A type $Γ ⊢ A$ is interpreted by a $I$-set $Aρ$ for each $I ∈ 𝕀$ and
+$ρ ∈ Γ(I)$,
+together with restriction maps $Aρ → A(ρf)$, $u ↦ uf$ if $f : I → J$
+satisfying $u1 = u$ and $(uf)g = u(fg)$ for any $g : J → K$.
+Furthermore the map $Aρ → A(ρα)$, $u ↦ uα$ is the projection operation.
 
 \medskip
-A term $Γ ⊢_I a : A$ is interpreted by a $J$-element $a(f,ρ) ∈ A(f,ρ)$
-for each $f: I → J$ and $ρ ∈ Γf$, such that
-$a(f,ρ)g = a(fg,ρg)$ for any $g : J → K$.
+A term $Γ ⊢ a : A$ is interpreted by a $I$-element $aρ ∈ Aρ$ for each
+$I ∈ 𝕀$ and $ρ ∈ Γ(I)$, such that $aρf = a(ρf)$ for any $f : I → J$.
 
 \medskip
-If $Γ ⊢_I A$ we define the interpretation of $Γ,x:A ⊢_I$
-by taking $⟨ρ,x=u⟩_α = ⟨ρ_α,x=u_α⟩$, where and $ρ ∈ Γf$ and
-$u ∈ A(f,ρ)$.
-The restriction map is defined by $⟨ρ,x=u⟩g = ⟨ρ g, x=ug⟩$.
+If $Γ⊢$ and $Γ ⊢ A$ we define the interpretation of $Γ,x:A ⊢$
+by taking $⟨ρ,x=u⟩$ to mean $ρ ∈ Γ$ and $u ∈ Aρ$.
+The restriction map is defined by $⟨ρ,x=u⟩f = ⟨ρf, x=uf⟩$.
+
+\smallskip
+If $Γ⊢$ we define the interpretation of $Γ,i:𝕀 ⊢$ as $Γ⊗𝕀$,
+and take $[ρ,i=j] ∈ Γ⊗𝕀(I,j)$ to mean $ρ ∈ Γ(I)$;
+and $[ρ,i=0] ∈ Γ⊗𝕀(I)$ to mean mean $ρ ∈ Γ(I)$.
+The restriction map is defined by $[ρ,i=j]f = [ρf,i=f(j)]$
+and $[ρ,i=0]f = [ρf,i=0]$.
 
 \bigskip
 The above refinement on presheaves is necessary for the interpretation
@@ -695,31 +693,30 @@ it is not clear how to validate the equality
 ${{(\CTimes i {x:A} B[x])} \op i a = B[a]}$.
 
 \bigskip
-The semantics we define satisfies the substitution law. That is, if $Γ,x:A ⊢_I B$
-and $Γ ⊢_I a:A$ then for any $f : I → J$ and $ρ ∈ Γ f$ we have
-$B[a](f,ρ) = B(f,⟨ρ,x=a(f,ρ)⟩)$.
-It also satisfies the substitution law on colors, \ie, if $Γ ⊢_I A$ and
-$f : I → J$ then for any $g : J → K$ we have $Γ'g = Γ(fg)$,
-where $Γ'$ is the result of performing the substitution $f$ in $Γ$, and if
-$ρ ∈ Γfg$ we have $Af (g,ρ) = A(fg,ρ)$.
+The semantics we define satisfies the substitution law. That is, if $Γ,x:A ⊢ B$
+and $Γ ⊢ a:A$ then for any $ρ ∈ Γ(I)$ we have
+$B[a]ρ = B(f,⟨ρ,x=aρ⟩)$.
+It also satisfies the substitution law on colors, \ie, if $Γ,i:𝕀 ⊢ A$
+then for any $ρ ∈ Γ(I)$ and $j ∉ I$ we have
+$A(i 0)ρ = A[ρ,i=0] = A[ρ,i=j](j 0)$.
 For establishing these properties, we proceed as \citet{Aczel98onrelating}.
 
 \bigskip
 We proceed to interpret each type construction.
 \begin{description}
   \item[\sc Pi.]
-    Assume $f : I → J$ and $ρ ∈ Γf$. We define $((x:A) → B)(f,ρ)$ as a $J$-set.
-    A $J$-element of $((x:A) → B)(f,ρ)$ is defined as a tuple $λ = (λ_α)$,
-    where each $λ_α$ is a family of elements indexed by a total map $g : J_α ↣ K$:
-    $$λ_{α g} ∈ \prod_{u ∈ A(fα g,ραg)} B(fαg,⟨ραg,x=u⟩)$$
+    Assume$ρ ∈ Γ(I)$. We define $((x:A) → B)ρ$ as a $I$-set.
+    An $I$-element of $((x:A) → B)ρ$ is defined as a tuple $λ = (λ_α)$,
+    where each $λ_α$ is a family of elements indexed by a total map $f : I_α ↣ J$:
+    $$λ_{α f} ∈ \prod_{u ∈ A(ραf)} B⟨ραf,x=u⟩$$
     such that
-    $\app{λ_{αg}}{u} h = \app{λ_{α gh}}{uh}$ for $g : J ↣ K$ total and
-    for \emph{any} $h : K → L$.
-    Because any map $J → K$ has an unique decomposition as a projection and a total
-    map, we can consider $λ_h$ for an arbitrary map $h : J → K$.
+    $\app{λ_{αf}}{u} g = \app{λ_{α fg}}{ug}$ for $f : I_α ↣ J$ total and
+    for \emph{any} $g : J → K$.
+    Because any map $I → J$ has an unique decomposition as a projection and a total
+    map, we can consider $λ_f$ for an arbitrary map $f : I → J$.
 
-    If $g : J → K$ is an arbitrary map, we define $λ g$ to be the tuple
-    $(λ g_β)$ where $λ g_β$ is the family $λ g_{βh} = λ_{gβh}$.
+    If $f : I → J$ is an arbitrary map, we define $λ f$ to be the tuple
+    $(λf_β)$ where $λf_β$ is the family $λf_{βg} = λ_{fβg}$.
 
     With this definition, we directly have $λα_{β} = λ_{αβ}$.
 
@@ -753,35 +750,34 @@ We proceed to interpret each type construction.
 
 
   \item[\sc Out.]
-    Assume $f : I → J$ and assume $ρ ∈ Γf$.  We need to define the $J$-set $(P \op {i} a)(f,ρ)$.
-    Let $j = \fresh J$.
-    Recall that we note the inclusions $ι_i : I → I,i$ and $ι_j : J → J,j$.
-    By the induction hypotheses we get a $(J,j)$-set $P(f^{ij},ρι_i)$,
-    and the $J$-element $a(f,ρ)$ belongs to
-    $P(i\,0)(f,ρ) = P((i\,0)f,ρ) = P(ι_i f,ρι_j)(j\,0)$.
-    We define $(P \op {i} a)(f,ρ)$ to be the set of $J$-elements $v$ such that
-    $(a(f,ρ),_j v) ∈ P(f^{ij},ρι_j)$. If $v$ is such an element and $g : J → K$
-    and $k=\fresh K$, then $vg$ is defined by the equation
-    $(a(f,ρ)g,_k vg) = (a(f,ρ) ,_j v) g^{jk}$.
+    Assume $ρ ∈ Γ(I)$. We need to define the $I$-set $(P \op {i} a)ρ$.
+    Let $j = \fresh I$.
+    By the induction hypotheses we get a $(I,j)$-set $P[ρ,i=j]$,
+    and the $I$-element $aρ$ belongs to
+    $P(i\,0)ρ = P[ρ,i=0] = P[ρ,i=j](j 0)$.
+
+    We define $(P \op {i} a)ρ$ to be the set of $I$-elements $v$ such that
+    $(aρ,_j v) ∈ P[ρ,i=j]$.
+    If $v$ is such an element and $f : I → J$ and $k=\fresh J$, then
+    $vf$ is defined by the equation $(aρf,_k vf) = (aρ ,_j v)f^{jk}$.
 
 
   \item[\sc In-Pred.]
-    Assume $f : I,i → J$, and $ρ ∈ Γ(ι_if)$.  We need to define the $J$-set
-    $(\CTimes i {x:A} B)(f,ρ)$.
-    Let $ι_i : I → I,i$ be the inclusion. There are two cases. If $f(i) = 0$,
-    then $(\CTimes i {x:A} B)(f,ρ)$ is defined to be the $J$-set $A(ι_i f)$.
-    Otherwise, if $f(i) = j ∈ J$, then we define $(\CTimes i {x:A} B)(f,ρ)$ to
-    be the $J$-set of $(u,_j v)$ where $u$ is a $J\backslash\{j\}$-element in
-    $A(ι_i f(j\,0),ρ(j\,0))$ and $v$ is an element in
-    $B(ι_i f(j\,0),⟨ρ(j\,0),x=u⟩)$.
+    Assume $ρ ∈ Γ⊗𝕀(I)$.  We need to define the $I$-set $(\CTimes i {x:A} B)ρ$.
+    There are two cases.
+    If $ρ = [ρ',i=0]$ with $ρ' ∈ Γ(I)$, then $(\CTimes i {x:A} B)ρ$ is
+    defined to be the $I$-set $Aρ'$.
+    If $ρ = [ρ',i=j]$ with $j ∈ I$ and $ρ' ∈ Γ(I\backslash\{j\})$, then we define
+    $(\CTimes i {x:A} B)ρ$ as the $I$-set of $(u ,_j v)$ where
+    $u ∈ Aρ'$ and $v ∈ B⟨ρ',x=u⟩$.
 
 
   \item[\sc Decode.]
-    Assume $f:I → J$ and $ρ ∈ Γf$.  We have $A(f,ρ) ∈ U(J)$ and we define
-    $\El{A}(f,ρ)$ to be the set $A(f,ρ)_1$.
-    The restriction map $\El{A}(f,ρ) → \El{A}(fg,ρ g)$, $u ↦ ug$ is defined
-    using the restriction map $A(f,ρ)_1 → A(f,ρ)_g$ and the fact that we have
-    $A(f,ρ)_g = A(fg,ρ g)_1$.
+    Assume $ρ ∈ Γ(I)$.  We have $Aρ ∈ U(I)$ and we define
+    $\El{A}ρ$ to be the set $Aρ_1$.
+    The restriction map $\El{A}ρ → \El{A}ρf$, $u ↦ uf$ is defined
+    using the restriction map $Aρ_1 → Aρ_f$ and the fact that we have
+    $Aρ_f = A(ρf)_1$.
 \end{description}
 
 \begin{remark}
@@ -797,35 +793,35 @@ We proceed to interpret each type construction.
 We now describe how to interpret terms.
 \begin{description}
   \item[\sc Var.]
-    We define $x(f,ρ)$ to be $ρ(x)$
+    We define $xρ$ to be $ρ(x)$
 
   \item[\sc Lam.]
-    We define $\app{(λ x:A.b)(f,ρ)_g}{u}$ to be $b(f,⟨ρg,x=u⟩)$
+    We define $\app{(λ x:A.b)ρ_f}{u}$ to be $b⟨ρf,x=u⟩$
 
   \item[\sc App.]
-    We define $(t\,u)(f,ρ)$ to be $\app{t(f,ρ)_1}{u(f,ρ)}$
+    We define $(t\,u)ρ$ to be $\app{tρ_1}{uρ}$
 
   \item[\sc In-Abs.]
-    Let $f:I,i → J$ and $ρ ∈ Γι_i f$ be given.
-    We define $(a ,_i p)(f,ρ)$ by case analysis on $f(i)$.
-    If $f(i) = 0$, we take $(a,_ip)(f,ρ)$ to be $a(ι_i f,ρ)$.
-    If $f(i) = j ∈ J$, we take $(a,_ip)(f,ρ)$ to be $(a(ι_if(j0),ρ),_j p(ι_if(j0),ρ))$
+    Assume $ρ ∈ Γ⊗𝕀(I)$.  We define the $I$-element $(a ,_i p)ρ$ by case
+    analysis on $ρ$.
+    If $ρ = [ρ',i=0]$ with $ρ' ∈ Γ(I)$, then we take $(a ,_i p)ρ$ to be
+    $aρ' ∈ A(i\,0)ρ' = A[ρ',i=0]$.
+    If $ρ = [ρ',i=j]$ with $j ∈ I$ and $ρ' ∈ Γ(I\backslash\{j\})$, then
+    we take $(a ,_i p)ρ$ to be
+    $(aρ' ,_j pρ')$.
 
   \item[\sc In-Fun.]
-    Let $f:I,i → J$ and $ρ ∈ Γι_i f$ be given.
-    We define ${\fp i t u}(f,ρ)_g$ by case analysis on $g(f(i))$.
-    If $g(f(i)) = 0$, we take ${\fp i t u}(f,ρ)_g$ to be $t(ι_i f,ρ)_g$.
-    If $g(f(i)) = j ∈ K$, we define $w = {\fp i t u}(f,ρ)_g$ by
-    $$\app{w}{(a ,_j b)} =
-      ( \app{t\,(ι_i fg(j0),ρ g(j0))}{a}
-      ,_j
-        {\app{\app{u\,(ι_i fg(j0),ρ g(j0))}{a}}{b}}
-      )$$
+    Assume $ρ ∈ Γ⊗𝕀(I)$, $f : I → J$.  We define the ${\fp i t u}ρ_f$ by
+    case analysis on $ρf$.
+    If $ρf = [ρ',i=0]$ with $ρ' ∈ Γ(I)$, then we define $w = {\fp i t u}ρ_f$ by
+    $\app{w}{a} = \app{tρ'}{a}$.
+    If $ρf = [ρ',i=j]$ with $j ∈ J$ and $ρ' ∈ Γ(J\backslash\{j\})$, then
+    we define $w = {\fp i t u}ρ_f$ by
+    $$\app{w}{(a ,_j b)} = ( \app{tρ'}{a} ,_j {\app{\app{uρ'}{a}}{b}} )$$
 
   \item[\sc Color-Elim.]
-    Let $f:I → J$ and $ρ ∈ Γ f$ be given.
-    We define $(a \param i)(f,ρ)$ to be $a(f^{ij},ρι_j)\param j$
-    where $j = \fresh{J}$.
+    Assume $ρ ∈ Γ(I)$.  We define $(a \param i)ρ$ as
+    $a[ρ,i=j]·j$ where $j = \fresh{J}$.
 \end{description}
 
 \begin{theorem}[Convertible terms are semantically equal]~
@@ -839,35 +835,47 @@ We now describe how to interpret terms.
 \end{theorem}
 \begin{proof}
   By simultaneous induction on the derivation.
-  We only show the conversion rules \textsc{Pair-Param} and
-  \textsc{Pair-Pred} here; other rules involving colors can be proven in
-  a similar fashion, while $β$ and $η$ can be proven in the usual way.
+  We only show the conversion rules \textsc{Pair-Param},
+  \textsc{Pair-Pred} and \textsc{Surj-Pair} here; other rules involving
+  colors can be proven in a similar fashion, while $β$ and $η$ can be
+  proven in the usual way.
 
   \begin{description}
     \item[\sc Pair-Param.]
-      Let $f : I → J$ and $j = \fresh J$.  We have
+      Let $ρ ∈ Γ(I)$ and $j = \fresh I$.  We have
       \begin{align*}
-        &v ∈ ({((x:A)\times_i B)} \op {i} a)(f,ρ)
+        &v ∈ ({((x:A)\times_i B)} \op {i} a)ρ
         \\
-        \text{ iff. }& (a(f,ρ) ,_j v) ∈ (\CTimes i {x:A} B)(f^{ij},ρι_j)
+        \text{ iff. }& (aρ ,_j v) ∈ (\CTimes i {x:A} B)[ρ,i=j]
         \\
-        \text{ iff. }& (a(f,ρ) ,_j v) ∈ \left\{ (u ,_j w) \mid u ∈ A(f,ρ), w ∈ B(f,⟨ρ,x=u⟩) \right\}
+        \text{ iff. }& (aρ ,_j v) ∈ \left\{ (u ,_j w) \mid u ∈ Aρ, w ∈ B⟨ρ,x=u⟩ \right\}
         \\
-        \text{ iff. }& v ∈ B(f,⟨ρ,x=a(f,ρ)⟩)
+        \text{ iff. }& v ∈ B⟨ρ,x=aρ⟩
         \\
-        \text{ iff. }& v ∈ B[a](f,ρ)
+        \text{ iff. }& v ∈ B[a]ρ
       \end{align*}
 
     \item[\sc Pair-Pred.]
-      Let $f : I → J$ and $j = \fresh J$.  We have
+      Let $ρ ∈ Γ(I)$ and $j = \fresh I$.  We have
       \begin{align*}
-         & ((a ,_i p) \param i)(f,ρ)
-      \\=~& (a ,_i p)(f^{ij}, ρι_j) · j
-      \\=~& (a(ι_i f^{ij}(j\,0), ρ) ,_j p(ι_i f^{ij}(j\,0), ρ)) · j
-      \\=~& (a(f, ρ) ,_j p(f, ρ)) · j
-      \\=~& p(f, ρ)
-      \qedhere
+         & ((a ,_i p) \param i)ρ
+        \\=~& (a ,_i p)[ρ,i=j]·j
+      \\=~& (aρ ,_j pρ) · j
+      \\=~& pρ
       \end{align*}
+
+    \item[\sc Surj-Pair.]
+      For each $ρ ∈ Γ(I)$ we have
+      $(t(i\,0) ,_i t·i)[ρ,i=0] = t(i\,0)ρ = t[ρ,i=0]$, and
+      if $j ∉ I$ then we have
+      \begin{align*}
+        & (t(i\,0) ,_i t·i)[ρ,i=j]
+        \\=~& (t(i\,0)ρ ,_j (t·i)ρ)
+        \\=~& (t[ρ,i=j](j\,0) ,_j t[ρ,i=j]·j)
+        \\=~& t[ρ,i=j]
+      \end{align*}
+      Hence $(t(i\,0) ,_i t·i)ρ = tρ$ for any $ρ ∈ Γ⊗𝕀(I)$.
+      \qedhere
   \end{description}
 \end{proof}
 
@@ -909,8 +917,7 @@ We now describe how to interpret terms.
 
 
 \begin{theorem}[Validity]
-  For any $f : I → J$ and any $ρ ∈ Γf$,\\
-    if $Γ ⊢_I a : A$ then $a(f,ρ) ∈ A(f,ρ)$.
+  If $Γ ⊢ a : A$ then $aρ ∈ Aρ$ for any $ρ ∈ Γ(I)$.
 %  Furthermore $af(1,ρ) = a(f,ρ)$ (using the interpretation of
 %  $Γf ⊢_J af : Af$).
 \end{theorem}
@@ -919,29 +926,22 @@ We now describe how to interpret terms.
   cases match the usual proof (using \fref{thm:convertible-in-model} for \textsc{Conv}).
   \begin{description}
     \item[\sc In-Abs.]
-      Let $f : I,i → J$ and $ρ ∈ Γf$.
-      We need to show that $(a ,_i p)(f,ρ) : T(f,ρ)$.
-      If $f(i) = 0$, we have by definition $(a,_ip)(f,ρ) = a(ι_i f,ρ)$,
-      which by induction hypothesis belongs to the $J$-set $T(i\,0)(ι_i f,ρ)$;
-      but by color substitution $T(i\,0)(ι_i f,ρ) = T((i\,0)ι_i f,ρ) = T(f,ρ)$.
-      If $f(i) = j ∈ J$, we have $f = g^{ij}$ where $g = ι_if(j\,0)$; by induction
-      hypothesis $p(g,ρ) ∈ (T \op i a)(g,ρ)$ hence by definition
-      $(a(g,ρ) ,_j p(g,ρ)) ∈ T(g^{ij},ρι_j)$ then
-      $(a ,_i p)(f,ρ) ∈ T(f,ρ)$.
+      Assume $ρ ∈ Γ⊗𝕀(I)$.
+      If $ρ = [ρ',i=0]$ with $ρ' ∈ Γ(I)$, we have
+      $(a ,_i p)[ρ',i=0] = aρ' ∈ T(i\,0)ρ' = T[ρ',i=0]$.
+      If $ρ = [ρ',i=j]$ with $j ∈ I$ and $ρ' ∈ Γ(I\backslash\{j\})$, then
+      $(a ,_i p)[ρ',i=j] = (aρ' ,_j pρ')$,
+      and by induction hypothesis
+      $pρ' ∈ (T \op {i} a)ρ'$ then by definition
+      $(aρ ,_j pρ') ∈ T[ρ,i=j]$.
 
     \item[\sc Color-Elim.]
-      Let $f : I → J$ and $ρ ∈ Γf$.
-      We need to show that $(a \param i)(f,ρ) ∈ (T \op i {a(i\,0)}) (f,ρ)$, \ie,
-      that
-      $ (a(i\,0)(f,ρ) ,_j (a \param i)(f,ρ))
-      = (a((i\,0)f,ρ) ,_j a(f^{ij},ρι_j) · j)
-      ∈ T(f^{ij},ρι_j)$
-      where $j = \fresh J$.
-      By induction hypothesis $a(f^{ij},ρι_j) ∈ T(f^{ij},ρι_j)$, and because it is a
-      $(J,j)$-element we have
-      $a(f^{ij},ρι_j) = (a(f^{ij},ρι_j)(j\,0) ,_j a(f^{ij},ρι_j) · j)$
-      We conclude by remarking that $a(f^{ij},ρι_j)(j\,0) = a((i\,0)f,ρ)$ holds
-      by color substitution and definition of $f^{ij}$.
+      Assume $ρ ∈ Γ(I)$.
+      We need to show that $(a·i)ρ ∈ (T \op i {a(i\,0)})ρ$, \ie, that
+      $ (a(i\,0)ρ ,_j (a·i)ρ) ∈ T[ρ,i=j]$ where $j = \fresh I$.
+      By induction hypothesis $a[ρ,i=j] ∈ T[ρ,i=j]$, hence
+      we have
+      $(a(i\,0)ρ ,_j (a·i)ρ) = (a[ρ,i=j](j\,0) ,_j a[ρ,i=j]·j) = a ∈ T[ρ,i=j]$.
     \qedhere
   \end{description}
 
