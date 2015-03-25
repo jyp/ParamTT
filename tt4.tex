@@ -24,7 +24,7 @@
 \newcommand\ip[3]{Σ^{#1} {#2}\,{#3}}
 \newcommand\fp[3]{⟨#2 ,_{#1} #3⟩}
 \newcommand\mor[2]{({#1}\,{#2})}
-\newcommand\proj[2]{{#2}\,\mor{#1}0}
+\newcommand\proj[2]{{#2}\mor{#1}0}
 \newcommand\projp[2]{\proj{#1}{(#2)}}
 
 \newcommand\comment[1]{}
@@ -139,11 +139,8 @@ parametric type theory, as well as the equality judgment.
 
 We assume a special symbol ‘0’, and a countable infinite set $𝕀$ of
 other symbols, called \emph{colors}.
-The metasyntactic variables $i,j,\ldots$ range over colors, while
-$I,J,…$ range over \emph{finite} sets of colors.
-We further assume a fixed function $\fresh{·}$ such that
-% JP: I remove \emph{gensym} which occurs nowhere else in the text
-$\fresh{I} ∉ I$ for any finite color set $I$.
+The metasyntactic variables $i,j,\ldots$ range over colors.
+while $φ$ range over $𝕀 ∪ \{0\}$.
 %
 The main innovation of the type theory
 presented here is that terms may depend on (a finite number of)
@@ -243,46 +240,42 @@ encoded in $U$. Small types are closed under product, $×_i$ and
 $∋_i$. The distinction between big and small types being standard, and
 to keep the presentation concise, we leave it implicit in the syntax.
 
-\begin{definition}[Color erasure]~
+\begin{definition}[Color renaming erasure]~
   \label{def:color-erasure}
-  We consider a color $i$,
-  and define the term $a(i\,0)$ by structural induction on $a$.
+  We consider a color $i ∈ 𝕀$ and a $φ ∈ 𝕀 ∪ \{0\}$,
+  and define the term $a(i\,φ)$ by induction on $a$.
 \begin{align*}
-  x(i\,0) & = x \\
-  U(i\,0) & = U \\
-  \El A(i\,0) & = \El {A(i\,0)} \\
-  |A|(i\,0) & = |A(i\,0)| \\
-  (λ(x:A).t)(i\,0) &= λ(x:A(i\,0)).t(i\,0) \\
-  (t\,u)(i\,0) &= (t(i\,0)) \, (u(i\,0)) \\
-  ((x:A)→B)(i\,0) &= (x:A(i\,0))→(B(i\,0)) \\
-  {\CP {j} a p}(i\,0)
-    &= a
-    & \text{if $i = j$} \\
-    &= \CP {j} a p
-    & \text{otherwise} \\
-  (\CTimes {j} {x:A} P)(i\,0)
-    &= A
-    & \text{if $i = j$} \\
-    &= \CTimes {j} {x:A} P
-    & \text{otherwise} \\
-  {\fp {j} t u}(i\,0)
-    &= t
-    & \text{if $i = j$} \\
-    &= \fp {j} t u
-    & \text{otherwise} \\
-  (A \op {j} a)(i\,0) &= (A(i\,0)) \op {j} (a(i\,0))
-    & \text{where $i ≠ j$} \\
-  (a · j)(i\,0) &= (a(i\,0)) · j
-    & \text{where  $i ≠ j$}
+  x \mor{i}{φ} & = x \\
+  U \mor{i}{φ} & = U \\
+  \El{A} \mor{i}{φ} & = \El {A\mor{i}{φ}} \\
+  |A| \mor{i}{φ} & = |A\mor{i}{φ}| \\
+  (λ(x:A).t)\mor{i}{φ} &= λ(x:A\mor{i}{φ}).t\mor{i}{φ} \\
+  (t\,u)\mor{i}{φ} &= (t\mor{i}{φ}) \, (u\mor{i}{φ}) \\
+  ((x:A)→B)\mor{i}{φ} &= (x:A\mor{i}{φ})→(B\mor{i}{φ}) \\
+  {\CP {i} a p}\mor{i}{0} &= a \\
+  {\CP {i} a p}\mor{i}{j} &= \CP {j} a p \\
+  {\CP {i} a p}\mor{j}{φ} &= \CP {i} {a\mor{j}{φ}} {p\mor{j}{φ}} &\text{if $i ≠ j$} \\
+  (\CTimes {i} {x:A} P)\mor{i}{0} &= A \\
+  (\CTimes {i} {x:A} P)\mor{i}{j} &= \CTimes {j} {x:A} P \\
+  (\CTimes {i} {x:A} P)\mor{j}{φ} &= \CTimes {i} {x:A\mor{j}{φ}} {P\mor{j}{φ}} &\text{if $i ≠ j$} \\
+  {\fp {i} t u}\mor{i}{0} &= t \\
+  {\fp {i} t u}\mor{i}{j} &= \fp {j} t u \\
+  {\fp {i} t u}\mor{j}{φ} &= \fp {i} {t\mor{j}{φ}} {u\mor{j}{φ}} &\text{if $i ≠ j$} \\
+  (A \op {i} a)\mor{i}{φ} &= {A\mor{i}{j}\mor{i}{φ}} \op {j} {a\mor{i}{φ}} &\text{where $j ∈ 𝕀 \backslash\{i\}$} \\
+  (A \op {i} a)\mor{j}{φ} &= (A\mor{j}{φ}) \op {i} (a\mor{j}{φ}) &\text{if $i ≠ j$} \\
+%
+  (a · i)\mor{i}{φ} &= a \mor{i}{j}\mor{i}{φ} · j &\text{where $j ∈ 𝕀 \backslash\{i\}$} \\
+  (a · i)\mor{j}{φ} &= a\mor{j}{φ} · i &\text{if $i ≠ j$} \\
   \end{align*}
-  \todo{we need to introduce $α$-equivalence for the two last clauses.
-  But we don't want to introduce general color morphisms as we would
-  have to change thm 4}
 \end{definition}
 
-\begin{theorem}[Color erasure preserves typing]
-  If $Γ,i:𝕀  ⊢ a : A$ then the terms $a(i\,0)$ and $A(i\,0)$ are
-  defined and $Γ ⊢ a(i\,0) : A(i\,0)$.
+\begin{theorem}[Color erasure and substitution preserve typing]
+  If $Γ,i:𝕀  ⊢ a : A$ then the terms $a(i\,φ)$ and $A(i\,φ)$ are
+  defined and
+  \begin{itemize}
+    \item $Γ ⊢ a(i\,0) : A(i\,0)$, and
+    \item $Γ, j :𝕀 ⊢ a(i\,j) : A(i\,j)$.
+  \end{itemize}
 \end{theorem}
 \begin{proof}
   By induction on the typing judgment.
@@ -562,8 +555,10 @@ In this section we show how to interpret our type theory by a presheaf model.
 % \todo{General idea for those who won't read it}
 
 \begin{definition}
-  A \emph{color map} $f : I → J$ is a function $I → J ∪ \{0\}$ such that
+  If $I$ and $J$ are two \emph{finite} subsets of $𝕀$, we call
+  \emph{color map} any function $f : I → J ∪ \{0\}$ such that
   $f(i_1) = f(i_2)$ iff. $i_1 = i_2$ whenever $f(i_1) = f(i_2) ∈ J$.
+  We then note $f : I → J$.
 \end{definition}
 
 \begin{definition}[Category $\pI{}$]
@@ -576,19 +571,22 @@ In this section we show how to interpret our type theory by a presheaf model.
   p.~176]{PittsAM:nomsns} for another description of this category),
   which is is equivalent to the category $\mathbf{Res}$ of nominal
   restriction sets \cite[rem.~9.9 p.~161]{PittsAM:nomsns}.
+
+  We further assume a fixed function $\fresh{·}$ such that
+  $\fresh{I} ∉ I$ for any object $I$.
 \end{definition}
 
- \begin{definition}[Projection]
-    We say that a morphism $α : I → I_α$ is a \emph{projection} if
-    $I_α ⊆ I$,
-    $α(i) = 0$ for each $i ∈ I \backslash I_α$, and
-    $α(i) = i$ for each $i ∈ I_α$.
-  \end{definition}
-  \begin{definition}[Total maps]
+\begin{definition}[Projection]
+   We say that a morphism $α : I → I_α$ is a \emph{projection} if
+   $I_α ⊆ I$,
+   $α(i) = 0$ for each $i ∈ I \backslash I_α$, and
+   $α(i) = i$ for each $i ∈ I_α$.
+\end{definition}
+\begin{definition}[Total maps]
   Injective morphisms, noted $h : I ↣ J$, are the \emph{total} ones, \ie,
   those verifying $h(i) ≠ 0$ for all $i ∈ I$.
-  \end{definition}
-  \begin{remark}[Morphism decomposition]
+\end{definition}
+\begin{remark}[Morphism decomposition]
   Any morphism $f : I → J$ has a
   unique decomposition into a projection map
   $α : I → I_α$ and a total map $h : I_α ↣ J$.
@@ -605,7 +603,7 @@ In this section we show how to interpret our type theory by a presheaf model.
   \end{tikzpicture}%
   \end{center}%
   }{}
-  \end{remark}
+\end{remark}
 
 \begin{definition}[$I$-set]
   We call $I$-element any tuple indexed by the subsets of $I$: $(u_J)_{J ⊆ I}$.
