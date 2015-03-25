@@ -180,6 +180,7 @@ We give a few intuitions to interpret the novel syntax, before giving formally t
   \fref{def:color-subst}.)
 \item The forms $\CP i t u$, $\CTimes i {x:A} B$ and $\fp i t u$ allow to
   locally associate parametricity proofs with a given realizer.
+  \todo{add an item for $\Gamma,i:𝕀 ⊢$}
 \end{enumerate}
 
 
@@ -387,6 +388,7 @@ conversion relation is decidable.
 
 \section{Parametricity}
 \label{sec:parametricity}
+\todo{more examples: identity, any $f : U → Bool$ is constant,…}
 In this section we prove that our system properly internalizes
 parametricity. We also illustrate the system by giving a few simple
 proofs relying on parametricity (including iterated parametricity).
@@ -699,13 +701,15 @@ $B[a]ρ = B(f,⟨ρ,x=aρ⟩)$.
 It also satisfies the substitution law on colors, \ie, if $Γ,i:𝕀 ⊢ A$
 then for any $ρ ∈ Γ(I)$ and $j ∉ I$ we have
 $A(i 0)ρ = A[ρ,i=0] = A[ρ,i=j](j 0)$.
+\todo{details: $[ρ,i=0] ∈ Γ⊗𝕀(I)$ and $[ρ,i=j] ∈ Γ⊗𝕀(I,j)$; $A(i 0)ρ =
+A[ρ,i=0]$ are $I$-elements while $A[ρ,i=j]$ is a $(I,j)$-element}
 For establishing these properties, we proceed as \citet{Aczel98onrelating}.
 
 \bigskip
 We proceed to interpret each type construction.
 \begin{description}
   \item[\sc Pi.]
-    Assume$ρ ∈ Γ(I)$. We define $((x:A) → B)ρ$ as a $I$-set.
+    Assume $ρ ∈ Γ(I)$. We define $((x:A) → B)ρ$ as a $I$-set.
     An $I$-element of $((x:A) → B)ρ$ is defined as a tuple $λ = (λ_α)$,
     where each $λ_α$ is a family of elements indexed by a total map $f : I_α ↣ J$:
     $$λ_{α f} ∈ \prod_{u ∈ A(ραf)} B⟨ραf,x=u⟩$$
