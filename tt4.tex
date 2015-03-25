@@ -108,12 +108,12 @@ abstraction result in a purely syntactical way.
 One states for example that if a function $f$ has type
 $(A : U) → U → U$ --- the type of the polymorphic identity --- then the
 following proposition holds:
-$$ (A : U) → (P : A → U) → (x : A) → P x → P (f A x) $$
+$$ (A : U) → (P : A → U) → (x : A) → P\, x → P (f\, A\, x) $$
 %
 Indeed \citet{bernardy_proofs_2012} proves such a result as a
 (syntactical) meta-theorem about type systems. However this result is
 not provable internally, \ie, the following is not provable:
-$$ (f : (A:U) → A → A) →  (A : U) → (P : A → U) → (x : A) → P x → P (f A x) $$
+$$ (f : (A:U) → A → A) →  (A : U) → (P : A → U) → (x : A) → P\, x → P (f\, A\, x) $$
 
 Several attempts have been made
 \citep{bernardy_computational_2012,bernardy_type-theory_2013} --- or are currently
@@ -243,16 +243,6 @@ encoded in $U$. Small types are closed under product, $×_i$ and
 $∋_i$. The distinction between big and small types being standard, and
 to keep the presentation concise, we leave it implicit in the syntax.
 
-
-We note
-\begin{itemize}
-\item $(i\,0) : I,i → I$ the partial identity: $(i\,0)(i) = 0$ and $(i\,0)(j) = j$ for each $j ∈ I$; 
-\item $ι_i : I → I,i$ the inclusion: $ι_i(j) = j$ for each $j ∈ I$; and
-\item $f^{ij} : I,i → J,j$ the color map such that $f^{ij}(i) = j$
-  and $f^{ij}(k) = f(k)$ for all $k ∈ I$
-  (if $f : I → J$ with $i ∉ I$ and $j ∉ J$).
-\end{itemize}
-
 \begin{definition}[Color erasure]~
   \label{def:color-erasure}
   We consider a color $i$,
@@ -260,6 +250,8 @@ We note
 \begin{align*}
   x(i\,0) & = x \\
   U(i\,0) & = U \\
+  \El A(i\,0) & = \El {A(i\,0)} \\
+  |A|(i\,0) & = |A(i\,0)| \\
   (λ(x:A).t)(i\,0) &= λ(x:A(i\,0)).t(i\,0) \\
   (t\,u)(i\,0) &= (t(i\,0)) \, (u(i\,0)) \\
   ((x:A)→B)(i\,0) &= (x:A(i\,0))→(B(i\,0)) \\
