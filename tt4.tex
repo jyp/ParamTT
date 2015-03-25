@@ -177,7 +177,7 @@ We give a few intuitions to interpret the novel syntax, before giving formally t
 \item The term $a \param i$ yields a proof of $A \op i \proj i a$.
 \item In the above, the term $\proj i a$ denotes a realizer of $a$,
   obtained by erasing the color $i$. (Erasure is detailed in
-  \fref{def:color-subst}.)
+  \fref{def:color-erasure}.)
 \item The forms $\CP i t u$, $\CTimes i {x:A} B$ and $\fp i t u$ allow to
   locally associate parametricity proofs with a given realizer.
   \todo{add an item for $\Gamma,i:𝕀 ⊢$}
@@ -243,23 +243,6 @@ encoded in $U$. Small types are closed under product, $×_i$ and
 $∋_i$. The distinction between big and small types being standard, and
 to keep the presentation concise, we leave it implicit in the syntax.
 
-\begin{definition}
-  A \emph{color map} $f : I → J$ is a function $I → J ∪ \{0\}$ such that
-  $f(i_1) = f(i_2)$ iff. $i_1 = i_2$ whenever $f(i_1) = f(i_2) ∈ J$.
-\end{definition}
-
-\begin{definition}[Category $\pI{}$]
-  \label{def:pI}
-  Let objects be objects be finite color sets
-  and morphisms be color maps.
-  If $f : I → J$ and $g : J → K$, we define the composition $fg : I → K$
-  as $fg(i) = 0$ if $f(i) = 0$ and $fg(i) = g(f(i))$ if $f(i) ∈ J$.
-  We write $1_I : I → I$ for the identity map, and define it as $1_I(i) = i$ for each $i ∈ I$.
-  It is easy to check that \pI{} is a category (see \cite[ex.~9.7
-  p.~176]{PittsAM:nomsns} for another description of this category),
-  which is is equivalent to the category $\mathbf{Res}$ of nominal
-  restriction sets \cite[rem.~9.9 p.~161]{PittsAM:nomsns}.
-\end{definition}
 
 We note
 \begin{itemize}
@@ -270,55 +253,44 @@ We note
   (if $f : I → J$ with $i ∉ I$ and $j ∉ J$).
 \end{itemize}
 
-\begin{definition}[Color substitution]~
-  \label{def:color-subst}
-  We consider a color map $f : I → J$ as a (color) substitution on terms,
-  and define $af$ by structural induction on $a$.
+\begin{definition}[Color erasure]~
+  \label{def:color-erasure}
+  We consider a color $i$,
+  and define the term $a(i\,0)$ by structural induction on $a$.
 \begin{align*}
-  x f & = x \\
-  U f & = U \\
-  (λ(x:A).t) f &= λ(x:Af).tf \\
-  (t\,u) f &= (tf) \, (uf) \\
-  ((x:A)→B) f &= (x:Af)→(Bf) \\
-  \CP {i} a p f &= \CP {j} {ag} {pg}
-    & \text{if $f(i) = j ∈ J$, where g = $ι_i f (j\,0)$} \\
-    &= a(ι_if)
-    & \text{if $f(i) = 0$} \\
-  (A ×_i B) f &= \CTimes {j} {Ag} {(Bg)}
-    & \text{if $f(i) = j ∈ J$, where g = $ι_i f (j\,0)$} \\
-    &= A(ι_if)
-    & \text{if $f(i) = 0$} \\
-  \fp {i} t u f &= \fp {j} {tg} {ug}
-    & \text{if $f(i) = j ∈ J$, where g = $ι_i f (j\,0)$} \\
-    &= u(ι_if)
-    & \text{if $f(i) = 0$} \\
-  (A \op {i} a) f &= (Af^{ij}) \op {j} (af)
-    & \text{where $j = \fresh J$} \\
-  (a · i) f &= (af^{ij}) · j
-    & \text{where $j = \fresh J$}
+  x(i\,0) & = x \\
+  U(i\,0) & = U \\
+  (λ(x:A).t)(i\,0) &= λ(x:A(i\,0)).t(i\,0) \\
+  (t\,u)(i\,0) &= (t(i\,0)) \, (u(i\,0)) \\
+  ((x:A)→B)(i\,0) &= (x:A(i\,0))→(B(i\,0)) \\
+  {\CP {j} a p}(i\,0)
+    &= a
+    & \text{if $i = j$} \\
+    &= \CP {j} a p
+    & \text{otherwise} \\
+  (\CTimes {j} {x:A} P)(i\,0)
+    &= A
+    & \text{if $i = j$} \\
+    &= \CTimes {j} {x:A} P
+    & \text{otherwise} \\
+  {\fp {j} t u}(i\,0)
+    &= t
+    & \text{if $i = j$} \\
+    &= \fp {j} t u
+    & \text{otherwise} \\
+  (A \op {j} a)(i\,0) &= (A(i\,0)) \op {j} (a(i\,0))
+    & \text{where $i ≠ j$} \\
+  (a · j)(i\,0) &= (a(i\,0)) · j
+    & \text{where  $i ≠ j$}
   \end{align*}
-We extend the definition to contexts in the obvious way:
-  \begin{align*}
-  () f      &= () \\
-  (Γ,x:A) f &= Γ f, x : A f
-\end{align*}
-We leave color substitution undefined if a color appears free in the
-term but is not in the domain of $f$.
+  \todo{we need to introduce $α$-equivalence for the two last clauses.
+  But we don't want to introduce general color morphisms as we would
+  have to change thm 4}
 \end{definition}
 
-\begin{theorem}~
-  \begin{itemize}
-  \item $a1_I = a$
-  \item $(af)g = a(fg)$ for any $f: I → J$ and $g : J → K$
-  \end{itemize}
-\end{theorem}
-\begin{proof}
-  By structural induction on $a$.
-\end{proof}
-
-\begin{theorem}[Color substitution preserves typing]
-  If $Γ ⊢_I a : A$ then the term
-$af$ is defined and $Γ f ⊢_J af : Af$.
+\begin{theorem}[Color erasure preserves typing]
+  If $Γ,i:𝕀  ⊢ a : A$ then the terms $a(i\,0)$ and $A(i\,0)$ are
+  defined and $Γ ⊢ a(i\,0) : A(i\,0)$.
 \end{theorem}
 \begin{proof}
   By induction on the typing judgment.
@@ -596,8 +568,23 @@ generators of the symmetric group.
 \label{sec:model}
 In this section we show how to interpret our type theory by a presheaf model.
 % \todo{General idea for those who won't read it}
-Recall \pI{} (\fref{def:pI}), the category of color maps.
 
+\begin{definition}
+  A \emph{color map} $f : I → J$ is a function $I → J ∪ \{0\}$ such that
+  $f(i_1) = f(i_2)$ iff. $i_1 = i_2$ whenever $f(i_1) = f(i_2) ∈ J$.
+\end{definition}
+
+\begin{definition}[Category $\pI{}$]
+  \label{def:pI}
+  Let objects be objects be finite color sets and morphisms be color maps.
+  If $f : I → J$ and $g : J → K$, we define the composition $fg : I → K$
+  as $fg(i) = 0$ if $f(i) = 0$ and $fg(i) = g(f(i))$ if $f(i) ∈ J$.
+  We write $1_I : I → I$ for the identity map, and define it as $1_I(i) = i$ for each $i ∈ I$.
+  It is easy to check that \pI{} is a category (see \cite[ex.~9.7
+  p.~176]{PittsAM:nomsns} for another description of this category),
+  which is is equivalent to the category $\mathbf{Res}$ of nominal
+  restriction sets \cite[rem.~9.9 p.~161]{PittsAM:nomsns}.
+\end{definition}
 
  \begin{definition}[Projection]
     We say that a morphism $α : I → I_α$ is a \emph{projection} if
@@ -700,7 +687,7 @@ ${{(\CTimes i {x:A} B[x])} \op i a = B[a]}$.
 \bigskip
 The semantics we define satisfies the substitution law. That is, if $Γ,x:A ⊢ B$
 and $Γ ⊢ a:A$ then for any $ρ ∈ Γ(I)$ we have
-$B[a]ρ = B(f,⟨ρ,x=aρ⟩)$.
+$B[a]ρ = B⟨ρ,x=aρ⟩$.
 It also satisfies the substitution law on colors, \ie, if $Γ,i:𝕀 ⊢ A$
 then for any $ρ ∈ Γ(I)$ and $j ∉ I$ we have
 $A(i 0)ρ = A[ρ,i=0] = A[ρ,i=j](j 0)$.
