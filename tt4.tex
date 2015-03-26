@@ -500,7 +500,7 @@ Indeed, a proof term is the following:
 In our system, one can use parametricity generically as follows:
 \begin{align*}
 p &: (A:U) → (x:A) → A \op i x\\
-p\, x &= x\param i
+p\, A\, x &= x\param i
 \end{align*}
 We have already seen that $A \op i $ corresponds to the parametricity
 predicate for type $A$. We can iterate this operator to construct
@@ -684,13 +684,13 @@ Seeing an $I$-element $u$ as a tuple indexed by projection maps
 $α : I → I_α$, the second requirement can be written $(uα)_β = u_{αβ}$.
 
 \bigskip
-A context $Γ ⊢$ is interpreted as a (usual) presheaf on $\pI^\opp$, \ie,
+A context $Γ ⊢$ is interpreted by a (usual) presheaf on $\pI^\opp$, \ie,
 by a family of sets $Γ(I)$ for $I ∈ 𝕀$, together with restriction maps
 $Γ(I) → Γ(J)$, $ρ ↦ ρf$ for $f : I → J$ satisfying the conditions
 $ρ1 = ρ$ and $(ρf)g = ρ(fg)$.
 
 \medskip
-A type $Γ ⊢ A$ is interpreted by a $I$-set $Aρ$ for each $I ∈ 𝕀$ and
+A type $Γ ⊢ A$ is interpreted by an $I$-set $Aρ$ for each object $I$ and
 $ρ ∈ Γ(I)$,
 together with restriction maps $Aρ → A(ρf)$, $u ↦ uf$ if $f : I → J$
 satisfying $u1 = u$ and $(uf)g = u(fg)$ for any $g : J → K$.
@@ -698,7 +698,7 @@ Furthermore the map $Aρ → A(ρα)$, $u ↦ uα$ is the projection operation.
 
 \medskip
 A term $Γ ⊢ a : A$ is interpreted by a $I$-element $aρ ∈ Aρ$ for each
-$I ∈ 𝕀$ and $ρ ∈ Γ(I)$, such that $aρf = a(ρf)$ for any $f : I → J$.
+object $I$ and $ρ ∈ Γ(I)$, such that $aρf = a(ρf)$ for any $f : I → J$.
 
 \medskip
 If $Γ⊢$ and $Γ ⊢ A$ we define the interpretation of $Γ,x:A ⊢$
