@@ -91,7 +91,7 @@ about a set theoretic semantic.  As he stated it, {\em the underlying
   idea is that the meanings of an expression in ``related''
   environments will be ``related'' values}.  For instance, he proves
 that if $t_X$ is a term of type $X → X$ and if we consider two sets
-$A_0$, $A_1$ and a relation $R ⊆ A_0 × A_1$ then we have
+$A_0$, $A_1$ and a relation $R ⊆ A_0 × A_1$, then we have
 $R([t_X]_{X=A_0}(a_0),[t_X]_{X=A_1}(a_1))$ whenever $R(a_0,a_1)$,
 where $[t_X]_{X=A}$ denotes the meaning of the expression $t_X$ where
 $X$ is interpreted by the set $A$. As he noted, one can replace in
@@ -139,7 +139,7 @@ parametric type theory, as well as the equality judgment.
 
 We assume a special symbol ‘0’, and a countable infinite set $𝕀$ of
 other symbols, called \emph{colors}.
-The metasyntactic variables $i,j,\ldots$ range over colors.
+The metasyntactic variables $i,j,\ldots$ range over colors,
 while $φ$ range over $𝕀 ∪ \{0\}$.
 We further assume a fixed function $\fresh{·}$ such that
 $\fresh{I} ∈ 𝕀 \backslash I$ for any finite color set $I$.
@@ -169,8 +169,8 @@ We give a few intuitions to interpret the novel syntax, before giving formally t
 \begin{enumerate}
 \item \citet{reynolds_types_1983} associates each type with a
   predicate. Here, each type is associated not a single predicate, but
-  many: one for every color. Furthermore this predicate is accessible
-  from the logic. The type $A \op i u$ expresses that $u$ satisfies
+  many: one for every color. Furthermore these predicates are accessible
+  from the logic: The type $A \op i u$ expresses that $u$ satisfies
   the parametricity predicate associated with the type $A$ on color
   $i$.
 \item The term $a \param i$ yields a proof of $A \op i \proj i a$.
@@ -335,7 +335,7 @@ following rules.
 \begin{remark}
   In order to be well-typed the context of the conclusion of the
   \textsc{Pair-App}, \textsc{Surj-Param}, \textsc{Surj-Fun} and
-  \textsc{Surj-Typ} needs to end with the color $i : 𝕀$.
+  \textsc{Surj-Typ} needs to end with the color binding $i : 𝕀$.
 \end{remark}
 
 \begin{corollary}[Any term can be seen as a pair of a realizer and a parametricity proof]
@@ -479,13 +479,13 @@ distinction between types and their codes.)
 Let $N = (X : U) → X → (X → X) → X$.
 Proving (unary) parametricity for $N$ means that, assuming
 \begin{itemize}
-\item $f : N$
-\item $A : U$
-\item $P : A → U$
-\item $z : A$
-\item $z' : P\, z$
-\item $s : A → A$
-\item $s' : (x:A) → P\, x → P\, (s\, x)$
+\item $f : N$,
+\item $A : U$,
+\item $P : A → U$,
+\item $z : A$,
+\item $z' : P\, z$,
+\item $s : A → A$, and
+\item $s' : (x:A) → P\, x → P\, (s\, x)$,
 \end{itemize}
 we can prove $P\, (f\, A\, z\, s)$.
 
@@ -697,9 +697,9 @@ $α : I → I_α$, the second requirement can be written $(uα)_β = u_{αβ}$.
 
 \bigskip
 A context $Γ ⊢$ is interpreted by a (usual) presheaf on $\pI^\opp$, \ie,
-by a family of sets $Γ(I)$ for $I ∈ 𝕀$, together with restriction maps
-$Γ(I) → Γ(J)$, $ρ ↦ ρf$ for $f : I → J$ satisfying the conditions
-$ρ1 = ρ$ and $(ρf)g = ρ(fg)$.
+by a family of sets $Γ(I)$ for each object $I$, together with
+restriction maps $Γ(I) → Γ(J)$, $ρ ↦ ρf$ for $f : I → J$ satisfying the
+conditions $ρ1 = ρ$ and $(ρf)g = ρ(fg)$.
 
 \medskip
 A type $Γ ⊢ A$ is interpreted by an $I$-set $Aρ$ for each object $I$ and
@@ -725,9 +725,9 @@ The restriction map is defined by
 $[ρ,i=0]f = [ρf,i=0]$ and $[ρ,i=j]f = [ρ(f-j),i=f(j)]$.
 \begin{remark}
   In other words,
-  $Γ,x:A⊢$ is interpreted by $(ρ∈Γ) × Aρ$ the cartesian product of the
-  interpretation of $Γ⊢$ and $Γ⊢A$, while
-  $Γ,i:𝕀⊢$ is interpreted by $Γ ⊗ 𝕀$ the tensor product of the
+  $Γ,x:A⊢$ is interpreted by the cartesian product $(ρ∈Γ) × Aρ$ of the
+  interpretations of $Γ⊢$ and $Γ⊢A$, while
+  $Γ,i:𝕀⊢$ is interpreted by the tensor product $Γ ⊗ 𝕀$ of the
   interpretation of $Γ⊢$ and $𝕀 ∪ \{0\}$:
   $$Γ ⊗ 𝕀(I) = \{ [ρ,i=0] \mid ρ ∈ Γ(I) \} ∪
                \{ [ρ,i=j] \mid j ∈ I, ρ ∈ Γ(I\backslash\{j\}) \}$$
@@ -748,7 +748,7 @@ It also satisfies the substitution law on colors, \ie, if $Γ,i:𝕀 ⊢ A$
 then for any $ρ ∈ Γ(I)$ and $j ∉ I$ we have
 $A(i 0)ρ = A[ρ,i=0] = A[ρ,i=j](j\, 0)$.
 (Since $[ρ,i=0] ∈ Γ⊗𝕀(I)$ and $[ρ,i=j] ∈ Γ⊗𝕀(I,j)$, $A(i\, 0)ρ$ and
-$A[ρ,i=0]$ are $I$-sets while $A[ρ,i=j]$ is a $(I,j)$-set.
+$A[ρ,i=0]$ are $I$-sets while $A[ρ,i=j]$ is a $(I,j)$-set.)
 For establishing these properties, we proceed as \citet{Aczel98onrelating}.
 
 \bigskip
@@ -789,9 +789,9 @@ We proceed to interpret each type construction.
     As before, such data define a set $A_f$ for an arbitrary map $f : I → J$
     with restriction maps $A_f → A_{fg}$ if $g : J → K$.
 
-    If $g : I → J$ is an arbitrary map, we define $Ag$ by taking $Ag_{βh}$
-    to be the set $A_{gβh}$, together with restriction maps $Ag_{βh} → Ag_{βhl}$
-    defined as the given maps $A_{gβh} → A_{gβhl}$.
+    If $f : I → J$ is an arbitrary map, we define $Af$ by taking $Af_{βg}$
+    to be the set $A_{fβg}$, together with restriction maps $Af_{βg} → Af_{βgh}$
+    defined as the given maps $A_{fβg} → A_{fβgh}$.
 
     We can then check, as before, that we have $Aα_{β} = A_{αβ}$
 
