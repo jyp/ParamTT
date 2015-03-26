@@ -703,19 +703,26 @@ A term $Γ ⊢ a : A$ is interpreted by a $I$-element $aρ ∈ Aρ$ for each
 object $I$ and $ρ ∈ Γ(I)$, such that $aρf = a(ρf)$ for any $f : I → J$.
 
 \medskip
-If $Γ⊢$ and $Γ ⊢ A$ we define the interpretation of $Γ,x:A ⊢$
-by taking $⟨ρ,x=u⟩$ to mean $ρ ∈ Γ$ and $u ∈ Aρ$.
+If $Γ⊢$ and $Γ ⊢ A$ we define the interpretation of $Δ = Γ,x:A$
+by taking $⟨ρ,x=u⟩ ∈ Δ(I)$ to mean $ρ ∈ Γ(I)$ and $u ∈ Aρ$.
 The restriction map is defined by $⟨ρ,x=u⟩f = ⟨ρf, x=uf⟩$.
 
 \smallskip
-If $Γ⊢$ we define the interpretation of $Γ,i:𝕀 ⊢$ as $Γ⊗𝕀$,
-and take $[ρ,i=j] ∈ Γ⊗𝕀(I,j)$ to mean $ρ ∈ Γ(I)$;
-and $[ρ,i=0] ∈ Γ⊗𝕀(I)$ to mean mean $ρ ∈ Γ(I)$.
-The restriction map is defined by $[ρ,i=j]f = [ρf,i=f(j)]$
-and $[ρ,i=0]f = [ρf,i=0]$.
-\todo{change notation to better pattern-match on $ρ ∈ Γ⊗𝕀(I)$:
-such elements are always of the form $[ρ',i=φ$] with $φ=0$ and
-$ρ' ∈ Γ(I)$, or $φ=j ∈ I$ and $ρ' ∈ Γ(I\backslash\{j\})$}
+If $Γ⊢$ we define the interpretation of $Δ = Γ,i:𝕀$ by taking
+$[ρ,i=φ] ∈ Δ(I)$ to mean either $φ = 0$ and $ρ ∈ Γ(I)$, or
+$φ = j ∈ I$ and $ρ ∈ Γ(I\backslash\{j\})$.
+The restriction map is defined by
+$[ρ,i=0]f = [ρf,i=0]$ and $[ρ,i=j]f = [ρf,i=f(j)]$.
+\begin{remark}
+  In other words,
+  $Γ,x:A⊢$ is interpreted by $(ρ∈Γ) × Aρ$ the cartesian product of the
+  interpretation of $Γ⊢$ and $Γ⊢A$, while
+  $Γ,i:𝕀⊢$ is interpreted by $Γ ⊗ 𝕀$ the tensor product of the
+  interpretation of $Γ⊢$ and $𝕀 ∪ \{0\}$:
+  $$Γ ⊗ 𝕀(I) = \{ [ρ,i=0] \mid ρ ∈ Γ(I) \} ∪
+               \{ [ρ,i=j] \mid j ∈ I, ρ ∈ Γ(I\backslash\{j\}) \}$$
+\end{remark}
+
 
 \bigskip
 The above refinement on presheaves is necessary for the interpretation
@@ -729,9 +736,9 @@ and $Γ ⊢ a:A$ then for any $ρ ∈ Γ(I)$ we have
 $B[a]ρ = B⟨ρ,x=aρ⟩$.
 It also satisfies the substitution law on colors, \ie, if $Γ,i:𝕀 ⊢ A$
 then for any $ρ ∈ Γ(I)$ and $j ∉ I$ we have
-$A(i 0)ρ = A[ρ,i=0] = A[ρ,i=j](j 0)$.
-\todo{details: $[ρ,i=0] ∈ Γ⊗𝕀(I)$ and $[ρ,i=j] ∈ Γ⊗𝕀(I,j)$; $A(i 0)ρ =
-A[ρ,i=0]$ are $I$-elements while $A[ρ,i=j]$ is a $(I,j)$-element}
+$A(i 0)ρ = A[ρ,i=0] = A[ρ,i=j](j\, 0)$.
+(Since $[ρ,i=0] ∈ Γ⊗𝕀(I)$ and $[ρ,i=j] ∈ Γ⊗𝕀(I,j)$, $A(i\, 0)ρ$ and
+$A[ρ,i=0]$ are $I$-sets while $A[ρ,i=j]$ is a $(I,j)$-set.
 For establishing these properties, we proceed as \citet{Aczel98onrelating}.
 
 \bigskip
