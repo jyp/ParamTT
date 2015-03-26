@@ -124,7 +124,7 @@ Our technical contributions are as follows:
 \begin{itemize}
 \item We present a type theory (\fref{sec:syntax}) which internalizes parametricity (as we show in \fref{sec:parametricity})
   and can be seen as a simplification and generalization of the systems of
-  \cite{bernardy_computational_2012,bernardy_type-theory_2013}
+  \cite{bernardy_computational_2012,bernardy_type-theory_2013}.
 \item We provide a \emph{denotational} semantics, in the form of a presheaf model, for this type theory (\fref{sec:model}).
       This model is a refinement of the presheaf semantics used to
       interpret nominal sets with
@@ -141,6 +141,8 @@ We assume a special symbol ‘0’, and a countable infinite set $𝕀$ of
 other symbols, called \emph{colors}.
 The metasyntactic variables $i,j,\ldots$ range over colors.
 while $φ$ range over $𝕀 ∪ \{0\}$.
+We further assume a fixed function $\fresh{·}$ such that
+$\fresh{I} ∈ 𝕀 \backslash I$ for any finite color set $I$.
 %
 The main innovation of the type theory
 presented here is that terms may depend on (a finite number of)
@@ -240,10 +242,11 @@ encoded in $U$. Small types are closed under product, $×_i$ and
 $∋_i$. The distinction between big and small types being standard, and
 to keep the presentation concise, we leave it implicit in the syntax.
 
-\begin{definition}[Color renaming erasure]~
+\begin{definition}[Color renaming and erasure]~
   \label{def:color-erasure}
-  We consider a color $i ∈ 𝕀$ and a $φ ∈ 𝕀 ∪ \{0\}$,
+  We consider a color $i ∈ 𝕀$ and some $φ ∈ 𝕀 ∪ \{0\}$,
   and define the term $a(i\,φ)$ by induction on $a$.
+
 \begin{align*}
   x \mor{i}{φ} & = x \\
   U \mor{i}{φ} & = U \\
@@ -261,10 +264,10 @@ to keep the presentation concise, we leave it implicit in the syntax.
   {\fp {i} t u}\mor{i}{0} &= t \\
   {\fp {i} t u}\mor{i}{j} &= \fp {j} t u \\
   {\fp {i} t u}\mor{j}{φ} &= \fp {i} {t\mor{j}{φ}} {u\mor{j}{φ}} &\text{if $i ≠ j$} \\
-  (A \op {i} a)\mor{i}{φ} &= {A\mor{i}{j}\mor{i}{φ}} \op {j} {a\mor{i}{φ}} &\text{where $j ∈ 𝕀 \backslash\{i\}$} \\
+  (A \op {i} a)\mor{i}{φ} &= {A\mor{i}{j}\mor{i}{φ}} \op {j} {a\mor{i}{φ}} &\text{where $j = \fresh{\{i\}}$} \\
   (A \op {i} a)\mor{j}{φ} &= (A\mor{j}{φ}) \op {i} (a\mor{j}{φ}) &\text{if $i ≠ j$} \\
 %
-  (a · i)\mor{i}{φ} &= a \mor{i}{j}\mor{i}{φ} · j &\text{where $j ∈ 𝕀 \backslash\{i\}$} \\
+  (a · i)\mor{i}{φ} &= a \mor{i}{j}\mor{i}{φ} · j &\text{where $j = \fresh{\{i\}}$} \\
   (a · i)\mor{j}{φ} &= a\mor{j}{φ} · i &\text{if $i ≠ j$} \\
   \end{align*}
 \end{definition}
@@ -571,9 +574,6 @@ In this section we show how to interpret our type theory by a presheaf model.
   p.~176]{PittsAM:nomsns} for another description of this category),
   which is is equivalent to the category $\mathbf{Res}$ of nominal
   restriction sets \cite[rem.~9.9 p.~161]{PittsAM:nomsns}.
-
-  We further assume a fixed function $\fresh{·}$ such that
-  $\fresh{I} ∉ I$ for any object $I$.
 \end{definition}
 
 \begin{definition}[Projection]
