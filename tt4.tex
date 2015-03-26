@@ -943,9 +943,9 @@ We now describe how to interpret terms.
   \begin{align*}
     &v ∈ (U \op i (X ,_j P) \op j Q) f
     \\
-    \text{ iff. }& (Qf ,_k v) ∈ (U \op i (X ,_j P))f^{jk}
+    \text{ iff. }& (Qf ,_k v) ∈ (U \op i (X ,_j P))(f,j=k)
     \\
-    \text{ iff. }& ((X ,_j P)f^{jk} ,_l (Qf ,_k v)) ∈ U(l,k)
+    \text{ iff. }& ((X ,_j P)(f,j=k) ,_l (Qf ,_k v)) ∈ U(l,k)
     \\
     \text{ iff. }& ((X ,_k P) ,_l (Q ,_k v)) ∈ U(l,k)
   \end{align*}
@@ -954,9 +954,9 @@ We now describe how to interpret terms.
   \begin{align*}
     &v ∈ (U \op j (X ,_i Q) \op i P) f
     \\
-    \text{ iff. }& (Pf ,_k v) ∈ (U \op j (X ,_i Q))f^{ik}
+    \text{ iff. }& (Pf ,_k v) ∈ (U \op j (X ,_i Q))(f,i=k)
     \\
-    \text{ iff. }& ((X ,_i Q)f^{ik} ,_l (Pf ,_k v)) ∈ U(k,l)
+    \text{ iff. }& ((X ,_i Q)(f,i=k) ,_l (Pf ,_k v)) ∈ U(k,l)
     \\
     \text{ iff. }& ((X ,_k Q) ,_l (P ,_k v)) ∈ U(k,l)
   \end{align*}
