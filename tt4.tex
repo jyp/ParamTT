@@ -625,6 +625,16 @@ In this section we show how to interpret our type theory by a presheaf model.
   restriction sets \cite[rem.~9.9 p.~161]{PittsAM:nomsns}.
 \end{definition}
 
+If $f : I → J$, $i ∈ 𝕀 \backslash I$ and $j ∈ 𝕀 \backslash J$ we note
+$(f, i = j) : I,i → J,j$ the map defined $(f,i=j)(i) = j$ and
+$(f,i=j)(k) = k$ $∀ k ∈ I$.
+
+If $f : I,i → J$ is such that $f(i) = 0$, we note $f-i : I → J$ the map
+defined by $(f-i)(k) = f(k)$ $∀ k ∈ I$.
+
+If $f : I,i → J,j$ is such that $f(i) = j$, we note $f-i : I → J$ the map
+defined by $(f-i)(k) = f(k)$ $∀ k ∈ I$.
+
 \begin{definition}[Projection]
    We say that a morphism $α : I → I_α$ is a \emph{projection} if
    $I_α ⊆ I$,
@@ -712,7 +722,7 @@ If $Γ⊢$ we define the interpretation of $Δ = Γ,i:𝕀$ by taking
 $[ρ,i=φ] ∈ Δ(I)$ to mean either $φ = 0$ and $ρ ∈ Γ(I)$, or
 $φ = j ∈ I$ and $ρ ∈ Γ(I\backslash\{j\})$.
 The restriction map is defined by
-$[ρ,i=0]f = [ρf,i=0]$ and $[ρ,i=j]f = [ρf,i=f(j)]$.
+$[ρ,i=0]f = [ρf,i=0]$ and $[ρ,i=j]f = [ρ(f-j),i=f(j)]$.
 \begin{remark}
   In other words,
   $Γ,x:A⊢$ is interpreted by $(ρ∈Γ) × Aρ$ the cartesian product of the
@@ -799,17 +809,17 @@ We proceed to interpret each type construction.
     We define $(P \op {i} a)ρ$ to be the set of $I$-elements $v$ such that
     $(aρ,_j v) ∈ P[ρ,i=j]$.
     If $v$ is such an element and $f : I → J$ and $k=\fresh J$, then
-    $vf$ is defined by the equation $(aρf,_k vf) = (aρ ,_j v)f^{jk}$.
+    $vf$ is defined by the equation $(aρf,_k vf) = (aρ ,_j v)(f, j=k)$.
 
 
   \item[\sc In-Pred.]
-    Assume $ρ ∈ Γ⊗𝕀(I)$.  We need to define the $I$-set $(\CTimes i {x:A} B)ρ$.
-    There are two cases.
-    If $ρ = [ρ',i=0]$ with $ρ' ∈ Γ(I)$, then $(\CTimes i {x:A} B)ρ$ is
-    defined to be the $I$-set $Aρ'$.
-    If $ρ = [ρ',i=j]$ with $j ∈ I$ and $ρ' ∈ Γ(I\backslash\{j\})$, then we define
-    $(\CTimes i {x:A} B)ρ$ as the $I$-set of $(u ,_j v)$ where
-    $u ∈ Aρ'$ and $v ∈ B⟨ρ',x=u⟩$.
+    Assume $[ρ,i=φ] ∈ Γ⊗𝕀(I)$.  We define the $I$-set $(\CTimes i {x:A} B)[ρ,i=φ]$
+    by case analysis on $φ ∈ I∪\{0\}$.
+    If $φ = 0$ then $ρ ∈ Γ(I)$, and we define $(\CTimes i {x:A} B)[ρ,i=0]$ as
+    the $I$-set $Aρ$.
+    If $φ = j ∈ I$ then $ρ ∈ Γ(I\backslash\{j\})$, and we define
+    $(\CTimes i {x:A} B)[ρ,i=j]$ as the $I$-set of $(u ,_j v)$ where
+    $u ∈ Aρ$ and $v ∈ B⟨ρ,x=u⟩$.
 
 
   \item[\sc Decode.]
@@ -842,22 +852,23 @@ We now describe how to interpret terms.
     We define $(t\,u)ρ$ to be $\app{tρ_1}{uρ}$
 
   \item[\sc In-Abs.]
-    Assume $ρ ∈ Γ⊗𝕀(I)$.  We define the $I$-element $(a ,_i p)ρ$ by case
-    analysis on $ρ$.
-    If $ρ = [ρ',i=0]$ with $ρ' ∈ Γ(I)$, then we take $(a ,_i p)ρ$ to be
-    $aρ' ∈ A(i\,0)ρ' = A[ρ',i=0]$.
-    If $ρ = [ρ',i=j]$ with $j ∈ I$ and $ρ' ∈ Γ(I\backslash\{j\})$, then
-    we take $(a ,_i p)ρ$ to be
-    $(aρ' ,_j pρ')$.
+    Assume $[ρ,i=φ] ∈ Γ⊗𝕀(I)$.  We define the $I$-element $(a ,_i p)[ρ,i=φ]$
+    by case analysis on $φ ∈ I ∪ \{0\}$.
+    If $φ = 0$ then $ρ ∈ Γ(I)$, and we take $(a ,_i p)[ρ,i=0]$ to be
+    $aρ ∈ A(i\,0)ρ = A[ρ,i=0]$.
+    If $φ = j ∈ I$ then $ρ ∈ Γ(I\backslash\{j\})$, and we take
+    $(a ,_i p)[ρ,i=j]$ to be $(aρ ,_j pρ)$.
 
   \item[\sc In-Fun.]
-    Assume $ρ ∈ Γ⊗𝕀(I)$, $f : I → J$.  We define the ${\fp i t u}ρ_f$ by
-    case analysis on $ρf$.
-    If $ρf = [ρ',i=0]$ with $ρ' ∈ Γ(I)$, then we define $w = {\fp i t u}ρ_f$ by
-    $\app{w}{a} = \app{tρ'}{a}$.
-    If $ρf = [ρ',i=j]$ with $j ∈ J$ and $ρ' ∈ Γ(J\backslash\{j\})$, then
-    we define $w = {\fp i t u}ρ_f$ by
-    $$\app{w}{(a ,_j b)} = ( \app{tρ'}{a} ,_j {\app{\app{uρ'}{a}}{b}} )$$
+    Assume $[ρ,i=φ] ∈ Γ⊗𝕀(I)$.  We define the $J$-element ${\fp i t u}[ρ,i=φ]_f$
+    by case analysis.
+    If $φ = 0$, then $ρ ∈ Γ(I)$ and $ρf ∈ Γ(J)$; we define
+    $w = {\fp i t u}[ρ,i=0]_f$ by $\app{w}{a} = \app{tρ_f}{a}$.
+    If $φ = j ∈ I$ and $f(j) = 0$, then $ρ ∈ Γ(I\backslash\{j\})$ and $ρ(f-j) ∈ Γ(J)$;
+    we define $w = {\fp i t u}[ρ,i=j]_f$ by $\app{w}{a} = \app{tρ_{f-j}}{a}$.
+    If $φ = j ∈ I$ and $f(j) = k ∈ J$, then $ρ ∈ Γ(I\backslash\{j\})$ and $ρ(f-j) ∈ Γ(J\backslash\{k\})$;
+    we define $w = {\fp i t u}[ρ,i=j]_f$ by
+    $$\app{w}{(a ,_k b)} = ( \app{tρ_{f-j}}{a} ,_k {\app{\app{uρ_{f-j}}{a}}{b}} )$$
 
   \item[\sc Color-Elim.]
     Assume $ρ ∈ Γ(I)$.  We define $(a \param i)ρ$ as
@@ -966,14 +977,13 @@ We now describe how to interpret terms.
   cases match the usual proof (using \fref{thm:convertible-in-model} for \textsc{Conv}).
   \begin{description}
     \item[\sc In-Abs.]
-      Assume $ρ ∈ Γ⊗𝕀(I)$.
-      If $ρ = [ρ',i=0]$ with $ρ' ∈ Γ(I)$, we have
-      $(a ,_i p)[ρ',i=0] = aρ' ∈ T(i\,0)ρ' = T[ρ',i=0]$.
-      If $ρ = [ρ',i=j]$ with $j ∈ I$ and $ρ' ∈ Γ(I\backslash\{j\})$, then
-      $(a ,_i p)[ρ',i=j] = (aρ' ,_j pρ')$,
-      and by induction hypothesis
-      $pρ' ∈ (T \op {i} a)ρ'$ then by definition
-      $(aρ ,_j pρ') ∈ T[ρ,i=j]$.
+      Assume $[ρ,i=φ] ∈ Γ⊗𝕀(I)$.  We proceed by case analysis on $φ ∈ I ∪ \{0\}$.
+      If $φ = 0$ then $ρ ∈ Γ(I)$, and we have
+      $(a ,_i p)[ρ,i=0] = aρ ∈ T(i\,0)ρ = T[ρ,i=0]$.
+      If $φ = j ∈ I$ then $ρ ∈ Γ(I\backslash\{j\})$, and we have
+      $(a ,_i p)[ρ,i=j] = (aρ ,_j pρ)$;
+      Since by induction hypothesis $pρ ∈ (T \op {i} a)ρ$, we conclude
+      by definition that $(aρ ,_j pρ) ∈ T[ρ,i=j]$.
 
     \item[\sc Color-Elim.]
       Assume $ρ ∈ Γ(I)$.
