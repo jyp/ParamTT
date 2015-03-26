@@ -332,8 +332,15 @@ following rules.
   \end{mathpar}
 \end{definition}
 
-\begin{corollary}[Any term can be seen as a pair of a realizer and a parametricity proof]~
+\begin{remark}
+  In order to be well-typed the context of the conclusion of the
+  \textsc{Pair-App}, \textsc{Surj-Param}, \textsc{Surj-Fun} and
+  \textsc{Surj-Typ} needs to end with the color $i : 𝕀$.
+\end{remark}
+
+\begin{corollary}[Any term can be seen as a pair of a realizer and a parametricity proof]
   \label{cor:equalities}
+  In a context ending with $i : 𝕀$,
   \begin{itemize}
   \item $a = \CP i {\proj i a} {a \param i}$
   \item $T = \CTimes i {x:\proj i T} {(T \op i x)}$
@@ -365,7 +372,7 @@ The absence of the above equalities allows for a simpler system, but
 how can we ensure that all parametricity theorems hold?  The answer is
 that the above relationships hold as isomorphisms.
 
-We say that $A$ is isomorphic to $B$ iff.
+We say that $A$ is \emph{isomorphic to} $B$ iff.
 \begin{enumerate}
   \item There exist $f : A → B$
   \item There exist $g : B → A$
@@ -391,10 +398,12 @@ $U \op i A$ is isomorphic to $A → U$.
       g &: (P : A → U) → U \op i A\\
       g &P = (\CTimes i {x:A} (P x)) \param i
     \end{array}$
-  \item $\CP i A {(\CTimes i {y:A} (P y)) \param i} \op i x = (\CTimes i {y:A} (P y)) \op i x = P x$.
-    By $η$-contraction we get the desired result.
+  \item $\CP i A {(\CTimes i {y:A} (P y)) \param i} \op i x = (\CTimes i {y:A} (P y)) \op i x = P x$
+    by \textsc{Pair-Param} then \textsc{Pair-Pred}, and we conclude by
+    $η$-contraction.
   \item $(\CTimes i {x:A} {\CP i A Q \op i x}) \param i = {\CP i A Q} \param i = Q$
-    by \fref{cor:equalities} for $×_i$.
+    by \textsc{Surj-Typ} (indeed $\CTimes i {x:A} {\CP i A Q \op i x}$
+    is typed in a context ending with $i:𝕀$) and \textsc{Pair-Pred}.
   \qedhere
   \end{enumerate}
 \end{proof}
@@ -413,11 +422,22 @@ $((x:A) → B[x]) \op i f$ is isomorphic to $$(x:A) → (x' : A \op i x) → B[\
       g &: ((x:A) → (x' : A \op i x) → B[\CP i x {x'}] \op i (f\,x)) →  ((x:A) → B[x]) \op i f\\
       g & p= \fp i f p \param i
     \end{array}$
-  \item $(\CP i f {\fp i f p \param i} \CP i x x') \param i = ({\fp i
-      f p} \CP i x {x'}) \param i = \CP i {f\, x} {p\, x\, x'} \param i = p\, x\, x'$
-  \item $\fp i f {λx x'. (\CP i f q \CP i x {x'}) \param i} \param i =
-         {\CP i f q} \param i = q$
-    by \fref{cor:equalities} for function pairing.
+  \item $(\CP i f {\fp i f p \param i}\, \CP i x x') \param i
+      = ({\fp i f p}\, \CP i x {x'}) \param i
+      = \CP i {f\, x} {p\, x\, x'} \param i
+      = p\, x\, x'$
+    by \textsc{Surj-Param}
+    then \textsc{Pair-App}
+    (indeed $\fp i f p$ and ${\fp i f p}\, \CP i x {x'}$ are typed in a
+    context ending with $i:𝕀$)
+    and we conclude by \textsc{Pair-Param}.
+
+  \item $\fp i f {λx x'. (\CP i f q\, \CP i x {x'}) \param i} \param i
+      = {\CP i f q} \param i
+      = q$
+    by \textsc{Surj-Fun}
+    (indeed $\CP i f q$ is typed in a context ending with $i:𝕀$)
+    and we conclude by \textsc{Pair-Param}.
   \qedhere
   \end{enumerate}
 \end{proof}
