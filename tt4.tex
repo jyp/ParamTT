@@ -348,12 +348,12 @@ conversion relation is decidable.
 
 \section{Parametricity}
 \label{sec:parametricity}
-\todo{more examples: identity, any $f : U → Bool$ is constant,…}
+\todo{more examples: any $f : U → Bool$ is constant,…}
 In this section we prove that our system properly internalizes
 parametricity. We also illustrate the system by giving a few simple
 proofs relying on parametricity (including iterated parametricity).
 
-Contrary to previous type theories with internalized parametricity
+Unlike previous type theories with internalized parametricity
 \citep{bernardy_computational_2012, bernardy_type-theory_2013}, the
 system presented here lacks equalities which allow to compute
 parametricity types. Expressed in our syntax, those equalities would become the conversion rules:
@@ -425,9 +425,36 @@ $((x:A) → B[x]) \op i f$ is isomorphic to $$(x:A) → (x' : A \op i x) → B[\
 In practice, when carrying out parametricity proofs, many of the steps
 of the above isomorphisms cancel each other and one obtains a simpler
 proof. This behaviour is illustrated by the following example:
-parametricity for Church-encoded natural numbers.
+parametricity for the polymorphic identity and Church-encoded natural numbers.
 (For the sake of simplicity, in the remainder of this section, we leave out the
 distinction between types and their codes.)
+
+\begin{example}
+  Any function $f : (X : U) → X → X$ is the polymorphic identity, \ie,
+  its output is Leibniz-equal to its second argument.
+  Assume
+  \begin{itemize}
+    \item $f : (X : U) → X → X$,
+    \item $A : U$,
+    \item $P : A → U$,
+    \item $a : A$, and
+    \item $p : P\, A$.
+  \end{itemize}
+  Then
+  $i:𝕀⊢\CTimes i {x:A} {(P\,x)}$
+  and
+  (because $⊢ (\CTimes i {x:A} {(P\,x)}) \op i a = P\,a$)
+  $i:𝕀⊢\CP i a p : \CTimes i {x:A} {(P\,x)}$, thus
+  $i:𝕀⊢f\, (\CTimes i {x:A} {(P\,x)})\, {\CP i a p} : \CTimes i {x:A} {(P\,x)}$
+  and finally
+  \begin{align*}
+    ⊢(f\, (\CTimes i {x:A} {(P\,x)})\, {\CP i a p}) \param i
+   &: (\CTimes i {x:A} {(P\,x)}) \op i \proj i {(f\, (\CTimes i {x:A} {(P\,x)})\, {\CP i a p})} \\
+   &= P\, \proj i {(f\, (\CTimes i {x:A} {(P\,x)})\, {\CP i a p})} \\
+   &= P\, (f\, A\, a)
+  \end{align*}
+\end{example}
+
 \begin{example}
 Let $N = (X : U) → X → (X → X) → X$.
 Proving (unary) parametricity for $N$ means that, assuming
