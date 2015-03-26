@@ -192,7 +192,7 @@ We give a few intuitions to interpret the novel syntax, before giving formally t
 
     \inferrule[NewVar]{Γ⊢ \\ Γ ⊢ A }{ Γ,x:A ⊢ }
 
-    \inferrule[NewCol]{Γ⊢ \\ Γ ⊢ }{ Γ,i:𝕀 ⊢ }
+    \inferrule[NewCol]{Γ⊢ }{ Γ,i:𝕀 ⊢ }
   \end{mathpar}
  
 \fbox{$Γ⊢ A$}
@@ -615,7 +615,7 @@ In this section we show how to interpret our type theory by a presheaf model.
 
 \begin{definition}[Category $\pI{}$]
   \label{def:pI}
-  Let objects be objects be finite color sets and morphisms be color maps.
+  Let objects be finite color sets and morphisms be color maps.
   If $f : I → J$ and $g : J → K$, we define the composition $fg : I → K$
   as $fg(i) = 0$ if $f(i) = 0$ and $fg(i) = g(f(i))$ if $f(i) ∈ J$.
   We write $1_I : I → I$ for the identity map, and define it as $1_I(i) = i$ for each $i ∈ I$.
@@ -878,10 +878,10 @@ We now describe how to interpret terms.
 \begin{theorem}[Convertible terms are semantically equal]~
   \label{thm:convertible-in-model}
   \begin{itemize}
-    \item If $Γ ⊢_I A₁$ and $Γ ⊢_I A₂$ with $A₁ = A₂$, then
-      $A₁(f,ρ) = A₂(f,ρ)$ for any $f : I → J$ and $ρ : Γf$.
-    \item If $Γ ⊢_I a₁ : A$ and $Γ ⊢_I a₂ : A$ with $a₁ = a₂$, then
-      $a₁(f,ρ) = a₂(f,ρ)$ for any $f : I → J$ and $ρ : Γf$.
+    \item If $Γ ⊢ A₁$ and $Γ ⊢ A₂$ with $A₁ = A₂$, then
+      $A₁ρ = A₂ρ$ for any object $I$ and $ρ : Γ(I)$.
+    \item If $Γ ⊢ a₁ : A$ and $Γ ⊢ a₂ : A$ with $a₁ = a₂$, then
+      $a₁ρ = a₂ρ$ for any object $I$ and $ρ : Γ(I)$.
   \end{itemize}
 \end{theorem}
 \begin{proof}
@@ -935,33 +935,33 @@ We now describe how to interpret terms.
   $U \op i (X ,_j P) \op j Q$ and $U \op j (X ,_i Q) \op i P$
   are not convertible.
   Their semantic interpretations are not equal either.  Indeed
-  taking $f = 1_∅$, $k = \fresh{∅}$ and $l = \fresh{\{k\}}$,
+  taking $ρ ∈ Γ(I)$, $k = \fresh{I}$ and $l = \fresh{I,k}$,
   we have
   (leaving out the context interpretation $ρ$ for the sake of
   readability)
   on the one hand
   \begin{align*}
-    &v ∈ (U \op i (X ,_j P) \op j Q) f
+    &v ∈ (U \op i (X ,_j P) \op j Q) ρ
     \\
-    \text{ iff. }& (Qf ,_k v) ∈ (U \op i (X ,_j P))(f,j=k)
+    \text{ iff. }& (Qρ ,_k v) ∈ (U \op i (X ,_j P))[ρ,j=k]
     \\
-    \text{ iff. }& ((X ,_j P)(f,j=k) ,_l (Qf ,_k v)) ∈ U(l,k)
+    \text{ iff. }& ((X ,_j P)[ρ,j=k] ,_l (Qρ ,_k v)) ∈ U(l,k)
     \\
-    \text{ iff. }& ((X ,_k P) ,_l (Q ,_k v)) ∈ U(l,k)
+    \text{ iff. }& ((Xρ ,_k Pρ) ,_l (Qρ ,_k v)) ∈ U(l,k)
   \end{align*}
 
   and on the other hand
   \begin{align*}
-    &v ∈ (U \op j (X ,_i Q) \op i P) f
+    &v ∈ (U \op j (X ,_i Q) \op i P) ρ
     \\
-    \text{ iff. }& (Pf ,_k v) ∈ (U \op j (X ,_i Q))(f,i=k)
+    \text{ iff. }& (Pρ ,_k v) ∈ (U \op j (X ,_i Q))[ρ,i=k]
     \\
-    \text{ iff. }& ((X ,_i Q)(f,i=k) ,_l (Pf ,_k v)) ∈ U(k,l)
+    \text{ iff. }& ((X ,_i Q)[ρ,i=k] ,_l (Pρ ,_k v)) ∈ U(k,l)
     \\
-    \text{ iff. }& ((X ,_k Q) ,_l (P ,_k v)) ∈ U(k,l)
+    \text{ iff. }& ((Xρ ,_k Qρ) ,_l (Pρ ,_k v)) ∈ U(k,l)
   \end{align*}
 
-  Hence $(U \op i (X ,_j P) \op j Q) f ≠ (U \op j (X ,_i Q) \op i P) f$
+  Hence $(U \op i (X ,_j P) \op j Q) ρ ≠ (U \op j (X ,_i Q) \op i P) ρ$
   since the map $U(l,k) → U(k,l)$, $u ↦ ug$ where $g(k) = l$ and $g(l)=k$
   is not the identity.
 \end{remark}
@@ -969,8 +969,6 @@ We now describe how to interpret terms.
 
 \begin{theorem}[Validity]
   If $Γ ⊢ a : A$ then $aρ ∈ Aρ$ for any $ρ ∈ Γ(I)$.
-%  Furthermore $af(1,ρ) = a(f,ρ)$ (using the interpretation of
-%  $Γf ⊢_J af : Af$).
 \end{theorem}
 \begin{proof}
   By induction on the typing judgment.  We only show the cases \textsc{In-Abs} and \textsc{Color-Elim}.  \textsc{In-Fun} is similar to the former, and the other
