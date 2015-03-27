@@ -125,6 +125,23 @@ Our technical contributions are as follows:
 \item We present a type theory (\fref{sec:syntax}) which internalizes parametricity (as we show in \fref{sec:parametricity})
   and can be seen as a simplification and generalization of the systems of
   \cite{bernardy_computational_2012,bernardy_type-theory_2013}.
+  In particular, given a $λ$-term we have a special pairing construction
+  to associate it to its parametricity proof, as well as special
+  projections to isolate the proof. As seen in \fref{ex:poly-id}, these
+  new constructions enable us to proof the above proposition
+  \emph{internally}.  (This is not possible with usual pair and
+  projections as the first projection does not commute with
+  application.)  Furthermore we distinguish between multiple uses of the
+  parametricity by naming (a.k.a \emph{coloring}) the pairs and
+  projections; this is analogous to building hypercubes and accessing to
+  their vertices as in \citep{bernardy_computational_2012}.
+  However, unlike previous type theories with internalized parametricity
+  \citep{bernardy_computational_2012, bernardy_type-theory_2013}, the
+  system presented here does not allow computation of parametricity types:
+  For instance, the parametricity predicated of $a : ★$ is
+  \emph{isomorphic to} rather than convertible to $A → ★$.  (As shown in
+  \fref{sec:parametricity}, this does not seem to be an issue in
+  practice.)
 \item We provide a \emph{denotational} semantics, in the form of a presheaf model, for this type theory (\fref{sec:model}).
       This model is a refinement of the presheaf semantics used to
       interpret nominal sets with
@@ -450,6 +467,7 @@ parametricity for the polymorphic identity and Church-encoded natural numbers.
 distinction between types and their codes.)
 
 \begin{example}
+  \label{ex:poly-id}
   Any function $f : (X : U) → X → X$ is the polymorphic identity, \ie,
   its output is Leibniz-equal to its second argument.
   Assume
