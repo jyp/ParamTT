@@ -635,6 +635,9 @@ defined by $(f-i)(k) = f(k)$ $∀ k ∈ I$.
 If $f : I,i → J,j$ is such that $f(i) = j$, we note $f-i : I → J$ the map
 defined by $(f-i)(k) = f(k)$ $∀ k ∈ I$.
 
+For an object $I$ and $i ∉ I$, we note $ι_i : I → I,i$ the inclusion
+map, defined by $ι_i(k) = k$ $∀ k ∈ I$.
+
 \begin{definition}[Projection]
    We say that a morphism $α : I → I_α$ is a \emph{projection} if
    $I_α ⊆ I$,
@@ -843,7 +846,9 @@ We proceed to interpret each type construction.
 We now describe how to interpret terms.
 \begin{description}
   \item[\sc Var.]
-    We define $xρ$ to be $ρ(x)$
+    We define $x⟨ρ,y=u⟩$ to be $u$ if $x = y$, and $xρ$ otherwise.
+    We define $x[ρ,i=φ]$ to be $xρ$ if $φ = 0$, and
+    $x(ρι_j)$ if $φ = j$.
 
   \item[\sc Lam.]
     We define $\app{(λ x:A.b)ρ_f}{u}$ to be $b⟨ρf,x=u⟩$
