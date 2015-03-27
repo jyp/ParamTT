@@ -563,7 +563,9 @@ proof of their type, as illustrated in the following example.
   $$Γ, h:A → A, h': (T → T) \op i h ⊢ g'\, h\, (λ (x : A).\, λ (x' : P\, x).\, (\CP i h {h'}\, \CP i x {x'}) \param i) : P\, (g\, h)
   $$
   Let $g'' = λ (h:A → A).\, λ (h': (T → T) \op i h).\, g'\, h\, (λ (x : A).\, λ (x' : P\, x).\, (\CP i h {h'}\, \CP i x {x'}) \param i)$.
-  We now have $Γ, i:𝕀 ⊢ \fp i g {g''} : (T → T) → T$ and can finally conclude:
+  Since $Γ ⊢ g'' : (h:A → A) → (T → T) \op i h → P\, (g\, h)$
+  we can pair it with $g$ and
+  $Γ, i:𝕀 ⊢ \fp i g {g''} : (T → T) → T$. We can finally conclude as before:
   $$Γ ⊢ (f\, T\, \fp i g {g''}) \param i : P\, (f\, A\, g)$$
 \end{example}
 
