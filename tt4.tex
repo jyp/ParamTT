@@ -166,18 +166,19 @@ presented here is that terms may depend on (a finite number of)
 colors.
 \begin{definition}[Syntax of terms and contexts]
   \begin{align*}
-    t,u,A,B & \coloneqq x & \text {variable} \\
+    A,B,P,T,a,b,p,t,u &
+              \coloneqq x & \text {variable} \\
             & \mid U & \text{universe} \\ 
             & \mid |A| & \text{code} \\ 
             & \mid \El{A} & \text{decode} \\
-            & \mid λx:A. t & \text{abstraction} \\
+            & \mid λx:A. b & \text{abstraction} \\
             & \mid t u & \text{application} \\ 
             & \mid (x:A) → B & \text{product} \\
-            & \mid \CP i t u & \text{colored pair} \\
-            & \mid \CTimes i {x:A} B  & \text{colored type pair} \\
+            & \mid \CP i a p & \text{colored pair} \\
+            & \mid \CTimes i {x:A} P & \text{colored type pair} \\
             & \mid \fp i t u & \text{colored function pair}\\
-            & \mid A \op i u & \text{parametricity type} \\
-            & \mid t \param i & \text{parametricity proof} \\
+            & \mid A \op i a & \text{parametricity type} \\
+            & \mid a \param i & \text{parametricity proof} \\
     \Gamma,\Delta & \coloneqq () \mid \Gamma,x:A \mid \Gamma,i:𝕀
   \end{align*}
 \end{definition}
@@ -187,16 +188,17 @@ We give a few intuitions to interpret the novel syntax, before giving formally t
 \item \citet{reynolds_types_1983} associates each type with a
   predicate. Here, each type is associated not a single predicate, but
   many: one for every color. Furthermore these predicates are definable
-  in the logic: The type $A \op i u$ expresses that $u$ satisfies
+  in the logic: The type $A \op i a$ expresses that $a$ satisfies
   the parametricity predicate associated with the type $A$ on color
   $i$.
-\item The term $a \param i$ yields a proof of $A \op i \proj i a$.
-\item In the above, the term $\proj i a$ denotes the realizer part of $a$,
+\item The term $a \param i$ yields a proof of $A \op i \proj i a$, where
+  $\proj i a$ denotes the realizer part of $a$,
   obtained by erasing the color $i$. (Erasure is detailed in
   \fref{def:color-erasure}.)
-\item The forms $\CP i t u$, $\CTimes i {x:A} B$ and $\fp i t u$ allow to
+\item The forms $\CP i a p$, $\CTimes i {x:A} P$ and $\fp i t u$ allow to
   locally associate parametricity proofs with a given realizer.
-  \todo{add an item for $\Gamma,i:𝕀 ⊢$}
+\item Free colors appear in the context, and bound using the
+  constructs $A \op i {}$ and $a \param$
 \end{enumerate}
 
 
@@ -220,9 +222,9 @@ We give a few intuitions to interpret the novel syntax, before giving formally t
     \\
     \inferrule[Pi]{Γ ⊢ A \\ Γ,x:A ⊢ B}{Γ ⊢ (x:A) → B}
 
-    \inferrule[Out]{Γ, i:𝕀 ⊢ T \\ Γ ⊢ a : \proj i T}{Γ ⊢ T \op i  a}
+    \inferrule[Out]{Γ, i:𝕀 ⊢ A \\ Γ ⊢ a : \proj i A}{Γ ⊢ A \op i  a}
 
-    \inferrule[In-Pred]{Γ ⊢ A \\ Γ,x:A ⊢ B}{Γ, i:𝕀 ⊢ \CTimes i {x:A} B}
+    \inferrule[In-Pred]{Γ ⊢ A \\ Γ,x:A ⊢ P}{Γ, i:𝕀 ⊢ \CTimes i {x:A} P}
  \end{mathpar}
 
 \fbox{$Γ⊢ a : A$}
@@ -237,14 +239,14 @@ We give a few intuitions to interpret the novel syntax, before giving formally t
  
     \inferrule[App]{Γ ⊢ t : (x:A) → B[x] \\ Γ ⊢ u : A}{Γ ⊢ t u: B[u]}
 
-    \\\inferrule[In-Abs]{Γ ⊢ a : \proj i T \\Γ ⊢ p : T \op i a}{Γ, i:𝕀 ⊢ \CP i a p : T}
+    \\\inferrule[In-Abs]{Γ ⊢ a : \proj i A \\Γ ⊢ p : A \op i a}{Γ, i:𝕀 ⊢ \CP i a p : A}
 
     \inferrule[In-Fun]
         {Γ ⊢ t : \projp i {(x:A) → P[x]}\\\\
          Γ ⊢ u : (x:\proj i A) → (x':A \op i x) → P[\CP i x {x'}] \op i t x}
         {Γ, i:𝕀 ⊢ \fp i t u : (x:A) → P[x]}
 
-    \inferrule[Color-Elim]{Γ, i:𝕀 ⊢ a : T}{Γ ⊢ a \param i : T \op i {\proj i a}}
+    \inferrule[Color-Elim]{Γ, i:𝕀 ⊢ a : A}{Γ ⊢ a \param i : A \op i {\proj i a}}
   \end{mathpar}
 \end{definition}
 
@@ -269,7 +271,7 @@ to keep the presentation concise, we leave it implicit in the syntax.
   U \mor{i}{φ} & = U \\
   \El{A} \mor{i}{φ} & = \El {A\mor{i}{φ}} \\
   |A| \mor{i}{φ} & = |A\mor{i}{φ}| \\
-  (λ(x:A).t)\mor{i}{φ} &= λ(x:A\mor{i}{φ}).t\mor{i}{φ} \\
+  (λ(x:A).b)\mor{i}{φ} &= λ(x:A\mor{i}{φ}).b\mor{i}{φ} \\
   (t\,u)\mor{i}{φ} &= (t\mor{i}{φ}) \, (u\mor{i}{φ}) \\
   ((x:A)→B)\mor{i}{φ} &= (x:A\mor{i}{φ})→(B\mor{i}{φ}) \\
   {\CP {i} a p}\mor{i}{0} &= a \\
@@ -321,26 +323,29 @@ The convertibility of types used in the {\sc Conv} rule and written
 simply ($=$) is defined as the smallest congruence containing the
 following rules.
 \begin{mathpar}
-  \inferrule[Pair-App]{}{{\fp i t u} \, a      = (t\,{\proj i a} ,_i u\,{\proj i a}\,{(a \param i)})}
-\and
   \inferrule[Pair-Param]{}{{(a,_i p)}\param i   = p}
 \and
-  \inferrule[Pair-Pred]{}{{(\CTimes i {x:A} B[x])} \op i a = B[a]}
+  \inferrule[Pair-App]{}{{\fp i t u} \, a      = (t\,{\proj i a} ,_i u\,{\proj i a}\,{(a \param i)})}
 \and
+  \inferrule[Pair-Pred]{}{{(\CTimes i {x:A} P[x])} \op i a = P[a]}
+    \\
+    %\inferrule[Surj-Param]{\proj i t = a \\ t \param i = p} {t = \CP i a p }
+    \inferrule[Surj-Param]{} {t = \CP i {\proj i t} {t \param i} }
+    \and
+    %\inferrule[Surj-Fun]{\proj i t = u \\ (t \CP i x y) \param i = v x y} {t = \fp i u v }
+    \inferrule[Surj-Fun]{} {t = \fp i {\proj i t} {λx x'. (t \CP i x {x'}) \param i}}
+    \and
+    %\inferrule[Surj-Typ]{\proj i T = A \\ T \op i x = B} {T = \CTimes i {x:A} B }
+    \inferrule[Surj-Typ]{} {T = \CTimes i {x:{\proj i T}} {(T \op i x)} }
+    \\
     \inferrule{}{\El{|A|} = A}
 \and
     \inferrule{}{|\El{A}| = A}
 \and
-    \inferrule[β]{}{(λx:A. u[x]) t = u[t]}
+    \inferrule[β]{}{(λx:A. b[x]) u = b[u]}
 \and
-    \inferrule[η]{t x = u} {t = λ x:A.u}
-    \and
-    \inferrule[Surj-Param]{\proj i t = a \\ t \param i = p} {t = \CP i a p }
-    \and
-    \inferrule[Surj-Fun]{\proj i t = u \\ (t \CP i x y) \param i = v x y} {t = \fp i u v }
-    \and
-    \inferrule[Surj-Typ]{\proj i T = A \\ T \op i x = B} {T = \CTimes i {x:A} B }
-    \and
+    \inferrule[η]{t x = b} {t = λ x:A.b}
+    \\
     \inferrule[Refl]{~}{a = a}
     \and
     \inferrule[Sym]{a = b}{b = a}
@@ -355,15 +360,15 @@ following rules.
   \textsc{Surj-Typ} needs to end with the color binding $i : 𝕀$.
 \end{remark}
 
-\begin{corollary}[Any term can be seen as a pair of a realizer and a parametricity proof]
-  \label{cor:equalities}
-  In a context ending with $i : 𝕀$,
-  \begin{itemize}
-  \item $a = \CP i {\proj i a} {a \param i}$
-  \item $T = \CTimes i {x:\proj i T} {(T \op i x)}$
-  \item $t = \fp i {\proj i t} {λx x'. (t \CP i x {x'}) \param i}$
-  \end{itemize}
-\end{corollary}
+%\begin{corollary}[Any term can be seen as a pair of a realizer and a parametricity proof]
+%  \label{cor:equalities}
+%  In a context ending with $i : 𝕀$,
+%  \begin{itemize}
+%  \item $t = \CP i {\proj i t} {t \param i}$
+%  \item $T = \CTimes i {x:\proj i T} {(T \op i x)}$
+%  \item $t = \fp i {\proj i t} {λx x'. (t \CP i x {x'}) \param i}$
+%  \end{itemize}
+%\end{corollary}
 
 Our conversion relation is intentional for functions, but extensional
 when it comes to dependencies on colors. Because there is at any point
@@ -470,7 +475,7 @@ distinction between types and their codes.)
   \label{ex:poly-id}
   Any function $f : (X : U) → X → X$ is the polymorphic identity, \ie,
   its output is Leibniz-equal to its second argument.
-  Assume
+  Assume a context with
   \begin{itemize}
     \item $f : (X : U) → X → X$,
     \item $A : U$,
@@ -758,8 +763,8 @@ $[ρ,i=0]f = [ρf,i=0]$ and $[ρ,i=j]f = [ρ(f-j),i=f(j)]$.
 \bigskip
 The above refinement on presheaves is necessary for the interpretation
 of some of our syntactic constructions.  Indeed, without this refinement,
-it is not clear how to validate the equality
-${{(\CTimes i {x:A} B[x])} \op i a = B[a]}$.
+it is not clear how to validate the equality \textsc{Pair-Pred}:
+${{(\CTimes i {x:A} P[x])} \op i a = P[a]}$.
 
 \bigskip
 The semantics we define satisfies the substitution law. That is, if $Γ,x:A ⊢ B$
@@ -821,26 +826,26 @@ We proceed to interpret each type construction.
 
 
   \item[\sc Out.]
-    Assume $ρ ∈ Γ(I)$. We need to define the $I$-set $(P \op {i} a)ρ$.
+    Assume $ρ ∈ Γ(I)$. We need to define the $I$-set $(A \op {i} a)ρ$.
     Let $j = \fresh I$.
-    By the induction hypotheses we get a $(I,j)$-set $P[ρ,i=j]$,
+    By the induction hypotheses we get a $(I,j)$-set $A[ρ,i=j]$,
     and the $I$-element $aρ$ belongs to
-    $P(i\,0)ρ = P[ρ,i=0] = P[ρ,i=j](j 0)$.
+    $A(i\,0)ρ = A[ρ,i=0] = A[ρ,i=j](j 0)$.
 
-    We define $(P \op {i} a)ρ$ to be the set of $I$-elements $v$ such that
-    $(aρ,_j v) ∈ P[ρ,i=j]$.
+    We define $(A \op {i} a)ρ$ to be the set of $I$-elements $v$ such that
+    $(aρ,_j v) ∈ A[ρ,i=j]$.
     If $v$ is such an element and $f : I → J$ and $k=\fresh J$, then
     $vf$ is defined by the equation $(aρf,_k vf) = (aρ ,_j v)(f, j=k)$.
 
 
   \item[\sc In-Pred.]
-    Assume $[ρ,i=φ] ∈ Γ⊗𝕀(I)$.  We define the $I$-set $(\CTimes i {x:A} B)[ρ,i=φ]$
+    Assume $[ρ,i=φ] ∈ Γ⊗𝕀(I)$.  We define the $I$-set $(\CTimes i {x:A} P)[ρ,i=φ]$
     by case analysis on $φ ∈ I∪\{0\}$.
-    If $φ = 0$ then $ρ ∈ Γ(I)$, and we define $(\CTimes i {x:A} B)[ρ,i=0]$ as
+    If $φ = 0$ then $ρ ∈ Γ(I)$, and we define $(\CTimes i {x:A} P)[ρ,i=0]$ as
     the $I$-set $Aρ$.
     If $φ = j ∈ I$ then $ρ ∈ Γ(I\backslash\{j\})$, and we define
-    $(\CTimes i {x:A} B)[ρ,i=j]$ as the $I$-set of $(u ,_j v)$ where
-    $u ∈ Aρ$ and $v ∈ B⟨ρ,x=u⟩$.
+    $(\CTimes i {x:A} P)[ρ,i=j]$ as the $I$-set of $(u ,_j v)$ where
+    $u ∈ Aρ$ and $v ∈ P⟨ρ,x=u⟩$.
 
 
   \item[\sc Decode.]
@@ -918,15 +923,15 @@ We now describe how to interpret terms.
     \item[\sc Pair-Param.]
       Let $ρ ∈ Γ(I)$ and $j = \fresh I$.  We have
       \begin{align*}
-        &v ∈ ({((x:A)\times_i B)} \op {i} a)ρ
+        &v ∈ ({((x:A)\times_i P)} \op {i} a)ρ
         \\
-        \text{ iff. }& (aρ ,_j v) ∈ (\CTimes i {x:A} B)[ρ,i=j]
+        \text{ iff. }& (aρ ,_j v) ∈ (\CTimes i {x:A} P)[ρ,i=j]
         \\
-        \text{ iff. }& (aρ ,_j v) ∈ \left\{ (u ,_j w) \mid u ∈ Aρ, w ∈ B⟨ρ,x=u⟩ \right\}
+        \text{ iff. }& (aρ ,_j v) ∈ \left\{ (u ,_j w) \mid u ∈ Aρ, w ∈ P⟨ρ,x=u⟩ \right\}
         \\
-        \text{ iff. }& v ∈ B⟨ρ,x=aρ⟩
+        \text{ iff. }& v ∈ P⟨ρ,x=aρ⟩
         \\
-        \text{ iff. }& v ∈ B[a]ρ
+        \text{ iff. }& v ∈ P[a]ρ
       \end{align*}
 
     \item[\sc Pair-Pred.]
@@ -1000,19 +1005,19 @@ We now describe how to interpret terms.
     \item[\sc In-Abs.]
       Assume $[ρ,i=φ] ∈ Γ⊗𝕀(I)$.  We proceed by case analysis on $φ ∈ I ∪ \{0\}$.
       If $φ = 0$ then $ρ ∈ Γ(I)$, and we have
-      $(a ,_i p)[ρ,i=0] = aρ ∈ T(i\,0)ρ = T[ρ,i=0]$.
+      $(a ,_i p)[ρ,i=0] = aρ ∈ A(i\,0)ρ = A[ρ,i=0]$.
       If $φ = j ∈ I$ then $ρ ∈ Γ(I\backslash\{j\})$, and we have
       $(a ,_i p)[ρ,i=j] = (aρ ,_j pρ)$;
-      Since by induction hypothesis $pρ ∈ (T \op {i} a)ρ$, we conclude
-      by definition that $(aρ ,_j pρ) ∈ T[ρ,i=j]$.
+      Since by induction hypothesis $pρ ∈ (A \op {i} a)ρ$, we conclude
+      by definition that $(aρ ,_j pρ) ∈ A[ρ,i=j]$.
 
     \item[\sc Color-Elim.]
       Assume $ρ ∈ Γ(I)$.
-      We need to show that $(a·i)ρ ∈ (T \op i {a(i\,0)})ρ$, \ie, that
-      $ (a(i\,0)ρ ,_j (a·i)ρ) ∈ T[ρ,i=j]$ where $j = \fresh I$.
-      By induction hypothesis $a[ρ,i=j] ∈ T[ρ,i=j]$, hence
+      We need to show that $(a·i)ρ ∈ (A \op i {a(i\,0)})ρ$, \ie, that
+      $ (a(i\,0)ρ ,_j (a·i)ρ) ∈ A[ρ,i=j]$ where $j = \fresh I$.
+      By induction hypothesis $a[ρ,i=j] ∈ A[ρ,i=j]$, hence
       we have
-      $(a(i\,0)ρ ,_j (a·i)ρ) = (a[ρ,i=j](j\,0) ,_j a[ρ,i=j]·j) = a ∈ T[ρ,i=j]$.
+      $(a(i\,0)ρ ,_j (a·i)ρ) = (a[ρ,i=j](j\,0) ,_j a[ρ,i=j]·j) = a ∈ A[ρ,i=j]$.
     \qedhere
   \end{description}
 
