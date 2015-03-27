@@ -186,12 +186,12 @@ We give a few intuitions to interpret the novel syntax, before giving formally t
 \begin{enumerate}
 \item \citet{reynolds_types_1983} associates each type with a
   predicate. Here, each type is associated not a single predicate, but
-  many: one for every color. Furthermore these predicates are accessible
-  from the logic: The type $A \op i u$ expresses that $u$ satisfies
+  many: one for every color. Furthermore these predicates are definable
+  in the logic: The type $A \op i u$ expresses that $u$ satisfies
   the parametricity predicate associated with the type $A$ on color
   $i$.
 \item The term $a \param i$ yields a proof of $A \op i \proj i a$.
-\item In the above, the term $\proj i a$ denotes a realizer of $a$,
+\item In the above, the term $\proj i a$ denotes the realizer part of $a$,
   obtained by erasing the color $i$. (Erasure is detailed in
   \fref{def:color-erasure}.)
 \item The forms $\CP i t u$, $\CTimes i {x:A} B$ and $\fp i t u$ allow to
@@ -495,7 +495,7 @@ distinction between types and their codes.)
 
 \begin{example}
 Let $N = (X : U) → X → (X → X) → X$.
-Proving (unary) parametricity for $N$ means that, assuming
+Proving (unary) parametricity for $N$ means that, assuming a context with
 \begin{itemize}
 \item $f : N$,
 \item $A : U$,
@@ -517,15 +517,15 @@ Indeed, a proof term is the following:
 \subsection{Iterating Parametricity}
 In our system, one can use parametricity generically as follows:
 \begin{align*}
-p &: (A:U) → (x:A) → A \op i x\\
-p\, A\, x &= x\param i
+p &: (X:U) → (x:X) → X \op i x\\
+p\, X\, x &= x\param i
 \end{align*}
 We have already seen that $A \op i $ corresponds to the parametricity
 predicate for type $A$. We can iterate this operator to construct
-relations between parametricity witnesses. That is, given
+relations between parametricity witnesses. That is, given a context with
 \begin{align*}
   x & :A \\
-  y & : A \op i x\\
+  y & : A \op j x\\
   z & : A \op i x
 \end{align*}
 Then the type $A \op i \CP j x y \op j z$ is well formed ($∋$ is left
@@ -597,9 +597,9 @@ We continue to reason by deduction:
 \end{remark}
 \begin{theorem}
   If the type $A$ and the term $a$ do not depend on either $i$ or $j$,
-  any proof $a'$ of $A \op i a$ (not depending on $i$ or $j$ either)
-  is related to the canonical proof ($a \param i$), \ie, formally $A
-  \op i \CP j a {a \param i} \op j a'$.
+  and $a' : A \op i a$ (not depending on $i$ or $j$ either), then
+  %is related to the canonical proof ($a \param i$), \ie, formally
+  $A \op i \CP j a {a \param i} \op j a'$.
 \end{theorem}
 \begin{proof}
 We can construct the following closed term:
