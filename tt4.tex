@@ -475,7 +475,7 @@ distinction between types and their codes.)
   \label{ex:poly-id}
   Any function $f : (X : U) → X → X$ is the polymorphic identity, \ie,
   its output is Leibniz-equal to its second argument.
-  Assume a context with
+  Assume a context $Γ$ with
   \begin{itemize}
     \item $f : (X : U) → X → X$,
     \item $A : U$,
@@ -484,14 +484,14 @@ distinction between types and their codes.)
     \item $p : P\, A$.
   \end{itemize}
   Then
-  $i:𝕀⊢\CTimes i {x:A} {(P\,x)}$
-  and
-  (because $⊢ (\CTimes i {x:A} {(P\,x)}) \op i a = P\,a$)
-  $i:𝕀⊢\CP i a p : \CTimes i {x:A} {(P\,x)}$, thus
-  $i:𝕀⊢f\, (\CTimes i {x:A} {(P\,x)})\, {\CP i a p} : \CTimes i {x:A} {(P\,x)}$
+  $Γ, i:𝕀⊢\CTimes i {x:A} {(P\,x)}$
+  and by \textsc{Pair-Pred}
+  %(because $Γ ⊢ (\CTimes i {x:A} {(P\,x)}) \op i a = P\,a$)
+  $Γ, i:𝕀⊢\CP i a p : \CTimes i {x:A} {(P\,x)}$, thus
+  $Γ, i:𝕀⊢f\, (\CTimes i {x:A} {(P\,x)})\, {\CP i a p} : \CTimes i {x:A} {(P\,x)}$
   and finally
   \begin{align*}
-    ⊢(f\, (\CTimes i {x:A} {(P\,x)})\, {\CP i a p}) \param i
+   Γ ⊢(f\, (\CTimes i {x:A} {(P\,x)})\, {\CP i a p}) \param i
    &: (\CTimes i {x:A} {(P\,x)}) \op i \proj i {(f\, (\CTimes i {x:A} {(P\,x)})\, {\CP i a p})} \\
    &= P\, \proj i {(f\, (\CTimes i {x:A} {(P\,x)})\, {\CP i a p})} \\
    &= P\, (f\, A\, a)
@@ -499,8 +499,9 @@ distinction between types and their codes.)
 \end{example}
 
 \begin{example}
+  \label{ex:church-nat}
 Let $N = (X : U) → X → (X → X) → X$.
-Proving (unary) parametricity for $N$ means that, assuming a context with
+Proving (unary) parametricity for $N$ means that, assuming a context $Γ$ with
 \begin{itemize}
 \item $f : N$,
 \item $A : U$,
@@ -512,11 +513,58 @@ Proving (unary) parametricity for $N$ means that, assuming a context with
 \end{itemize}
 we can prove $P\, (f\, A\, z\, s)$.
 
-Indeed, a proof term is the following:
-%
-\[
-(f (\CTimes i {x:A} (P x)) \CP i z {z'} \fp i s {s'}) \param i
-\]
+Indeed
+  $Γ, i:𝕀⊢\CTimes i {x:A} {(P\,x)}$,
+  and by \textsc{Pair-Pred}
+  $Γ, i:𝕀⊢ \CP i z {z'} : \CTimes i {x:A} {(P\,x)}$ and
+  $Γ, i:𝕀⊢ \fp i s {s'} : \CTimes i {x:A} {(P\,x)} → \CTimes i {x:A} {(P\,x)}$,
+thus
+  $$Γ, i:𝕀 ⊢ f\, (\CTimes i {x:A} {(P\,x)})\, {\CP i z {z'}}\, \fp i s {s'} : \CTimes i {x:A} {(P\,x)}$$
+  and finally
+  \begin{align*}
+    Γ ⊢ (f\, (\CTimes i {x:A} {(P\,x)})\, {\CP i z {z'}}\, \fp i s {s'}) \param i
+     &: (\CTimes i {x:A} {(P\,x)}) \op i (f\, A\, z\, s) \\
+     &= P\, (f\, A\, z\, s) \\
+  \end{align*}
+\end{example}
+
+As seen in \fref{ex:church-nat}, one needs to use the
+$\fp i t u$ to pair a function with the parametricity proof of its type
+if one wants to apply that pair to some argument and reduce the
+application.  This is because as noted above, our system does not
+support direct computation of free theorems: in particular $(A → B) \op i a$
+does not reduce.
+
+At this point one may wonder, since a new syntactic construction was
+introduced for function types, if yet another construction is required
+for higher order functions.  It turns out $\fp i t u$ can be combined
+with $\CP i a p$ to pair higher order functions with the parametricity
+proof of their type, as illustrated in the following example.
+
+\begin{example}
+  Let $F = (X : U) → ((X → X) → X) → X$.
+  Proving (unary) parametricity for $F$ means that, assuming a context $Γ$ with
+  \begin{itemize}
+    \item $f : F$,
+    \item $A : U$,
+    \item $P : A → U$,
+    \item $g : (A → A) → A$, and
+    \item $g' : (h : A → A) → ((x : A) → P\, x → P\, (h\, x)) → P\, (g\, h)$,
+  \end{itemize}
+  we can prove $P\, (f\, A\, g)$.
+
+  Let $T = \CTimes i {x:A} {(P\,x)}$.
+%  and $Δ = Γ, h:A → A, h': (T → T) \op i h$.
+  We have $Γ, i:𝕀 ⊢ T$ and
+  $$Γ, h:A → A, h': (T → T) \op i h, x : A, x' : P\, x ⊢ \CP i h {h'} : T → T$$
+  hence
+  $$Γ, h:A → A, h': (T → T) \op i h, x : A, x' : P\, x ⊢ (\CP i h {h'}\, \CP i x {x'}) \param i : T \op i (h\, x) = P\, (h\, x)$$
+  then
+  $$Γ, h:A → A, h': (T → T) \op i h ⊢ g'\, h\, (λ (x : A).\, λ (x' : P\, x).\, (\CP i h {h'}\, \CP i x {x'}) \param i) : P\, (g\, h)
+  $$
+  Let $g'' = λ (h:A → A).\, λ (h': (T → T) \op i h).\, g'\, h\, (λ (x : A).\, λ (x' : P\, x).\, (\CP i h {h'}\, \CP i x {x'}) \param i)$.
+  We now have $Γ, i:𝕀 ⊢ \fp i g {g''} : (T → T) → T$ and can finally conclude:
+  $$Γ ⊢ (f\, T\, \fp i g {g''}) \param i : P\, (f\, A\, g)$$
 \end{example}
 
 \subsection{Iterating Parametricity}
