@@ -594,7 +594,7 @@ If the type $A$ does not depend on either $i$ or $j$, the relation $λy z. A \op
 \begin{proof}
   We first construct the proof term:
   \begin{align*}
-    &\sigma_1 : (x:A) → (y : A \op i x) → (z : A \op i x) → (w : A \op i \CP j x y \op j z) → A \op j \CP i x z \op i y \\
+    &\sigma_1 : (x:A) → (y : A \op i x) → (z : A \op i x) → A \op i \CP j x y \op j z → A \op j \CP i x z \op i y \\
     &\sigma_1\, x\, y\, z\, w = \CP i {\CP j x y}{\CP j z w} \param j \param i
   \end{align*}
   And, by α-equivalence on colors, $A \op j \CP i x z \op i y = A \op i \CP j x z \op j y$.
@@ -804,9 +804,10 @@ $[ρ,i=0]f = [ρf,i=0]$ and $[ρ,i=j]f = [ρ(f-j),i=f(j)]$.
   In other words,
   $Γ,x:A⊢$ is interpreted by the cartesian product $(ρ∈Γ) × Aρ$ of the
   interpretations of $Γ⊢$ and $Γ⊢A$, while
-  $Γ,i:𝕀⊢$ is interpreted by the tensor product $Γ ⊗ 𝕀$ of the
+  $Γ,i:𝕀⊢$ is interpreted by the separated product \cite[sec.~3.4
+  p.~54]{PittsAM:nomsns} $Γ ∗ 𝕀$ of the
   interpretation of $Γ⊢$ and $𝕀 ∪ \{0\}$:
-  $$Γ ⊗ 𝕀(I) = \{ [ρ,i=0] \mid ρ ∈ Γ(I) \} ∪
+  $$Γ ∗ 𝕀(I) = \{ [ρ,i=0] \mid ρ ∈ Γ(I) \} ∪
                \{ [ρ,i=j] \mid j ∈ I, ρ ∈ Γ(I\backslash\{j\}) \}$$
 \end{remark}
 
@@ -824,7 +825,7 @@ $B[a]ρ = B⟨ρ,x=aρ⟩$.
 It also satisfies the substitution law on colors, \ie, if $Γ,i:𝕀 ⊢ A$
 then for any $ρ ∈ Γ(I)$ and $j ∉ I$ we have
 $A(i 0)ρ = A[ρ,i=0] = A[ρ,i=j](j\, 0)$.
-(Since $[ρ,i=0] ∈ Γ⊗𝕀(I)$ and $[ρ,i=j] ∈ Γ⊗𝕀(I,j)$, $A(i\, 0)ρ$ and
+(Since $[ρ,i=0] ∈ Γ∗𝕀(I)$ and $[ρ,i=j] ∈ Γ∗𝕀(I,j)$, $A(i\, 0)ρ$ and
 $A[ρ,i=0]$ are $I$-sets while $A[ρ,i=j]$ is a $(I,j)$-set.)
 For establishing these properties, we proceed as \citet{Aczel98onrelating}.
 
@@ -890,7 +891,7 @@ We proceed to interpret each type construction.
 
 
   \item[\sc In-Pred.]
-    Assume $[ρ,i=φ] ∈ Γ⊗𝕀(I)$.  We define the $I$-set $(\CTimes i {x:A} P)[ρ,i=φ]$
+    Assume $[ρ,i=φ] ∈ Γ∗𝕀(I)$.  We define the $I$-set $(\CTimes i {x:A} P)[ρ,i=φ]$
     by case analysis on $φ ∈ I∪\{0\}$.
     If $φ = 0$ then $ρ ∈ Γ(I)$, and we define $(\CTimes i {x:A} P)[ρ,i=0]$ as
     the $I$-set $Aρ$.
@@ -931,7 +932,7 @@ We now describe how to interpret terms.
     We define $(t\,u)ρ$ to be $\app{tρ_1}{uρ}$
 
   \item[\sc In-Abs.]
-    Assume $[ρ,i=φ] ∈ Γ⊗𝕀(I)$.  We define the $I$-element $(a ,_i p)[ρ,i=φ]$
+    Assume $[ρ,i=φ] ∈ Γ∗𝕀(I)$.  We define the $I$-element $(a ,_i p)[ρ,i=φ]$
     by case analysis on $φ ∈ I ∪ \{0\}$.
     If $φ = 0$ then $ρ ∈ Γ(I)$, and we take $(a ,_i p)[ρ,i=0]$ to be
     $aρ ∈ A(i\,0)ρ = A[ρ,i=0]$.
@@ -939,7 +940,7 @@ We now describe how to interpret terms.
     $(a ,_i p)[ρ,i=j]$ to be $(aρ ,_j pρ)$.
 
   \item[\sc In-Fun.]
-    Assume $[ρ,i=φ] ∈ Γ⊗𝕀(I)$.  We define the $J$-element ${\fp i t u}[ρ,i=φ]_f$
+    Assume $[ρ,i=φ] ∈ Γ∗𝕀(I)$.  We define the $J$-element ${\fp i t u}[ρ,i=φ]_f$
     by case analysis.
     If $φ = 0$, then $ρ ∈ Γ(I)$ and $ρf ∈ Γ(J)$; we define
     $w = {\fp i t u}[ρ,i=0]_f$ by $\app{w}{a} = \app{tρ_f}{a}$.
@@ -1004,7 +1005,7 @@ We now describe how to interpret terms.
         \\=~& (t[ρ,i=j](j\,0) ,_j t[ρ,i=j]·j)
         \\=~& t[ρ,i=j]
       \end{align*}
-      Hence $(t(i\,0) ,_i t·i)ρ = tρ$ for any $ρ ∈ Γ⊗𝕀(I)$.
+      Hence $(t(i\,0) ,_i t·i)ρ = tρ$ for any $ρ ∈ Γ∗𝕀(I)$.
       \qedhere
   \end{description}
 \end{proof}
@@ -1054,7 +1055,7 @@ We now describe how to interpret terms.
   cases match the usual proof (using \fref{thm:convertible-in-model} for \textsc{Conv}).
   \begin{description}
     \item[\sc In-Abs.]
-      Assume $[ρ,i=φ] ∈ Γ⊗𝕀(I)$.  We proceed by case analysis on $φ ∈ I ∪ \{0\}$.
+      Assume $[ρ,i=φ] ∈ Γ∗𝕀(I)$.  We proceed by case analysis on $φ ∈ I ∪ \{0\}$.
       If $φ = 0$ then $ρ ∈ Γ(I)$, and we have
       $(a ,_i p)[ρ,i=0] = aρ ∈ A(i\,0)ρ = A[ρ,i=0]$.
       If $φ = j ∈ I$ then $ρ ∈ Γ(I\backslash\{j\})$, and we have
