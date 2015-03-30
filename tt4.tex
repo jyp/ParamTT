@@ -556,7 +556,7 @@ proof of their type, as illustrated in the following example.
   Let $T = \CTimes i {x:A} {(P\,x)}$.
 %  and $Δ = Γ, h:A → A, h': (T → T) \op i h$.
   We have $Γ, i:𝕀 ⊢ T$ and
-  $$Γ, h:A → A, h': (T → T) \op i h, x : A, x' : P\, x ⊢ \CP i h {h'} : T → T$$
+  $$Γ, h:A → A, h': (T → T) \op i h, x : A, x' : P\, x, i:𝕀 ⊢ \CP i h {h'} : T → T$$
   hence
   $$Γ, h:A → A, h': (T → T) \op i h, x : A, x' : P\, x ⊢ (\CP i h {h'}\, \CP i x {x'}) \param i : T \op i (h\, x) = P\, (h\, x)$$
   then
