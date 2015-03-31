@@ -1,9 +1,12 @@
-\documentclass[english]{PaperTools/latex/lipics}
+\documentclass[english]{PaperTools/latex/entcs}
+\usepackage{graphicx}
+\sloppy
+
 \graphicspath{{PaperTools/latex/}}
-\usepackage{natbib}
+\usepackage[numbers]{natbib}
 \usepackage[utf8]{inputenc}
 \usepackage{stmaryrd}
-\usepackage{amssymb,amstext,amsmath}
+\usepackage{amssymb,amstext,amsmath,amsthm}
 \usepackage{mathtools}
 \usepackage{mathpartir}
 \usepackage{fancyref}
@@ -11,6 +14,16 @@
 \input{fancyrefs}
 \usepackage{tikz}
 \usetikzlibrary{arrows}
+
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{example}[theorem]{Example}
+\theoremstyle{remark}
+\newtheorem*{remark}{Remark}
 
 \newcommand\CC[4]{(#2,_{#1} #3)}
 \newcommand\CP[3]{(#2,_{#1} #3)}
@@ -24,7 +37,7 @@
 \newcommand\ip[3]{Σ^{#1} {#2}\,{#3}}
 \newcommand\fp[3]{⟨#2 ,_{#1} #3⟩}
 \newcommand\mor[2]{({#1}\,{#2})}
-\newcommand\proj[2]{{#2}\,\mor{#1}0}
+\newcommand\proj[2]{{#2}\mor{#1}0}
 \newcommand\projp[2]{\proj{#1}{(#2)}}
 
 \newcommand\comment[1]{}
@@ -34,64 +47,48 @@
 \def\fresh#1{\mathsf{fresh}(#1)}
 \def\Hom#1#2{\mathbf{Hom}(#1,#2)}
 \def\ie{\textit{i.e.}}
+\def\eg{\textit{e.g.}}
 \def\app#1#2{\mathsf{app}(#1,#2)}
 \def\El#1{\mathrm{El}(#1)}
 \def\opp{\mathrm{op}}
 
-\newtheorem{conjecture}[theorem]{Conjecture}
 \newboolean{tikz}
 \setboolean{tikz}{true} % XXX set to false to disable diagrams
 
-\title{A presheaf model of parametric type theory}
+\allowdisplaybreaks
 
-\author{Jean-Philippe Bernardy}
-\author{Thierry Coquand}
-\author{Guilhem Moulin}
-% {Chalmers University of Technology and University of Gothenburg}
-\affil{Chalmers University of Technology and University of Gothenburg \\
-\texttt{\{bernardy,coquand,mouling\}@chalmers.se}}
-\authorrunning{J-P. Bernardy, T. Coquand and G. Moulin}
-\Copyright[-nd]{J-P. Bernardy, T. Coquand and G. Moulin}
-% JP: I prefer by-sa if possible
-\subjclass{{F.4.1.} {Mathematical logic.} {Lambda calculus and related
-  systems.}}
-
-%Editor-only macros:: begin (do not touch as author)%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\serieslogo{}%please provide filename (without suffix)
-\volumeinfo%(easychair interface)
-  {Billy Editor and Bill Editors}% editors
-  {2}% number of editors: 1, 2, ....
-  {Conference title on which this volume is based on}% event
-  {1}% volume
-  {1}% issue
-  {1}% starting page number
-\EventShortName{}
-\DOI{10.4230/LIPIcs.xxx.yyy.p}% to be completed by the volume editor
-% Editor-only macros::end %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\date{\today}
-
+\def\lastname{J-P. Bernardy, T. Coquand and G. Moulin}
 \begin{document}
-\maketitle
-
+\begin{frontmatter}
+  \title{A presheaf model of parametric type theory}
+  \author{Jean-Philippe Bernardy}
+  \author{Thierry Coquand}
+  \author{Guilhem Moulin}
+  \address{Chalmers University of Technology and University of Gothenburg \\
+  \href{mailto:bernardy@chalmers.se,coquand@chalmers.se,mouling@chalmers.se}%
+       {\textnormal\tt\{bernardy,coquand,mouling\}@chalmers.se}}
 \begin{abstract}
   We propose a new type theory with internalized
   parametricity. Compared to previous similar proposals, this version
   comes with a denotational semantics which is a refinement of the
   standard presheaf semantics of dependent type theory. Further, this
   presheaf semantics is a refinement of the one used to interpret
-  nominal sets with restriction.  The present calculus is a candidate for the
+  nominal sets with restrictions.  The present calculus is a candidate for the
   core of a proof assistant with internalized parametricity.
 \end{abstract}
+\begin{keyword}
+  Parametricity, Presheaf semantics, Type theory
+\end{keyword}
+\end{frontmatter}
 
 \section{Introduction}
-\cite{reynolds_types_1983} proved a general \emph{abstraction theorem} (sometimes called
+\citet{reynolds_types_1983} proved a general \emph{abstraction theorem} (sometimes called
 \emph{parametricity theorem}) about polymorphic functions. His argument is
 about a set theoretic semantic.  As he stated it, {\em the underlying
   idea is that the meanings of an expression in ``related''
   environments will be ``related'' values}.  For instance, he proves
 that if $t_X$ is a term of type $X → X$ and if we consider two sets
-$A_0$, $A_1$ and a relation $R ⊆ A_0 × A_1$ then we have
+$A_0$, $A_1$ and a relation $R ⊆ A_0 × A_1$, then we have
 $R([t_X]_{X=A_0}(a_0),[t_X]_{X=A_1}(a_1))$ whenever $R(a_0,a_1)$,
 where $[t_X]_{X=A}$ denotes the meaning of the expression $t_X$ where
 $X$ is interpreted by the set $A$. As he noted, one can replace in
@@ -99,23 +96,32 @@ this statement binary relations by $n$-ary relations, and in particular
 unary relations (predicates). In the latter case, the statement is the following:
 if $A$ is a set and $P$ is a predicate on $A$, then we have
 $P([t_X]_{X=A}(a))$ whenever $P(a)$ holds.
-\cite{wadler_theorems_1989} illustrates by many examples how this
+\citet{wadler_theorems_1989} illustrates by many examples how this
 result is useful for reasoning about functional programs.
 
 The argument and result of Reynolds are model-theoretic in nature.
 In lambda-calculi with dependent types, it is possible to state such an
 abstraction result in a purely syntactical way.
 One states for example that if a function $f$ has type
-$(A : U) → U → U$ --- the type of the polymorphic identity --- then the
+$(A : ★) → ★ → ★$ --- the type of the polymorphic identity --- then the
 following proposition holds:
-$$ (A : U) → (P : A → U) → (x : A) → P x → P (f A x) $$
+$$ (A : ★) → (P : A → ★) → (x : A) → P\, x → P (f\, A\, x) $$
 %
-Indeed \citet{bernardy_proofs_2012} proves such a result as a
+Indeed \citet{bernardy_proofs_2012} prove such a result as a
 (syntactical) meta-theorem about type systems. However this result is
 not provable internally, \ie, the following is not provable:
-$$ (f : (A:U) → A → A) →  (A : U) → (P : A → U) → (x : A) → P x → P (f A x) $$
+$$ (f : (A:★) → A → A) →  (A : ★) → (P : A → ★) → (x : A) → P\, x → P (f\, A\, x) $$
 
-Several attempts have been made
+As a workaround, users relying on the parametricity conditions have
+postulated the parametricity axiom
+\citep{pouillard_nameless_2011,chlipala_parametric_2008,atkey_unembedding_2009}.
+However, %this approach has a fundamental drawback:
+because such postulate does not have a computational interpretation,
+parametricity conditions can only be used in computationally-irrelevant
+positions.
+
+Instead, one would like to be able to rely on parametricity conditions
+within proof assistants themselves.  Several attempts have been made
 \citep{bernardy_computational_2012,bernardy_type-theory_2013} --- or are currently
 developed \citep{altenkirch2014syntax} ---
 for designing an extension of dependent type theory in which such an internal form of
@@ -124,45 +130,62 @@ Our technical contributions are as follows:
 \begin{itemize}
 \item We present a type theory (\fref{sec:syntax}) which internalizes parametricity (as we show in \fref{sec:parametricity})
   and can be seen as a simplification and generalization of the systems of
-  \cite{bernardy_computational_2012,bernardy_type-theory_2013}
+  \citet{bernardy_computational_2012,bernardy_type-theory_2013}.
+  In particular, given a $λ$-term we have a special pairing construction
+  to associate it to its parametricity proof, as well as special
+  projections to isolate the proof. As seen in \fref{ex:poly-id}, these
+  new constructions enable us to prove the above proposition
+  \emph{internally}.  (This is not possible with usual pair and
+  projections as the first projection does not commute with
+  application.)  Furthermore we distinguish between multiple uses of the
+  parametricity by naming (a.k.a \emph{coloring}) the pairs and
+  projections; this is analogous to building hypercubes and accessing to
+  their vertices as in \citep{bernardy_computational_2012}.
+  However, unlike previous type theories with internalized parametricity
+  \citep{bernardy_computational_2012, bernardy_type-theory_2013}, the
+  system presented here does not allow computation of parametricity types:
+  For instance, the parametricity predicated of $a : ★$ is
+  \emph{isomorphic to} rather than convertible to $A → ★$.  (As shown in
+  \fref{sec:parametricity}, this does not seem to be an issue in
+  practice.)
 \item We provide a \emph{denotational} semantics, in the form of a presheaf model, for this type theory (\fref{sec:model}).
       This model is a refinement of the presheaf semantics used to
       interpret nominal sets with
       restrictions~\citep{bezem2014model,DBLP:journals/corr/Pitts14}.
-\item We conjecture that conversion and type-checking are decidable for this system.
 \end{itemize}
+We conjecture that conversion and type-checking are decidable for this system.
 
 \section{Syntax}
 \label{sec:syntax}
 In this section we define the syntax and typing rules of our
 parametric type theory, as well as the equality judgment.
 
-We assume a special symbol ‘0’, and a countable infinite set of other
-symbols, called \emph{colors}.
-The metasyntactic variables $i,j,\ldots$ range over colors, while
-$I,J,…$ range over \emph{finite} sets of colors.
+We assume a special symbol ‘0’, and a countable infinite set $𝕀$ of
+other symbols, called \emph{colors}.
+The metasyntactic variables $i,j,\ldots$ range over colors,
+while $φ$ range over $𝕀 ∪ \{0\}$.
 We further assume a fixed function $\fresh{·}$ such that
-% JP: I remove \emph{gensym} which occurs nowhere else in the text
-$\fresh{I} ∉ I$ for any finite color set $I$.
+$\fresh{I} ∈ 𝕀 \backslash I$ for any finite color set $I$.
 %
 The main innovation of the type theory
 presented here is that terms may depend on (a finite number of)
 colors.
 \begin{definition}[Syntax of terms and contexts]
   \begin{align*}
-    t,u,A,B & \coloneqq x & \text {variable} \\
+    A,B,P,T,a,b,p,t,u &
+              \coloneqq x & \text {variable} \\
             & \mid U & \text{universe} \\ 
             & \mid |A| & \text{code} \\ 
             & \mid \El{A} & \text{decode} \\
-            & \mid λx:A. t & \text{abstraction} \\
+            & \mid λx:A. b & \text{abstraction} \\
             & \mid t u & \text{application} \\ 
             & \mid (x:A) → B & \text{product} \\
-            & \mid \CP i t u & \text{colored pair} \\
-            & \mid \CTimes i {x:A} B  & \text{colored type pair} \\
+            & \mid \CP i a p & \text{colored pair} \\
+            & \mid \CTimes i {x:A} P & \text{colored type pair} \\
             & \mid \fp i t u & \text{colored function pair}\\
-            & \mid A \op i u & \text{parametricity type} \\
-            & \mid t \param i & \text{parametricity proof} \\
-    \Gamma,\Delta & \coloneqq () \mid \Gamma,x:A
+            & \mid A \op i a & \text{parametricity type} \\
+            & \mid a \param i & \text{parametricity proof} \\
+    \Gamma,\Delta & \coloneqq () \mid \Gamma,x:A \mid \Gamma,i:𝕀
   \end{align*}
 \end{definition}
 
@@ -170,77 +193,84 @@ We give a few intuitions to interpret the novel syntax, before giving formally t
 \begin{enumerate}
 \item \citet{reynolds_types_1983} associates each type with a
   predicate. Here, each type is associated not a single predicate, but
-  many: one for every color. Furthermore this predicate is accessible
-  from the logic. The type $A \op i u$ expresses that $u$ satisfies
-  the parametricity predicate associated with the type $A$ on color
-  $i$.
-\item The term $a \param i$ yields a proof of $A \op i \proj i a$.
-\item In the above, the term $\proj i a$ denotes a realizer of $a$,
+  many: one for every color. (Using a new name for each application of
+  Parametricity is analogous to naming dimensions in the hypercubes of
+  our earlier syntax \citep{bernardy_computational_2012}; making a
+  distincition between these dimensions solves the problem of
+  swapping described in that paper.)
+  Furthermore these predicates are definable
+  in the logic: The type $A \op i a$ expresses that $a$ satisfies
+  the parametricity predicate associated with the type $A$ on color~$i$.
+\item The term $a \param i$ yields a proof of $A \op i \proj i a$, where
+  $\proj i a$ denotes the realizer part of $a$,
   obtained by erasing the color $i$. (Erasure is detailed in
-  \fref{def:color-subst}.)
-\item The forms $\CP i t u$, $\CTimes i {x:A} B$ and $\fp i t u$ allow to
+  \fref{def:color-erasure}.)
+\item The forms $\CP i a p$, $\CTimes i {x:A} P$ and $\fp i t u$ allow to
   locally associate parametricity proofs with a given realizer.
+\item Free colors appear in the context, and bound using the
+  constructs $A \op i {}$ and $a \param$
 \end{enumerate}
 
 
 
-\begin{definition}[Typing judgements — à la Tarski]
-We mutually define three judgments:
-\begin{itemize}
-\item $Γ⊢_I$ (Is the context $Γ$ is well-formed, assuming the color set $I$?).
-\item $Γ⊢_I A$  (Is the type $A$ well-formed in $Γ$, assuming the color set $I$?)
-\item $Γ⊢_I a : A$  (Does the term $a$ have type $A$ in the context $Γ$, assuming the color set $I$?)
-\end{itemize}
-
-\fbox{$Γ⊢_I$}
+\begin{definition}[Typing judgements — à la Tarski]~\\\indent
+\fbox{$Γ⊢$}
   \begin{mathpar}
-    \inferrule[Empty]{~}{() ⊢_I }
+    \inferrule[Empty]{~}{() ⊢ }
 
-    \inferrule[NewVar]{Γ⊢_I \\ Γ ⊢_I A }{ Γ,x:A ⊢_I }
+    \inferrule[NewVar]{Γ⊢ \\ Γ ⊢ A }{ Γ,x:A ⊢ }
 
+    \inferrule[NewCol]{Γ⊢ }{ Γ,i:𝕀 ⊢ }
   \end{mathpar}
  
-\fbox{$Γ⊢_I A$}
+\fbox{$Γ⊢ A$}
  \begin{mathpar}
+    \inferrule[Universe]{~}{Γ ⊢ U}
 
-    \inferrule[Universe]{~}{Γ ⊢_I U}
+    \inferrule[Decode]{Γ ⊢ A : U}{Γ ⊢ \El{A}}
 
-    \inferrule[Decode]{Γ ⊢_I A : U}{Γ ⊢_I \El{A}}
-    \\
-    \inferrule[Pi]{Γ ⊢_I A \\ Γ,x:A ⊢_I B}{Γ ⊢_I (x:A) → B}
+    \inferrule[Swap]{Γ, i:𝕀, j:𝕀, Δ ⊢ A}{Γ, j:𝕀, i:𝕀, Δ  ⊢ A}
+ \end{mathpar}
+ \begin{mathpar}
+    \inferrule[Pi]{Γ ⊢ A \\ Γ,x:A ⊢ B}{Γ ⊢ (x:A) → B}
 
-    \inferrule[Out]{Γ ⊢_{I,i} T \\ Γ ⊢_I a : \proj i T}{Γ ⊢_I T \op i  a}
+    \inferrule[Out]{Γ, i:𝕀 ⊢ A \\ Γ ⊢ a : \proj i A}{Γ ⊢ A \op i  a}
 
-    \inferrule[In-Pred]{Γ ⊢_{I} A \\ Γ,x:A ⊢_{I} B}{Γ ⊢_{I,i} \CTimes i {x:A} B}
+    \inferrule[In-Pred]{Γ ⊢ A \\ Γ,x:A ⊢ P}{Γ, i:𝕀 ⊢ \CTimes i {x:A} P}
  \end{mathpar}
 
-\fbox{$Γ⊢_I a : A$}
+\fbox{$Γ⊢ a : A$}
   \begin{mathpar}
-    \inferrule[Conv]{Γ ⊢_I t:A \\ A = B}{Γ ⊢_I t : B}
+    \inferrule[Conv]{Γ ⊢ t:A \\ A = B}{Γ ⊢ t : B}
 
-    \inferrule[Var]{Γ ⊢_I \\ x : A ∈ Γ}{Γ ⊢_I x : A}
+    \inferrule[Var]{Γ ⊢ \\ x : A ∈ Γ}{Γ ⊢ x : A}
 
-    \inferrule[Code]{Γ ⊢_I A }{Γ ⊢_I |A| : U}
+    \inferrule[Code]{Γ ⊢ A }{Γ ⊢ |A| : U}
 
-    \\\inferrule[Lam]{Γ,x:A ⊢_I b : B}{Γ ⊢_I λx:A.b : (x:A) → B}
+    \inferrule[Swap]{Γ, i:𝕀, j:𝕀, Δ ⊢ a : A}{Γ, j:𝕀, i:𝕀, Δ  ⊢ a : A}
+    \\
+    \inferrule[Lam]{Γ,x:A ⊢ b : B}{Γ ⊢ λx:A.b : (x:A) → B}
  
-    \inferrule[App]{Γ ⊢_I t : (x:A) → B[x] \\ Γ ⊢_I u : A}{Γ ⊢_I t u: B[u]}
-
-    \\\inferrule[In-Abs]{Γ ⊢_I a : \proj i T \\Γ ⊢_I p : T \op i a}{Γ ⊢_{I,i} \CP i a p : T}
+    \inferrule[App]{Γ ⊢ t : (x:A) → B[x] \\ Γ ⊢ u : A}{Γ ⊢ t u: B[u]}
+    \\
+    \inferrule[In-Abs]{Γ ⊢ a : \proj i A \\Γ ⊢ p : A \op i a}{Γ, i:𝕀 ⊢ \CP i a p : A}
 
     \inferrule[In-Fun]
-        {Γ ⊢_I t : \projp i {(x:A) → P[x]}\\\\
-         Γ ⊢_I u : (x:\proj i A) → (x':A \op i x) → P[\CP i x {x'}] \op i t x}
-        {Γ ⊢_{I,i} \fp i t u : (x:A) → P[x]}
+        {Γ ⊢ t : \projp i {(x:A) → P[x]}\\\\
+         Γ ⊢ u : (x:\proj i A) → (x':A \op i x) → P[\CP i x {x'}] \op i t x}
+        {Γ, i:𝕀 ⊢ \fp i t u : (x:A) → P[x]}
 
-    \inferrule[Color-Elim]{Γ ⊢_{I,i} a : T}{Γ ⊢_I a \param i : T \op i {\proj i a}}
+    \inferrule[Color-Elim]{Γ, i:𝕀 ⊢ a : A}{Γ ⊢ a \param i : A \op i {\proj i a}}
   \end{mathpar}
 \end{definition}
 
 The parametricity constructions ($·$ and $∋$) act like color
 binders (they bring colors into scope), while the pairing constructs
 remove colors from scope.
-The equality relation used in the {\sc Conv} rule is detailed below in \fref{def:conversion}.
+The equality relation used in the {\sc Conv} rule is detailed below in
+\fref{def:conversion}.  The \textsc{Swap} rules allow us to use
+\textsc{Out} and \textsc{Color-Elim} with any free color, provided that
+no variable vas introduced after that color (see \eg, \fref{thm:param-2-sym}).
 
 Additionally, for the above system to be well-founded, we need to
 distinguish small and big types, and allow only small types to be
@@ -248,82 +278,42 @@ encoded in $U$. Small types are closed under product, $×_i$ and
 $∋_i$. The distinction between big and small types being standard, and
 to keep the presentation concise, we leave it implicit in the syntax.
 
-\begin{definition}
-  A \emph{color map} $f : I → J$ is a function $I → J ∪ \{0\}$ such that
-  $f(i_1) = f(i_2)$ iff. $i_1 = i_2$ whenever $f(i_1) = f(i_2) ∈ J$.
-\end{definition}
-
-\begin{definition}[Category $\pI{}$]
-  \label{def:pI}
-  Let objects be objects be finite color sets
-  and morphisms be color maps.
-  If $f : I → J$ and $g : J → K$, we define the composition $fg : I → K$
-  as $fg(i) = 0$ if $f(i) = 0$ and $fg(i) = g(f(i))$ if $f(i) ∈ J$.
-  We write $1_I : I → I$ for the identity map, and define it as $1_I(i) = i$ for each $i ∈ I$.
-  It is easy to check that \pI{} is a category (see \cite[ex.~9.7
-  p.~176]{PittsAM:nomsns} for another description of this category),
-  which is is equivalent to the category $\mathbf{Res}$ of nominal
-  restriction sets \cite[rem.~9.9 p.~161]{PittsAM:nomsns}.
-\end{definition}
-
-We note
-\begin{itemize}
-\item $(i\,0) : I,i → I$ the partial identity: $(i\,0)(i) = 0$ and $(i\,0)(j) = j$ for each $j ∈ I$; 
-\item $ι_i : I → I,i$ the inclusion: $ι_i(j) = j$ for each $j ∈ I$; and
-\item $f^{ij} : I,i → J,j$ the color map such that $f^{ij}(i) = j$
-  and $f^{ij}(k) = f(k)$ for all $k ∈ I$
-  (if $f : I → J$ with $i ∉ I$ and $j ∉ J$).
-\end{itemize}
-
-\begin{definition}[Color substitution]~
-  \label{def:color-subst}
-  We consider a color map $f : I → J$ as a (color) substitution on terms,
-  and define $af$ by structural induction on $a$.
+\begin{definition}[Color renaming and erasure]~
+  \label{def:color-erasure}
+  We consider a color $i ∈ 𝕀$ and some $φ ∈ 𝕀 ∪ \{0\}$,
+  and define the term $a(i\,φ)$ by induction on $a$.
 \begin{align*}
-  x f & = x \\
-  U f & = U \\
-  (λ(x:A).t) f &= λ(x:Af).tf \\
-  (t\,u) f &= (tf) \, (uf) \\
-  ((x:A)→B) f &= (x:Af)→(Bf) \\
-  \CP {i} a p f &= \CP {j} {ag} {pg}
-    & \text{if $f(i) = j ∈ J$, where g = $ι_i f (j\,0)$} \\
-    &= a(ι_if)
-    & \text{if $f(i) = 0$} \\
-  (A ×_i B) f &= \CTimes {j} {Ag} {(Bg)}
-    & \text{if $f(i) = j ∈ J$, where g = $ι_i f (j\,0)$} \\
-    &= A(ι_if)
-    & \text{if $f(i) = 0$} \\
-  \fp {i} t u f &= \fp {j} {tg} {ug}
-    & \text{if $f(i) = j ∈ J$, where g = $ι_i f (j\,0)$} \\
-    &= u(ι_if)
-    & \text{if $f(i) = 0$} \\
-  (A \op {i} a) f &= (Af^{ij}) \op {j} (af)
-    & \text{where $j = \fresh J$} \\
-  (a · i) f &= (af^{ij}) · j
-    & \text{where $j = \fresh J$}
+  x \mor{i}{φ} & = x \\
+  U \mor{i}{φ} & = U \\
+  \El{A} \mor{i}{φ} & = \El {A\mor{i}{φ}} \\
+  |A| \mor{i}{φ} & = |A\mor{i}{φ}| \\
+  (λ(x:A).b)\mor{i}{φ} &= λ(x:A\mor{i}{φ}).b\mor{i}{φ} \\
+  (t\,u)\mor{i}{φ} &= (t\mor{i}{φ}) \, (u\mor{i}{φ}) \\
+  ((x:A)→B)\mor{i}{φ} &= (x:A\mor{i}{φ})→(B\mor{i}{φ}) \\
+  {\CP {i} a p}\mor{i}{0} &= a \\
+  {\CP {i} a p}\mor{i}{j} &= \CP {j} a p \\
+  {\CP {i} a p}\mor{j}{φ} &= \CP {i} {a\mor{j}{φ}} {p\mor{j}{φ}} &\text{if $i ≠ j$} \\
+  (\CTimes {i} {x:A} P)\mor{i}{0} &= A \\
+  (\CTimes {i} {x:A} P)\mor{i}{j} &= \CTimes {j} {x:A} P \\
+  (\CTimes {i} {x:A} P)\mor{j}{φ} &= \CTimes {i} {x:A\mor{j}{φ}} {P\mor{j}{φ}} &\text{if $i ≠ j$} \\
+  {\fp {i} t u}\mor{i}{0} &= t \\
+  {\fp {i} t u}\mor{i}{j} &= \fp {j} t u \\
+  {\fp {i} t u}\mor{j}{φ} &= \fp {i} {t\mor{j}{φ}} {u\mor{j}{φ}} &\text{if $i ≠ j$} \\
+  (A \op {i} a)\mor{i}{φ} &= {A\mor{i}{j}\mor{i}{φ}} \op {j} {a\mor{i}{φ}} &\text{where $j = \fresh{\{i\}}$} \\
+  (A \op {i} a)\mor{j}{φ} &= (A\mor{j}{φ}) \op {i} (a\mor{j}{φ}) &\text{if $i ≠ j$} \\
+%
+  (a · i)\mor{i}{φ} &= a \mor{i}{j}\mor{i}{φ} · j &\text{where $j = \fresh{\{i\}}$} \\
+  (a · i)\mor{j}{φ} &= a\mor{j}{φ} · i &\text{if $i ≠ j$} \\
   \end{align*}
-We extend the definition to contexts in the obvious way:
-  \begin{align*}
-  () f      &= () \\
-  (Γ,x:A) f &= Γ f, x : A f
-\end{align*}
-We leave color substitution undefined if a color appears free in the
-term but is not in the domain of $f$.
 \end{definition}
 
-\begin{theorem}~
+\begin{theorem}[Color erasure and substitution preserve typing]
+  If $Γ,i:𝕀  ⊢ a : A$ then the terms $a(i\,φ)$ and $A(i\,φ)$ are
+  defined and
   \begin{itemize}
-  \item $a1_I = a$
-  \item $(af)g = a(fg)$ for any $f: I → J$ and $g : J → K$
+    \item $Γ ⊢ a(i\,0) : A(i\,0)$, and
+    \item $Γ, j :𝕀 ⊢ a(i\,j) : A(i\,j)$.
   \end{itemize}
-\end{theorem}
-\begin{proof}
-  By structural induction on $a$.
-\end{proof}
-
-\begin{theorem}[Color substitution preserves typing]
-  If $Γ ⊢_I a : A$ then the term
-$af$ is defined and $Γ f ⊢_J af : Af$.
 \end{theorem}
 \begin{proof}
   By induction on the typing judgment.
@@ -343,32 +333,35 @@ $af$ is defined and $Γ f ⊢_J af : Af$.
 \end{definition}
 }
 
-\begin{definition}[Conversion]~
+\begin{definition}[Conversion]
 \label{def:conversion}
 The convertibility of types used in the {\sc Conv} rule and written
 simply ($=$) is defined as the smallest congruence containing the
 following rules.
 \begin{mathpar}
-  \inferrule[Pair-App]{}{{\fp i t u} \, a      = (t\,{\proj i a} ,_i u\,{\proj i a}\,{(a \param i)})}
-\and
   \inferrule[Pair-Param]{}{{(a,_i p)}\param i   = p}
 \and
-  \inferrule[Pair-Pred]{}{{(\CTimes i {x:A} B[x])} \op i a = B[a]}
+  \inferrule[Pair-App]{}{{\fp i t u} \, a      = (t\,{\proj i a} ,_i u\,{\proj i a}\,{(a \param i)})}
 \and
+  \inferrule[Pair-Pred]{}{{(\CTimes i {x:A} P[x])} \op i a = P[a]}
+    \\
+    %\inferrule[Surj-Param]{\proj i t = a \\ t \param i = p} {t = \CP i a p }
+    \inferrule[Surj-Param]{} {t = \CP i {\proj i t} {t \param i} }
+    \and
+    %\inferrule[Surj-Fun]{\proj i t = u \\ (t \CP i x y) \param i = v x y} {t = \fp i u v }
+    \inferrule[Surj-Fun]{} {t = \fp i {\proj i t} {λx x'. (t \CP i x {x'}) \param i}}
+    \and
+    %\inferrule[Surj-Typ]{\proj i T = A \\ T \op i x = B} {T = \CTimes i {x:A} B }
+    \inferrule[Surj-Typ]{} {T = \CTimes i {x:{\proj i T}} {(T \op i x)} }
+    \\
     \inferrule{}{\El{|A|} = A}
 \and
     \inferrule{}{|\El{A}| = A}
 \and
-    \inferrule[β]{}{(λx:A. u[x]) t = u[t]}
+    \inferrule[β]{}{(λx:A. b[x]) u = b[u]}
 \and
-    \inferrule[η]{t x = u} {t = λ x:A.u}
-    \and
-    \inferrule[Surj-Param]{\proj i t = a \\ t \param i = p} {t = \CP i a p }
-    \and
-    \inferrule[Surj-Fun]{\proj i t = u \\ (t \CP i x y) \param i = v x y} {t = \fp i u v }
-    \and
-    \inferrule[Surj-Typ]{\proj i T = A \\ T \op i x = B} {T = \CTimes i {x:A} B }
-    \and
+    \inferrule[η]{t x = b} {t = λ x:A.b}
+    \\
     \inferrule[Refl]{~}{a = a}
     \and
     \inferrule[Sym]{a = b}{b = a}
@@ -377,14 +370,21 @@ following rules.
   \end{mathpar}
 \end{definition}
 
-\begin{corollary}[Any term can be seen as a pair of a realizer and a parametricity proof]~
-  \label{cor:equalities}
-  \begin{itemize}
-  \item $a = \CP i {\proj i a} {a \param i}$
-  \item $T = \CTimes i {x:\proj i T} {(T \op i x)}$
-  \item $t = \fp i {\proj i t} {λx x'. (t \CP i x {x'}) \param i}$
-  \end{itemize}
-\end{corollary}
+\begin{remark}
+  In order to be well-typed the context of the conclusion of the
+  \textsc{Pair-App}, \textsc{Surj-Param}, \textsc{Surj-Fun} and
+  \textsc{Surj-Typ} needs to end with the color binding $i : 𝕀$.
+\end{remark}
+
+%\begin{corollary}[Any term can be seen as a pair of a realizer and a parametricity proof]
+%  \label{cor:equalities}
+%  In a context ending with $i : 𝕀$,
+%  \begin{itemize}
+%  \item $t = \CP i {\proj i t} {t \param i}$
+%  \item $T = \CTimes i {x:\proj i T} {(T \op i x)}$
+%  \item $t = \fp i {\proj i t} {λx x'. (t \CP i x {x'}) \param i}$
+%  \end{itemize}
+%\end{corollary}
 
 Our conversion relation is intentional for functions, but extensional
 when it comes to dependencies on colors. Because there is at any point
@@ -393,28 +393,29 @@ conversion relation is decidable.
 
 \section{Parametricity}
 \label{sec:parametricity}
+%\todo{more examples: any $f : U → Bool$ is constant,…}
 In this section we prove that our system properly internalizes
 parametricity. We also illustrate the system by giving a few simple
 proofs relying on parametricity (including iterated parametricity).
 
-Contrary to previous type theories with internalized parametricity
+Unlike previous type theories with internalized parametricity
 \citep{bernardy_computational_2012, bernardy_type-theory_2013}, the
 system presented here lacks equalities which allow to compute
-parametricity types. Expressed in our syntax, those equalities would become the conversion rules:
-$$U \op i A = A → U$$
-and
-$$((x:A) → B[x]) \op i f = (x:A) → (x' : A \op i x) → B[\CP i x {x'}] \op i (f x).$$
+parametricity types. Expressed in our syntax, those equalities would
+become the conversion rules:
+\begin{center}$U \op i A = A → U$, and\end{center}
+\begin{center}$((x:A) → B[x]) \op i f = (x:A) → (x' : A \op i x) → B[\CP i x {x'}] \op i (f x).$\end{center}
 
 The absence of the above equalities allows for a simpler system, but
 how can we ensure that all parametricity theorems hold?  The answer is
 that the above relationships hold as isomorphisms.
-
-We say that $A$ is isomorphic to $B$ iff.
+%
+We say that $A$ is \emph{isomorphic to} $B$ iff.
 \begin{enumerate}
-  \item There exist $f : A → B$
-  \item There exist $g : B → A$
-  \item For any $x$, $f\, (g\, x) = x$
-  \item For any $x$, $g\, (f\, x) = x$
+  \item There exist $f : A → B$,
+  \item There exist $g : B → A$,
+  \item For any $x$, $f\, (g\, x) = x$, and
+  \item For any $x$, $g\, (f\, x) = x$.
 \end{enumerate}
 This notion of isomorphism is quite strong, because the equality used
 in its definition is the conversion relation (\fref{def:conversion}).
@@ -435,10 +436,12 @@ $U \op i A$ is isomorphic to $A → U$.
       g &: (P : A → U) → U \op i A\\
       g &P = (\CTimes i {x:A} (P x)) \param i
     \end{array}$
-  \item $\CP i A {(\CTimes i {y:A} (P y)) \param i} \op i x = (\CTimes i {y:A} (P y)) \op i x = P x$.
-    By $η$-contraction we get the desired result.
+  \item $\CP i A {(\CTimes i {y:A} (P y)) \param i} \op i x = (\CTimes i {y:A} (P y)) \op i x = P x$
+    by \textsc{Pair-Param} then \textsc{Pair-Pred}, and we conclude by
+    $η$-contraction.
   \item $(\CTimes i {x:A} {\CP i A Q \op i x}) \param i = {\CP i A Q} \param i = Q$
-    by \fref{cor:equalities} for $×_i$.
+    by \textsc{Surj-Typ} (indeed $\CTimes i {x:A} {\CP i A Q \op i x}$
+    is typed in a context ending with $i:𝕀$) and \textsc{Pair-Pred}.
   \qedhere
   \end{enumerate}
 \end{proof}
@@ -457,11 +460,22 @@ $((x:A) → B[x]) \op i f$ is isomorphic to $$(x:A) → (x' : A \op i x) → B[\
       g &: ((x:A) → (x' : A \op i x) → B[\CP i x {x'}] \op i (f\,x)) →  ((x:A) → B[x]) \op i f\\
       g & p= \fp i f p \param i
     \end{array}$
-  \item $(\CP i f {\fp i f p \param i} \CP i x x') \param i = ({\fp i
-      f p} \CP i x {x'}) \param i = \CP i {f\, x} {p\, x\, x'} \param i = p\, x\, x'$
-  \item $\fp i f {λx x'. (\CP i f q \CP i x {x'}) \param i} \param i =
-         {\CP i f q} \param i = q$
-    by \fref{cor:equalities} for function pairing.
+  \item $(\CP i f {\fp i f p \param i}\, \CP i x x') \param i
+      = ({\fp i f p}\, \CP i x {x'}) \param i
+      = \CP i {f\, x} {p\, x\, x'} \param i
+      = p\, x\, x'$
+    by \textsc{Surj-Param}
+    then \textsc{Pair-App}
+    (indeed $\fp i f p$ and ${\fp i f p}\, \CP i x {x'}$ are typed in a
+    context ending with $i:𝕀$)
+    and we conclude by \textsc{Pair-Param}.
+
+  \item $\fp i f {λx x'. (\CP i f q\, \CP i x {x'}) \param i} \param i
+      = {\CP i f q} \param i
+      = q$
+    by \textsc{Surj-Fun}
+    (indeed $\CP i f q$ is typed in a context ending with $i:𝕀$)
+    and we conclude by \textsc{Pair-Param}.
   \qedhere
   \end{enumerate}
 \end{proof}
@@ -469,77 +483,152 @@ $((x:A) → B[x]) \op i f$ is isomorphic to $$(x:A) → (x' : A \op i x) → B[\
 In practice, when carrying out parametricity proofs, many of the steps
 of the above isomorphisms cancel each other and one obtains a simpler
 proof. This behaviour is illustrated by the following example:
-parametricity for Church-encoded natural numbers.
+parametricity for the polymorphic identity and Church-encoded natural numbers.
 (For the sake of simplicity, in the remainder of this section, we leave out the
 distinction between types and their codes.)
+
 \begin{example}
+  \label{ex:poly-id}
+  Any function $f : (X : U) → X → X$ is the polymorphic identity, \ie,
+  its output is Leibniz-equal to its second argument. Assume a context
+  $$Γ = f : (X : U) → X → X,\enspace
+    A : U,\enspace
+    P : A → U,\enspace
+    a : A,\enspace
+    p : P\, A$$
+  Then
+  $Γ, i:𝕀⊢\CTimes i {x:A} {(P\,x)}$
+  and by \textsc{Pair-Pred}
+  %(because $Γ ⊢ (\CTimes i {x:A} {(P\,x)}) \op i a = P\,a$)
+  $Γ, i:𝕀⊢\CP i a p : \CTimes i {x:A} {(P\,x)}$, thus
+  $Γ, i:𝕀⊢f\, (\CTimes i {x:A} {(P\,x)})\, {\CP i a p} : \CTimes i {x:A} {(P\,x)}$
+  and finally
+  \begin{align*}
+   Γ ⊢(f\, (\CTimes i {x:A} {(P\,x)})\, {\CP i a p}) \param i
+   &: (\CTimes i {x:A} {(P\,x)}) \op i \proj i {(f\, (\CTimes i {x:A} {(P\,x)})\, {\CP i a p})} \\
+   &= P\, \proj i {(f\, (\CTimes i {x:A} {(P\,x)})\, {\CP i a p})}
+    = P\, (f\, A\, a)
+  \end{align*}
+\end{example}
+
+\begin{example}
+  \label{ex:church-nat}
 Let $N = (X : U) → X → (X → X) → X$.
-Proving (unary) parametricity for $N$ means that, assuming
-\begin{itemize}
-\item $f : N$
-\item $A : U$
-\item $P : A → U$
-\item $z : A$
-\item $z' : P\, z$
-\item $s : A → A$
-\item $s' : (x:A) → P\, x → P\, (s\, x)$
-\end{itemize}
+Proving (unary) parametricity for $N$ means that, assuming a context $Γ$
+  $$f : N,\enspace
+    A : U,\enspace
+    P : A → U,\enspace
+    z : A,\enspace
+    z' : P\, z,\enspace
+    s : A → A,\enspace
+    s' : (x:A) → P\, x → P\, (s\, x),$$
 we can prove $P\, (f\, A\, z\, s)$.
 
-Indeed, a proof term is the following:
-%
-\[
-(f (\CTimes i {x:A} (P x)) \CP i z {z'} \fp i s {s'}) \param i
-\]
+Indeed
+  $Γ, i:𝕀⊢\CTimes i {x:A} {(P\,x)}$,
+  and by \textsc{Pair-Pred}
+  $Γ, i:𝕀⊢ \CP i z {z'} : \CTimes i {x:A} {(P\,x)}$ and
+  $Γ, i:𝕀⊢ \fp i s {s'} : \CTimes i {x:A} {(P\,x)} → \CTimes i {x:A} {(P\,x)}$,
+thus
+  \begin{align*}
+    &Γ, i:𝕀 ⊢ f\, (\CTimes i {x:A} {(P\,x)})\, {\CP i z {z'}}\, \fp i s {s'} : \CTimes i {x:A} {(P\,x)}\text{, and finally}\\
+    &Γ ⊢ (f\, (\CTimes i {x:A} {(P\,x)})\, {\CP i z {z'}}\, \fp i s {s'}) \param i
+       : (\CTimes i {x:A} {(P\,x)}) \op i (f\, A\, z\, s)
+       = P\, (f\, A\, z\, s)
+  \end{align*}
+\end{example}
+
+As seen in \fref{ex:church-nat}, one needs to use the
+$\fp i t u$ to pair a function with the parametricity proof of its type
+if one wants to apply that pair to some argument and reduce the
+application.  This is because as noted above, our system does not
+support direct computation of free theorems: in particular $(A → B) \op i a$
+does not reduce.
+
+At this point one may wonder, since a new syntactic construction was
+introduced for function types, if yet another construction is required
+for higher order functions.  It turns out $\fp i t u$ can be combined
+with $\CP i a p$ to pair higher order functions with the parametricity
+proof of their type, as illustrated in the following example.
+
+\begin{example}
+  Let $F = (X : U) → ((X → X) → X) → X$.
+  Proving (unary) parametricity for $F$ means that, assuming a context
+  %\begin{multline*}
+    $Γ = f : F,\enspace
+    A : U,\enspace
+    P : A → U,\enspace
+    g : (A → A) → A,\enspace
+    g' : (h : A → A) → ((x : A) → P\, x → P\, (h\, x)) → P\, (g\, h)$,
+  %\end{multline*}
+  we can prove $P\, (f\, A\, g)$.
+
+  Let $T = \CTimes i {x:A} {(P\,x)}$.
+%  and $Δ = Γ, h:A → A, h': (T → T) \op i h$.
+  We have $Γ, i:𝕀 ⊢ T$ and
+  \begin{align*}
+    \!\!\!&Γ, h:A → A, h': (T → T) \op i h, x : A, x' : P\, x, i:𝕀 ⊢ \CP i h {h'} : T → T\text{, hence}
+    \\
+    \!\!\!&Γ, h:A → A, h': (T → T) \op i h, x : A, x' : P\, x ⊢ (\CP i h {h'}\, \CP i x {x'}) \param i : T \op i h\, x = P\, (h\, x)
+    \\
+    \!\!\!&Γ, h:A → A, h': (T → T) \op i h ⊢ g'\, h\, (λ (x : A).\, λ (x' : P\, x).\, (\CP i h {h'}\, \CP i x {x'}) \param i) : P\, (g\, h)
+  \end{align*}
+  Let $g'' = λ h.\, λ h'.\, g'\, h\, λ (x : A).\, λ (x' : P\, x).\, (\CP i h {h'}\, \CP i x {x'}) \param i$.
+  Since we have $Γ ⊢ g'' : (h:A → A) → (T → T) \op i h → P\, (g\, h)$
+  we can pair it with $g$ and
+  $Γ, i:𝕀 ⊢ \fp i g {g''} : (T → T) → T$. We can finally conclude as before, that
+  $Γ ⊢ (f\, T\, \fp i g {g''}) \param i : P\, (f\, A\, g)$.
 \end{example}
 
 \subsection{Iterating Parametricity}
 In our system, one can use parametricity generically as follows:
 \begin{align*}
-p &: (A:U) → (x:A) → A \op i x\\
-p\, x &= x\param i
+p &: (X:U) → (x:X) → X \op i x\\
+p\, X\, x &= x\param i
 \end{align*}
 We have already seen that $A \op i $ corresponds to the parametricity
-predicate for type $A$. We can iterate this operator to construct
-relations between parametricity witnesses. That is, given
-\begin{align*}
-  x & :A \\
-  y & : A \op i x\\
-  z & : A \op i x
-\end{align*}
-Then the type $A \op i \CP j x y \op j z$ is well formed ($∋$ is left
+predicate for type $A$.
+As we hinted at in the introduction, the color index $i$ allows us to
+distinguish each application of Parametricity.  (As a side remark, since
+the \textsc{Param} rules ``consumes'' a color, limiting nested
+applications of Parametricity can trivialy be enforced in our system by
+limiting the number of free colors in the context.)
+We can iterate the operator $A \op {·} $ to construct
+relations between parametricity witnesses. That is, given a context with
+$$x :A,\enspace
+  y : A \op j x,\enspace
+  z : A \op i x,$$
+the type $A \op i \CP j x y \op j z$ is well formed ($∋$ is left
 associative), and can be understood as a relation
 between the parametricity proofs $y$ and $z$. The following results about this relation illustrate the expressivity of our system.
 \begin{theorem}
+  \label{thm:param-2-sym}
 If the type $A$ does not depend on either $i$ or $j$, the relation $λy z. A \op i \CP j x y \op j z$ is symmetric.
 \end{theorem}
 \begin{proof}
   We first construct the proof term:
   \begin{align*}
-    &\sigma_1 : (x:A) → (y : A \op i x) → (z : A \op i x) → (w : A \op i \CP j x y \op j z) → A \op j \CP i x z \op i y \\
+    &\sigma_1 : (x:A) → (y : A \op i x) → (z : A \op i x) → A \op i \CP j x y \op j z → A \op j \CP i x z \op i y \\
     &\sigma_1\, x\, y\, z\, w = \CP i {\CP j x y}{\CP j z w} \param j \param i
   \end{align*}
   And, by α-equivalence on colors, $A \op j \CP i x z \op i y = A \op i \CP j x z \op j y$.
 \end{proof}
 
 \begin{theorem}
-  The function $\sigma_1$ (defined above) is involutive in its last argument:
-  \[ \sigma_1\, y\, x\, z\, (\sigma_1\, x\, y\, z\, w) = w \]
+  The types $A \op i \CP j x y \op j z$ and $A \op j \CP i x z \op i y$ are isomorphic.
 \end{theorem}
 \begin{proof}
+  We show that %the function $\sigma_1$ (defined above) is involutive in its last argument, \ie,
+  $\sigma_1\, y\, x\, z\, (\sigma_1\, x\, y\, z\, w) = w$.
   Let
-  \begin{align*}
-    t &= \CP i {\CP j x y}{\CP j z w} \\
-    w' &= t \param j \param i \\
-    t' &= \CP j {\CP i x z}{\CP i y {w'}}
-  \end{align*}
+    $t = \CP i {\CP j x y}{\CP j z w},\enspace
+    w' = t \param j \param i,\enspace
+    t' = \CP j {\CP i x z}{\CP i y {w'}}.$
   Then
-  \begin{align*}
-    \proj i {t'} &= \CP j x y = \proj i t \\
-    \proj j {t'} &= \CP i x z = \proj j t \\
-    \projp i {t\param j} &= y
-  \end{align*}
-We continue to reason by deduction:
+  $\proj i {t'} = \CP j x y = \proj i t$,
+  $\proj j {t'} = \CP i x z = \proj j t$, and
+  $\projp i {t\param j} = y$.
+We now continue to reason by deduction:
   \begin{align*}
     w' &= t \param j \param i & \text{By def}\\
     {\CP i y {w'}} &= t\param j & \text{Because $\projp i {t\param j} = y $}  \\
@@ -551,9 +640,6 @@ We continue to reason by deduction:
   \qedhere
   \end{align*}
 \end{proof}
-\begin{corollary}
-  The types $A \op i \CP j x y \op j z$ and $A \op j \CP i x z \op i y$ are isomorphic.
-\end{corollary}
 
 \begin{remark}
   At this point one may wonder if the system could have been set up to have
@@ -574,15 +660,15 @@ We continue to reason by deduction:
 \end{remark}
 \begin{theorem}
   If the type $A$ and the term $a$ do not depend on either $i$ or $j$,
-  any proof $a'$ of $A \op i a$ (not depending on $i$ or $j$ either)
-  is related to the canonical proof ($a \param i$), \ie, formally $A
-  \op i \CP j a {a \param i} \op j a'$.
+  and $a' : A \op i a$ (not depending on $i$ or $j$ either), then
+  %is related to the canonical proof ($a \param i$), \ie, formally
+  $A \op i \CP j a {a \param i} \op j a'$.
 \end{theorem}
 \begin{proof}
 We can construct the following closed term:
   \begin{align*}
     &q   : (A:U) → (x:A) → (x':A \op i x) → A \op i \CP j x {x \param i} \op j x'\\
-    &q   : (A:U) → (x:A) → (x':A \op i x) → A \op i x \op j x' &\text {by \fref{cor:equalities}}\\
+    &q   : (A:U) → (x:A) → (x':A \op i x) → A \op i x \op j x' &\text{by \textsc{Surj-Param}}\\
     &q\, A\, x\, x' = x' \param j
   \end{align*}
 The result is obtained by substituting $a$ for $x$ and $a'$ for $x'$.
@@ -600,37 +686,65 @@ generators of the symmetric group.
 \label{sec:model}
 In this section we show how to interpret our type theory by a presheaf model.
 % \todo{General idea for those who won't read it}
-Recall \pI{} (\fref{def:pI}), the category of color maps.
 
+\begin{definition}
+  If $I$ and $J$ are two \emph{finite} subsets of $𝕀$, we call
+  \emph{color map} any function $f : I → J ∪ \{0\}$ such that
+  $i_1 = i_2$ for any $i_1, i_2 ∈ I$ with $f(i_1) = f(i_2) ∈ J$.
+  We then note $f : I → J$.
+\end{definition}
 
- \begin{definition}[Projection]
-    We say that a morphism $α : I → I_α$ is a \emph{projection} if
-    $I_α ⊆ I$,
-    $α(i) = 0$ for each $i ∈ I \backslash I_α$, and
-    $α(i) = i$ for each $i ∈ I_α$.
-  \end{definition}
-  \begin{definition}[Total maps]
+\begin{definition}[Category $\pI{}$]
+  \label{def:pI}
+  Let objects be finite color sets and morphisms be color maps.
+  If $f : I → J$ and $g : J → K$, we define the composition $fg : I → K$
+  as $fg(i) = 0$ if $f(i) = 0$ and $fg(i) = g(f(i))$ if $f(i) ∈ J$.
+  We write $1_I : I → I$ for the identity map, and define it as $1_I(i) = i$ for each $i ∈ I$.
+  It is easy to check that \pI{} is a category (see \cite[ex.~9.7
+  p.~176]{PittsAM:nomsns} for another description of this category).
+\end{definition}
+
+If $f : I → J$, $i ∉ I$ and $j ∉ J$, we note
+$(f, i = j) : I,i → J,j$ the map defined by $(f,i=j)(i) = j$ and
+$(f,i=j)(k) = k$ $∀ k ∈ I$.
+
+If $f : I,i → J$ is such that $f(i) = 0$, we note $f-i : I → J$ the map
+defined by $(f-i)(k) = f(k)$ $∀ k ∈ I$.
+
+If $f : I,i → J,j$ is such that $f(i) = j$, we note $f-i : I → J$ the map
+defined by $(f-i)(k) = f(k)$ $∀ k ∈ I$.
+
+For an object $I$ and $i ∉ I$, we note $ι_i : I → I,i$ the inclusion
+map, defined by $ι_i(k) = k$ $∀ k ∈ I$.
+
+\begin{definition}[Projection]
+   We say that a morphism $α : I → I_α$ is a \emph{projection} if
+   $I_α ⊆ I$,
+   $α(i) = 0$ for each $i ∈ I \backslash I_α$, and
+   $α(i) = i$ for each $i ∈ I_α$.
+\end{definition}
+\begin{definition}[Total maps]
   Injective morphisms, noted $h : I ↣ J$, are the \emph{total} ones, \ie,
   those verifying $h(i) ≠ 0$ for all $i ∈ I$.
-  \end{definition}
-  \begin{remark}[Morphism decomposition]
+\end{definition}
+\begin{remark}[Morphism decomposition]
   Any morphism $f : I → J$ has a
   unique decomposition into a projection map
   $α : I → I_α$ and a total map $h : I_α ↣ J$.
-  \ifthenelse{\boolean{tikz}}{
-  \begin{center}%
-  \begin{tikzpicture}[node distance=4\baselineskip]%
-      \node              (I)  {$I$};
-      \node[below of=I]  (Ia) {$I_α$};
-      \node[right of=Ia] (J)  {$J$};
-
-      \draw[->,dotted] (I) to node[left] {$α$} (Ia);
-      \draw[->] (I) to node[above right] {$f$} (J);
-      \draw[to reversed->,dotted] (Ia) to node[below] {$h$} (J);
-  \end{tikzpicture}%
-  \end{center}%
-  }{}
-  \end{remark}
+%  \ifthenelse{\boolean{tikz}}{
+%  \begin{center}%
+%  \begin{tikzpicture}[node distance=4\baselineskip]%
+%      \node              (I)  {$I$};
+%      \node[below of=I]  (Ia) {$I_α$};
+%      \node[right of=Ia] (J)  {$J$};
+%
+%      \draw[->,dotted] (I) to node[left] {$α$} (Ia);
+%      \draw[->] (I) to node[above right] {$f$} (J);
+%      \draw[to reversed->,dotted] (Ia) to node[below] {$h$} (J);
+%  \end{tikzpicture}%
+%  \end{center}%
+%  }{}
+\end{remark}
 
 \begin{definition}[$I$-set]
   We call $I$-element any tuple indexed by the subsets of $I$: $(u_J)_{J ⊆ I}$.
@@ -643,15 +757,19 @@ Recall \pI{} (\fref{def:pI}), the category of color maps.
   If $a,b$ are $I$-elements and $j ∉ I$, we define the $(I,j)$-element
   $(a ,_j b)$ as $(a ,_j b)_J ≔ a_J$ if $j ∉ J$ and $(a ,_j b)_{J,j} ≔ b_J$.
   %
-  Any $(I,i)$-element can be written $u = (u_J)_{J ⊆ \{I,i\}} = (u_J)_{J ⊆ I} ∪ (u_{J,i})_{J ⊆ I}$;
-  We can therefore define the $I$-elements $u (i\,0) ≔ (u_J)_{J ⊆ I}$ and $u · i ≔ (u_{J,i})_{J ⊆ I}$.
+  Any $(I,i)$-element (where $I,i$ is a shorthand for $I ∪ \{i\}$ with
+  $i ∉ I$) can be written $u = (u_J)_{J ⊆ I,i} = (u_J)_{J ⊆ I} ∪ (u_{J,i})_{J ⊆ I}$;
+  We can therefore define the $I$-elements $u (i\,0) ≔ (u_J)_{J ⊆ I}$ and
+  $u · i ≔ (u_{J,i})_{J ⊆ I}$.
   (Hence by definition $u = (u (i\,0) ,_i u · i)$.)
 
-\bigskip
 Recall that a \emph{presheaf} $F$ on $\pI^\opp$ is given by a family of
 sets $F(I)$ together with restriction maps $F(I) → F(J)$, $u ↦ uf$ for
-$f : I → J$ satisfying $u1 = u$ and $(uf)g = u(fg)$. We use a refined
-presheaf on $\pI^\opp$ by requiring two further conditions:
+$f : I → J$ satisfying $u1 = u$ and $(uf)g = u(fg)$.
+Note that the category of presheaves on $\pI^\opp$ is equivalent to the
+category $\mathbf{Res}$ of nominal restriction sets \cite[rem.~9.9 p.~161]{PittsAM:nomsns}.
+%
+We use a refined presheaf on $\pI^\opp$ by requiring two further conditions:
 %
 \begin{enumerate}
   \item for any object $I$, $F(I)$ is an $I$-set; and
@@ -663,64 +781,84 @@ presheaf on $\pI^\opp$ by requiring two further conditions:
 Seeing an $I$-element $u$ as a tuple indexed by projection maps
 $α : I → I_α$, the second requirement can be written $(uα)_β = u_{αβ}$.
 
-\bigskip
-A context $Γ ⊢_I$ is interpreted as a presheaf on the slice category
-$\pI^\opp/I$, \ie, by a family of $J$-sets $Γf$ for any map $f : I → J$
-together with restriction maps $Γ f → Γ fg$, $ρ ↦ ρg$
-for $g : J → K$ satisfying the conditions $ρ 1 = ρ$ and $(ρg)h = ρ(gh)$.
-Furthermore the map $Γf → Γ(fα)$, $ρ ↦ ρα$ is the projection operation.
+\smallskip
+A context $Γ ⊢$ is interpreted by a (usual) presheaf on $\pI^\opp$, \ie,
+by a family of sets $Γ(I)$ for each object $I$, together with
+restriction maps $Γ(I) → Γ(J)$, $ρ ↦ ρf$ for $f : I → J$ satisfying the
+conditions $ρ1 = ρ$ and $(ρf)g = ρ(fg)$.
 
-\medskip
-A type $Γ ⊢_I A$ is interpreted as follows.
-For each map $f : I → J$ and $ρ ∈ Γf$ we give a $J$-set $A(f,ρ)$
-together with restriction maps $A(f,ρ) → A(fg,ρg)$, $u ↦ ug$ if $g : J → K$
-satisfying $u1 = u$ and $(ug)h = u(gh)$ for any $h : K → L$.
-Furthermore the map $A(f,ρ) → A(fα,ρα)$, $u ↦ uα$ is the projection operation.
+A type $Γ ⊢ A$ is interpreted by an $I$-set $Aρ$ for each object $I$ and
+$ρ ∈ Γ(I)$,
+together with restriction maps $Aρ → A(ρf)$, $u ↦ uf$ if $f : I → J$
+satisfying $u1 = u$ and $(uf)g = u(fg)$ for any $g : J → K$.
+Furthermore the map $Aρ → A(ρα)$, $u ↦ uα$ is the projection operation.
 
-\medskip
-A term $Γ ⊢_I a : A$ is interpreted by a $J$-element $a(f,ρ) ∈ A(f,ρ)$
-for each $f: I → J$ and $ρ ∈ Γf$, such that
-$a(f,ρ)g = a(fg,ρg)$ for any $g : J → K$.
+A term $Γ ⊢ a : A$ is interpreted by a $I$-element $aρ ∈ Aρ$ for each
+object $I$ and $ρ ∈ Γ(I)$, such that $aρf = a(ρf)$ for any $f : I → J$.
 
-\medskip
-If $Γ ⊢_I A$ we define the interpretation of $Γ,x:A ⊢_I$
-by taking $⟨ρ,x=u⟩_α = ⟨ρ_α,x=u_α⟩$, where and $ρ ∈ Γf$ and
-$u ∈ A(f,ρ)$.
-The restriction map is defined by $⟨ρ,x=u⟩g = ⟨ρ g, x=ug⟩$.
+If $Γ⊢$ and $Γ ⊢ A$ we define the interpretation of $Δ = Γ,x:A$
+by taking $⟨ρ,x=u⟩ ∈ Δ(I)$ to mean $ρ ∈ Γ(I)$ and $u ∈ Aρ$.
+The restriction map is defined by $⟨ρ,x=u⟩f = ⟨ρf, x=uf⟩$.
 
-\bigskip
+If $Γ⊢$ we define the interpretation of $Δ = Γ,i:𝕀$ by taking
+$[ρ,i=φ] ∈ Δ(I)$ to mean either $φ = 0$ and $ρ ∈ Γ(I)$, or
+$φ = j ∈ I$ and $ρ ∈ Γ(I\backslash\{j\})$.
+The restriction map is defined by
+$[ρ,i=0]f = [ρf,i=0]$ and $[ρ,i=j]f = [ρ(f-j),i=f(j)]$.
+\begin{remark}
+  In other words,
+  $Γ,x:A⊢$ is interpreted by the cartesian product $(ρ∈Γ) × Aρ$ of the
+  interpretations of $Γ⊢$ and $Γ⊢A$, while
+  $Γ,i:𝕀⊢$ is interpreted by the separated product \cite[sec.~3.4
+  p.~54]{PittsAM:nomsns} $Γ ∗ 𝕀$ of the
+  interpretation of $Γ⊢$ and $𝕀 ∪ \{0\}$:
+  $$Γ ∗ 𝕀(I) = \{ [ρ,i=0] \mid ρ ∈ Γ(I) \} ∪
+               \{ [ρ,i=j] \mid j ∈ I, ρ ∈ Γ(I\backslash\{j\}) \}$$
+  %
+  We also note that $Γ,i:𝕀,j:𝕀 ⊢$ and $Γ,j:𝕀,i:𝕀 ⊢$ are respectively
+  interpeted as the sets of $[ρ,i=φ,j=φ']$ and $[ρ,j=φ,i=φ']$, which are
+  trivially isomorphic.
+%  \begin{align*}
+%    Γ ∗ 𝕀 ∗ 𝕀(I) =& \{ [ρ,i=0,j=0] \mid ρ ∈ Γ(I) \} ∪
+%      \{ [ρ,i=k,j=0] \mid k ∈ I, ρ ∈ Γ(I\backslash\{k\}) \} ∪ \\
+%    & \{ [ρ,i=0,j=l] \mid l ∈ I, ρ ∈ Γ(I\backslash\{l\}) \} ∪ \\
+%    & \{ [ρ,i=k,j=0] \mid k ∈ I, k ∈ I\backslash\{l\} I, ρ ∈ Γ(I\backslash\{k,l\}) \}
+%  \end{align*}
+\end{remark}
+
 The above refinement on presheaves is necessary for the interpretation
 of some of our syntactic constructions.  Indeed, without this refinement,
-it is not clear how to validate the equality
-${{(\CTimes i {x:A} B[x])} \op i a = B[a]}$.
+it is not clear how to validate the equality \textsc{Pair-Pred}:
+${{(\CTimes i {x:A} P[x])} \op i a = P[a]}$.
 
-\bigskip
-The semantics we define satisfies the substitution law. That is, if $Γ,x:A ⊢_I B$
-and $Γ ⊢_I a:A$ then for any $f : I → J$ and $ρ ∈ Γ f$ we have
-$B[a](f,ρ) = B(f,⟨ρ,x=a(f,ρ)⟩)$.
-It also satisfies the substitution law on colors, \ie, if $Γ ⊢_I A$ and
-$f : I → J$ then for any $g : J → K$ we have $Γ'g = Γ(fg)$,
-where $Γ'$ is the result of performing the substitution $f$ in $Γ$, and if
-$ρ ∈ Γfg$ we have $Af (g,ρ) = A(fg,ρ)$.
+\smallskip
+The semantics we define satisfies the substitution law. That is, if $Γ,x:A ⊢ B$
+and $Γ ⊢ a:A$ then for any $ρ ∈ Γ(I)$ we have
+$B[a]ρ = B⟨ρ,x=aρ⟩$.
+It also satisfies the substitution law on colors, \ie, if $Γ,i:𝕀 ⊢ A$
+then for any $ρ ∈ Γ(I)$ and $j ∉ I$ we have
+$A(i 0)ρ = A[ρ,i=0] = A[ρ,i=j](j\, 0)$.
+(Since $[ρ,i=0] ∈ Γ∗𝕀(I)$ and $[ρ,i=j] ∈ Γ∗𝕀(I,j)$, $A(i\, 0)ρ$ and
+$A[ρ,i=0]$ are $I$-sets while $A[ρ,i=j]$ is a $(I,j)$-set.)
 For establishing these properties, we proceed as \citet{Aczel98onrelating}.
 
-\bigskip
+\smallskip
 We proceed to interpret each type construction.
 \begin{description}
   \item[\sc Pi.]
-    Assume $f : I → J$ and $ρ ∈ Γf$. We define $((x:A) → B)(f,ρ)$ as a $J$-set.
-    A $J$-element of $((x:A) → B)(f,ρ)$ is defined as a tuple $λ = (λ_α)$,
-    where each $λ_α$ is a family of elements indexed by a total map $g : J_α ↣ K$:
-    $$λ_{α g} ∈ \prod_{u ∈ A(fα g,ραg)} B(fαg,⟨ραg,x=u⟩)$$
+    Assume $ρ ∈ Γ(I)$. We define $((x:A) → B)ρ$ as a $I$-set.
+    An $I$-element of $((x:A) → B)ρ$ is defined as a tuple $λ = (λ_α)$,
+    where each $λ_α$ is a family of elements indexed by a total map $f : I_α ↣ J$:
+    $$λ_{α f} ∈ \prod_{u ∈ A(ραf)} B⟨ραf,x=u⟩$$
     such that
-    $\app{λ_{αg}}{u} h = \app{λ_{α gh}}{uh}$ for $g : J ↣ K$ total and
-    for \emph{any} $h : K → L$.
-    Because any map $J → K$ has an unique decomposition as a projection and a total
-    map, we can consider $λ_h$ for an arbitrary map $h : J → K$.
+    $\app{λ_{αf}}{u} g = \app{λ_{α fg}}{ug}$ for $f : I_α ↣ J$ total and
+    for \emph{any} $g : J → K$.
+    Because any map $I → J$ has an unique decomposition as a projection and a total
+    map, we can consider $λ_f$ for an arbitrary map $f : I → J$.
 
-    If $g : J → K$ is an arbitrary map, we define $λ g$ to be the tuple
-    $(λ g_β)$ where $λ g_β$ is the family $λ g_{βh} = λ_{gβh}$.
-
+    If $f : I → J$ is an arbitrary map, we define $λ f$ to be the tuple
+    $(λf_β)$ where $λf_β$ is the family $λf_{βg} = λ_{fβg}$.
+    %
     With this definition, we directly have $λα_{β} = λ_{αβ}$.
 
     This is similar to the usual interpretation of dependent product in
@@ -742,10 +880,10 @@ We proceed to interpret each type construction.
     As before, such data define a set $A_f$ for an arbitrary map $f : I → J$
     with restriction maps $A_f → A_{fg}$ if $g : J → K$.
 
-    If $g : I → J$ is an arbitrary map, we define $Ag$ by taking $Ag_{βh}$
-    to be the set $A_{gβh}$, together with restriction maps $Ag_{βh} → Ag_{βhl}$
-    defined as the given maps $A_{gβh} → A_{gβhl}$.
-
+    If $f : I → J$ is an arbitrary map, we define $Af$ by taking $Af_{βg}$
+    to be the set $A_{fβg}$, together with restriction maps $Af_{βg} → Af_{βgh}$
+    defined as the given maps $A_{fβg} → A_{fβgh}$.
+    %
     We can then check, as before, that we have $Aα_{β} = A_{αβ}$
 
     As before, this is similar to the usual interpretation of universe in
@@ -753,35 +891,34 @@ We proceed to interpret each type construction.
 
 
   \item[\sc Out.]
-    Assume $f : I → J$ and assume $ρ ∈ Γf$.  We need to define the $J$-set $(P \op {i} a)(f,ρ)$.
-    Let $j = \fresh J$.
-    Recall that we note the inclusions $ι_i : I → I,i$ and $ι_j : J → J,j$.
-    By the induction hypotheses we get a $(J,j)$-set $P(f^{ij},ρι_i)$,
-    and the $J$-element $a(f,ρ)$ belongs to
-    $P(i\,0)(f,ρ) = P((i\,0)f,ρ) = P(ι_i f,ρι_j)(j\,0)$.
-    We define $(P \op {i} a)(f,ρ)$ to be the set of $J$-elements $v$ such that
-    $(a(f,ρ),_j v) ∈ P(f^{ij},ρι_j)$. If $v$ is such an element and $g : J → K$
-    and $k=\fresh K$, then $vg$ is defined by the equation
-    $(a(f,ρ)g,_k vg) = (a(f,ρ) ,_j v) g^{jk}$.
+    Assume $ρ ∈ Γ(I)$. We need to define the $I$-set $(A \op {i} a)ρ$.
+    Let $j = \fresh I$.
+    By the induction hypotheses we get a $(I,j)$-set $A[ρ,i=j]$,
+    and the $I$-element $aρ$ belongs to
+    $A(i\,0)ρ = A[ρ,i=0] = A[ρ,i=j](j 0)$.
+
+    We define $(A \op {i} a)ρ$ to be the set of $I$-elements $v$ such that
+    $(aρ,_j v) ∈ A[ρ,i=j]$.
+    If $v$ is such an element and $f : I → J$ and $k=\fresh J$, then
+    $vf$ is defined by the equation $(aρf,_k vf) = (aρ ,_j v)(f, j=k)$.
 
 
   \item[\sc In-Pred.]
-    Assume $f : I,i → J$, and $ρ ∈ Γ(ι_if)$.  We need to define the $J$-set
-    $(\CTimes i {x:A} B)(f,ρ)$.
-    Let $ι_i : I → I,i$ be the inclusion. There are two cases. If $f(i) = 0$,
-    then $(\CTimes i {x:A} B)(f,ρ)$ is defined to be the $J$-set $A(ι_i f)$.
-    Otherwise, if $f(i) = j ∈ J$, then we define $(\CTimes i {x:A} B)(f,ρ)$ to
-    be the $J$-set of $(u,_j v)$ where $u$ is a $J\backslash\{j\}$-element in
-    $A(ι_i f(j\,0),ρ(j\,0))$ and $v$ is an element in
-    $B(ι_i f(j\,0),⟨ρ(j\,0),x=u⟩)$.
+    Assume $[ρ,i=φ] ∈ Γ∗𝕀(I)$.  We define the $I$-set $(\CTimes i {x:A} P)[ρ,i=φ]$
+    by case analysis on $φ ∈ I∪\{0\}$.
+    If $φ = 0$ then $ρ ∈ Γ(I)$, and we define $(\CTimes i {x:A} P)[ρ,i=0]$ as
+    the $I$-set $Aρ$.
+    If $φ = j ∈ I$ then $ρ ∈ Γ(I\backslash\{j\})$, and we define
+    $(\CTimes i {x:A} P)[ρ,i=j]$ as the $I$-set of $(u ,_j v)$ where
+    $u ∈ Aρ$ and $v ∈ P⟨ρ,x=u⟩$.
 
 
   \item[\sc Decode.]
-    Assume $f:I → J$ and $ρ ∈ Γf$.  We have $A(f,ρ) ∈ U(J)$ and we define
-    $\El{A}(f,ρ)$ to be the set $A(f,ρ)_1$.
-    The restriction map $\El{A}(f,ρ) → \El{A}(fg,ρ g)$, $u ↦ ug$ is defined
-    using the restriction map $A(f,ρ)_1 → A(f,ρ)_g$ and the fact that we have
-    $A(f,ρ)_g = A(fg,ρ g)_1$.
+    Assume $ρ ∈ Γ(I)$.  We have $Aρ ∈ U(I)$ and we define
+    $\El{A}ρ$ to be the set $Aρ_1$.
+    The restriction map $\El{A}ρ → \El{A}ρf$, $u ↦ uf$ is defined
+    using the restriction map $Aρ_1 → Aρ_f$ and the fact that we have
+    $Aρ_f = A(ρf)_1$.
 \end{description}
 
 \begin{remark}
@@ -797,77 +934,88 @@ We proceed to interpret each type construction.
 We now describe how to interpret terms.
 \begin{description}
   \item[\sc Var.]
-    We define $x(f,ρ)$ to be $ρ(x)$
+    We define $x⟨ρ,y=u⟩$ to be $u$ if $x = y$, and $xρ$ otherwise.
+    We define $x[ρ,i=φ]$ to be $xρ$ if $φ = 0$, and
+    $x(ρι_j)$ if $φ = j$.
 
   \item[\sc Lam.]
-    We define $\app{(λ x:A.b)(f,ρ)_g}{u}$ to be $b(f,⟨ρg,x=u⟩)$
+    We define $\app{(λ x:A.b)ρ_f}{u}$ to be $b⟨ρf,x=u⟩$
 
   \item[\sc App.]
-    We define $(t\,u)(f,ρ)$ to be $\app{t(f,ρ)_1}{u(f,ρ)}$
+    We define $(t\,u)ρ$ to be $\app{tρ_1}{uρ}$
 
   \item[\sc In-Abs.]
-    Let $f:I,i → J$ and $ρ ∈ Γι_i f$ be given.
-    We define $(a ,_i p)(f,ρ)$ by case analysis on $f(i)$.
-    If $f(i) = 0$, we take $(a,_ip)(f,ρ)$ to be $a(ι_i f,ρ)$.
-    If $f(i) = j ∈ J$, we take $(a,_ip)(f,ρ)$ to be $(a(ι_if(j0),ρ),_j p(ι_if(j0),ρ))$
+    Assume $[ρ,i=φ] ∈ Γ∗𝕀(I)$.  We define the $I$-element $(a ,_i p)[ρ,i=φ]$
+    by case analysis on $φ ∈ I ∪ \{0\}$.
+    If $φ = 0$ then $ρ ∈ Γ(I)$, and we take $(a ,_i p)[ρ,i=0]$ to be
+    $aρ ∈ A(i\,0)ρ = A[ρ,i=0]$.
+    If $φ = j ∈ I$ then $ρ ∈ Γ(I\backslash\{j\})$, and we take
+    $(a ,_i p)[ρ,i=j]$ to be $(aρ ,_j pρ)$.
 
   \item[\sc In-Fun.]
-    Let $f:I,i → J$ and $ρ ∈ Γι_i f$ be given.
-    We define ${\fp i t u}(f,ρ)_g$ by case analysis on $g(f(i))$.
-    If $g(f(i)) = 0$, we take ${\fp i t u}(f,ρ)_g$ to be $t(ι_i f,ρ)_g$.
-    If $g(f(i)) = j ∈ K$, we define $w = {\fp i t u}(f,ρ)_g$ by
-    $$\app{w}{(a ,_j b)} =
-      ( \app{t\,(ι_i fg(j0),ρ g(j0))}{a}
-      ,_j
-        {\app{\app{u\,(ι_i fg(j0),ρ g(j0))}{a}}{b}}
-      )$$
+    Assume $[ρ,i=φ] ∈ Γ∗𝕀(I)$.  We define the $J$-element ${\fp i t u}[ρ,i=φ]_f$
+    by case analysis.
+    If $φ = 0$, then $ρ ∈ Γ(I)$ and $ρf ∈ Γ(J)$; we define
+    $w = {\fp i t u}[ρ,i=0]_f$ by $\app{w}{a} = \app{tρ_f}{a}$.
+    If $φ = j ∈ I$ and $f(j) = 0$, then $ρ ∈ Γ(I\backslash\{j\})$ and $ρ(f-j) ∈ Γ(J)$;
+    we define $w = {\fp i t u}[ρ,i=j]_f$ by $\app{w}{a} = \app{tρ_{f-j}}{a}$.
+    If $φ = j ∈ I$ and $f(j) = k ∈ J$, then $ρ ∈ Γ(I\backslash\{j\})$ and $ρ(f-j) ∈ Γ(J\backslash\{k\})$;
+    we define $w = {\fp i t u}[ρ,i=j]_f$ by
+    $\app{w}{(a ,_k b)} = ( \app{tρ_{f-j}}{a} ,_k {\app{\app{uρ_{f-j}}{a}}{b}} )$.
 
   \item[\sc Color-Elim.]
-    Let $f:I → J$ and $ρ ∈ Γ f$ be given.
-    We define $(a \param i)(f,ρ)$ to be $a(f^{ij},ρι_j)\param j$
-    where $j = \fresh{J}$.
+    Assume $ρ ∈ Γ(I)$.  We define $(a \param i)ρ$ as
+    $a[ρ,i=j]·j$ where $j = \fresh{J}$.
 \end{description}
 
 \begin{theorem}[Convertible terms are semantically equal]~
   \label{thm:convertible-in-model}
   \begin{itemize}
-    \item If $Γ ⊢_I A₁$ and $Γ ⊢_I A₂$ with $A₁ = A₂$, then
-      $A₁(f,ρ) = A₂(f,ρ)$ for any $f : I → J$ and $ρ : Γf$.
-    \item If $Γ ⊢_I a₁ : A$ and $Γ ⊢_I a₂ : A$ with $a₁ = a₂$, then
-      $a₁(f,ρ) = a₂(f,ρ)$ for any $f : I → J$ and $ρ : Γf$.
+    \item If $Γ ⊢ A₁$ and $Γ ⊢ A₂$ with $A₁ = A₂$, then
+      $A₁ρ = A₂ρ$ for any $ρ : Γ(I)$.
+    \item If $Γ ⊢ a₁ : A$ and $Γ ⊢ a₂ : A$ with $a₁ = a₂$, then
+      $a₁ρ = a₂ρ$ for any $ρ : Γ(I)$.
   \end{itemize}
 \end{theorem}
 \begin{proof}
   By simultaneous induction on the derivation.
-  We only show the conversion rules \textsc{Pair-Param} and
-  \textsc{Pair-Pred} here; other rules involving colors can be proven in
-  a similar fashion, while $β$ and $η$ can be proven in the usual way.
+  We only show the conversion rules \textsc{Pair-Param},
+  \textsc{Pair-Pred} and \textsc{Surj-Param} here; other rules involving
+  colors can be proven in a similar fashion, while $β$ and $η$ can be
+  proven in the usual way.
 
   \begin{description}
     \item[\sc Pair-Param.]
-      Let $f : I → J$ and $j = \fresh J$.  We have
+      Let $ρ ∈ Γ(I)$ and $j = \fresh I$.  We have
       \begin{align*}
-        &v ∈ ({((x:A)\times_i B)} \op {i} a)(f,ρ)
+        &v ∈ ({((x:A)\times_i P)} \op {i} a)ρ
         \\
-        \text{ iff. }& (a(f,ρ) ,_j v) ∈ (\CTimes i {x:A} B)(f^{ij},ρι_j)
+        \text{ iff. }& (aρ ,_j v) ∈ (\CTimes i {x:A} P)[ρ,i=j]
         \\
-        \text{ iff. }& (a(f,ρ) ,_j v) ∈ \left\{ (u ,_j w) \mid u ∈ A(f,ρ), w ∈ B(f,⟨ρ,x=u⟩) \right\}
+        \text{ iff. }& (aρ ,_j v) ∈ \left\{ (u ,_j w) \mid u ∈ Aρ, w ∈ P⟨ρ,x=u⟩ \right\}
         \\
-        \text{ iff. }& v ∈ B(f,⟨ρ,x=a(f,ρ)⟩)
+        \text{ iff. }& v ∈ P⟨ρ,x=aρ⟩
         \\
-        \text{ iff. }& v ∈ B[a](f,ρ)
+        \text{ iff. }& v ∈ P[a]ρ
       \end{align*}
 
     \item[\sc Pair-Pred.]
-      Let $f : I → J$ and $j = \fresh J$.  We have
-      \begin{align*}
-         & ((a ,_i p) \param i)(f,ρ)
-      \\=~& (a ,_i p)(f^{ij}, ρι_j) · j
-      \\=~& (a(ι_i f^{ij}(j\,0), ρ) ,_j p(ι_i f^{ij}(j\,0), ρ)) · j
-      \\=~& (a(f, ρ) ,_j p(f, ρ)) · j
-      \\=~& p(f, ρ)
+      Let $ρ ∈ Γ(I)$ and $j = \fresh I$.  We have
+      $ ((a ,_i p) \param i)ρ
+      = (a ,_i p)[ρ,i=j]·j
+      = (aρ ,_j pρ) · j
+      = pρ$
+
+    \item[\sc Surj-Param.]
+      For each $ρ ∈ Γ(I)$ we have
+      $(t(i\,0) ,_i t·i)[ρ,i=0] = t(i\,0)ρ = t[ρ,i=0]$, and
+      if $j ∉ I$ then
+      $ (t(i\,0) ,_i t·i)[ρ,i=j]
+      = (t(i\,0)ρ ,_j (t·i)ρ)
+      = (t[ρ,i=j](j\,0) ,_j t[ρ,i=j]·j)
+      = t[ρ,i=j]$.
+      Hence $(t(i\,0) ,_i t·i)ρ = tρ$ for any $ρ ∈ Γ∗𝕀(I)$.
       \qedhere
-      \end{align*}
   \end{description}
 \end{proof}
 
@@ -876,72 +1024,61 @@ We now describe how to interpret terms.
   $U \op i (X ,_j P) \op j Q$ and $U \op j (X ,_i Q) \op i P$
   are not convertible.
   Their semantic interpretations are not equal either.  Indeed
-  taking $f = 1_∅$, $k = \fresh{∅}$ and $l = \fresh{\{k\}}$,
+  taking $ρ ∈ Γ(I)$, $k = \fresh{I}$ and $l = \fresh{I,k}$,
   we have
   (leaving out the context interpretation $ρ$ for the sake of
   readability)
   on the one hand
   \begin{align*}
-    &v ∈ (U \op i (X ,_j P) \op j Q) f
+    &v ∈ (U \op i (X ,_j P) \op j Q) ρ
     \\
-    \text{ iff. }& (Qf ,_k v) ∈ (U \op i (X ,_j P))f^{jk}
+    \text{ iff. }& (Qρ ,_k v) ∈ (U \op i (X ,_j P))[ρ,j=k]
     \\
-    \text{ iff. }& ((X ,_j P)f^{jk} ,_l (Qf ,_k v)) ∈ U(l,k)
+    \text{ iff. }& ((X ,_j P)[ρ,j=k] ,_l (Qρ ,_k v)) ∈ U(l,k)
     \\
-    \text{ iff. }& ((X ,_k P) ,_l (Q ,_k v)) ∈ U(l,k)
+    \text{ iff. }& ((Xρ ,_k Pρ) ,_l (Qρ ,_k v)) ∈ U(l,k)
   \end{align*}
 
-  and on the other hand
+  while on the other hand
   \begin{align*}
-    &v ∈ (U \op j (X ,_i Q) \op i P) f
+    &v ∈ (U \op j (X ,_i Q) \op i P) ρ
     \\
-    \text{ iff. }& (Pf ,_k v) ∈ (U \op j (X ,_i Q))f^{ik}
+    \text{ iff. }& (Pρ ,_k v) ∈ (U \op j (X ,_i Q))[ρ,i=k]
     \\
-    \text{ iff. }& ((X ,_i Q)f^{ik} ,_l (Pf ,_k v)) ∈ U(k,l)
+    \text{ iff. }& ((X ,_i Q)[ρ,i=k] ,_l (Pρ ,_k v)) ∈ U(k,l)
     \\
-    \text{ iff. }& ((X ,_k Q) ,_l (P ,_k v)) ∈ U(k,l)
+    \text{ iff. }& ((Xρ ,_k Qρ) ,_l (Pρ ,_k v)) ∈ U(k,l)
   \end{align*}
 
-  Hence $(U \op i (X ,_j P) \op j Q) f ≠ (U \op j (X ,_i Q) \op i P) f$
+  Hence $(U \op i (X ,_j P) \op j Q) ρ ≠ (U \op j (X ,_i Q) \op i P) ρ$
   since the map $U(l,k) → U(k,l)$, $u ↦ ug$ where $g(k) = l$ and $g(l)=k$
   is not the identity.
 \end{remark}
 
 
 \begin{theorem}[Validity]
-  For any $f : I → J$ and any $ρ ∈ Γf$,\\
-    if $Γ ⊢_I a : A$ then $a(f,ρ) ∈ A(f,ρ)$.
-%  Furthermore $af(1,ρ) = a(f,ρ)$ (using the interpretation of
-%  $Γf ⊢_J af : Af$).
+  If $Γ ⊢ a : A$ then $aρ ∈ Aρ$ for any $ρ ∈ Γ(I)$.
 \end{theorem}
 \begin{proof}
   By induction on the typing judgment.  We only show the cases \textsc{In-Abs} and \textsc{Color-Elim}.  \textsc{In-Fun} is similar to the former, and the other
   cases match the usual proof (using \fref{thm:convertible-in-model} for \textsc{Conv}).
   \begin{description}
     \item[\sc In-Abs.]
-      Let $f : I,i → J$ and $ρ ∈ Γf$.
-      We need to show that $(a ,_i p)(f,ρ) : T(f,ρ)$.
-      If $f(i) = 0$, we have by definition $(a,_ip)(f,ρ) = a(ι_i f,ρ)$,
-      which by induction hypothesis belongs to the $J$-set $T(i\,0)(ι_i f,ρ)$;
-      but by color substitution $T(i\,0)(ι_i f,ρ) = T((i\,0)ι_i f,ρ) = T(f,ρ)$.
-      If $f(i) = j ∈ J$, we have $f = g^{ij}$ where $g = ι_if(j\,0)$; by induction
-      hypothesis $p(g,ρ) ∈ (T \op i a)(g,ρ)$ hence by definition
-      $(a(g,ρ) ,_j p(g,ρ)) ∈ T(g^{ij},ρι_j)$ then
-      $(a ,_i p)(f,ρ) ∈ T(f,ρ)$.
+      Assume $[ρ,i=φ] ∈ Γ∗𝕀(I)$.  We proceed by case analysis on $φ ∈ I ∪ \{0\}$.
+      If $φ = 0$ then $ρ ∈ Γ(I)$, and we have
+      $(a ,_i p)[ρ,i=0] = aρ ∈ A(i\,0)ρ = A[ρ,i=0]$.
+      If $φ = j ∈ I$ then $ρ ∈ Γ(I\backslash\{j\})$, and we have
+      $(a ,_i p)[ρ,i=j] = (aρ ,_j pρ)$;
+      Since by induction hypothesis $pρ ∈ (A \op {i} a)ρ$, we conclude
+      by definition that $(aρ ,_j pρ) ∈ A[ρ,i=j]$.
 
     \item[\sc Color-Elim.]
-      Let $f : I → J$ and $ρ ∈ Γf$.
-      We need to show that $(a \param i)(f,ρ) ∈ (T \op i {a(i\,0)}) (f,ρ)$, \ie,
-      that
-      $ (a(i\,0)(f,ρ) ,_j (a \param i)(f,ρ))
-      = (a((i\,0)f,ρ) ,_j a(f^{ij},ρι_j) · j)
-      ∈ T(f^{ij},ρι_j)$
-      where $j = \fresh J$.
-      By induction hypothesis $a(f^{ij},ρι_j) ∈ T(f^{ij},ρι_j)$, and because it is a
-      $(J,j)$-element we have
-      $a(f^{ij},ρι_j) = (a(f^{ij},ρι_j)(j\,0) ,_j a(f^{ij},ρι_j) · j)$
-      We conclude by remarking that $a(f^{ij},ρι_j)(j\,0) = a((i\,0)f,ρ)$ holds
-      by color substitution and definition of $f^{ij}$.
+      Assume $ρ ∈ Γ(I)$.
+      We need to show that $(a·i)ρ ∈ (A \op i {a(i\,0)})ρ$, \ie, that
+      $ (a(i\,0)ρ ,_j (a·i)ρ) ∈ A[ρ,i=j]$ where $j = \fresh I$.
+      By induction hypothesis $a[ρ,i=j] ∈ A[ρ,i=j]$, hence
+      we have
+      $(a(i\,0)ρ ,_j (a·i)ρ) = (a[ρ,i=j](j\,0) ,_j a[ρ,i=j]·j) = a ∈ A[ρ,i=j]$.
     \qedhere
   \end{description}
 
@@ -1005,7 +1142,7 @@ presheaf, but they also have the same underlying category $\pI$.
 This means as all these models have an additional cubical structure.
 We find remarkable that cubical structures are useful for modeling both
 parametricity and univalence.
-\cite{altenkirch2014syntax} give a syntax for
+\citet{altenkirch2014syntax} give a syntax for
 \citeauthor{bezem2014model}'s Cubical Type Theory, effectively modelling
 univalence by internalization of their model.
 The present work further refines the model by interpreting terms as
@@ -1028,7 +1165,12 @@ relevant for internalization of parametricity became apparent through
 discussions between Thorsten Altenkirch and the second  author about
 the paper \citep{bernardy_computational_2012}.
 
+We are extremely grateful to Simon Huber for finding a flaw in an
+earlier version of this paper, and helping us to fix it.
+We also thank Peter Dybjer and Patrik Jansson for valuable feedback and
+discussion.
+
+\newcommand{\newblock}{}
 \bibliographystyle{abbrvnat}
 \bibliography{PaperTools/bibtex/jp,tt}
-
 \end{document}
