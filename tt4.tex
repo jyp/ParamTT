@@ -55,6 +55,8 @@
 \newboolean{tikz}
 \setboolean{tikz}{true} % XXX set to false to disable diagrams
 
+\allowdisplaybreaks
+
 \def\lastname{J-P. Bernardy, T. Coquand and G. Moulin}
 \begin{document}
 \begin{frontmatter}
@@ -211,8 +213,7 @@ We give a few intuitions to interpret the novel syntax, before giving formally t
 
 
 
-\begin{definition}[Typing judgements — à la Tarski]
-
+\begin{definition}[Typing judgements — à la Tarski]~\\\indent
 \fbox{$Γ⊢$}
   \begin{mathpar}
     \inferrule[Empty]{~}{() ⊢ }
@@ -229,7 +230,8 @@ We give a few intuitions to interpret the novel syntax, before giving formally t
     \inferrule[Decode]{Γ ⊢ A : U}{Γ ⊢ \El{A}}
 
     \inferrule[Swap]{Γ, i:𝕀, j:𝕀, Δ ⊢ A}{Γ, j:𝕀, i:𝕀, Δ  ⊢ A}
-    \\
+ \end{mathpar}
+ \begin{mathpar}
     \inferrule[Pi]{Γ ⊢ A \\ Γ,x:A ⊢ B}{Γ ⊢ (x:A) → B}
 
     \inferrule[Out]{Γ, i:𝕀 ⊢ A \\ Γ ⊢ a : \proj i A}{Γ ⊢ A \op i  a}
@@ -246,12 +248,12 @@ We give a few intuitions to interpret the novel syntax, before giving formally t
     \inferrule[Code]{Γ ⊢ A }{Γ ⊢ |A| : U}
 
     \inferrule[Swap]{Γ, i:𝕀, j:𝕀, Δ ⊢ a : A}{Γ, j:𝕀, i:𝕀, Δ  ⊢ a : A}
-
-    \\\inferrule[Lam]{Γ,x:A ⊢ b : B}{Γ ⊢ λx:A.b : (x:A) → B}
+    \\
+    \inferrule[Lam]{Γ,x:A ⊢ b : B}{Γ ⊢ λx:A.b : (x:A) → B}
  
     \inferrule[App]{Γ ⊢ t : (x:A) → B[x] \\ Γ ⊢ u : A}{Γ ⊢ t u: B[u]}
-
-    \\\inferrule[In-Abs]{Γ ⊢ a : \proj i A \\Γ ⊢ p : A \op i a}{Γ, i:𝕀 ⊢ \CP i a p : A}
+    \\
+    \inferrule[In-Abs]{Γ ⊢ a : \proj i A \\Γ ⊢ p : A \op i a}{Γ, i:𝕀 ⊢ \CP i a p : A}
 
     \inferrule[In-Fun]
         {Γ ⊢ t : \projp i {(x:A) → P[x]}\\\\
@@ -280,7 +282,6 @@ to keep the presentation concise, we leave it implicit in the syntax.
   \label{def:color-erasure}
   We consider a color $i ∈ 𝕀$ and some $φ ∈ 𝕀 ∪ \{0\}$,
   and define the term $a(i\,φ)$ by induction on $a$.
-
 \begin{align*}
   x \mor{i}{φ} & = x \\
   U \mor{i}{φ} & = U \\
@@ -332,7 +333,7 @@ to keep the presentation concise, we leave it implicit in the syntax.
 \end{definition}
 }
 
-\begin{definition}[Conversion]~
+\begin{definition}[Conversion]
 \label{def:conversion}
 The convertibility of types used in the {\sc Conv} rule and written
 simply ($=$) is defined as the smallest congruence containing the
@@ -400,21 +401,21 @@ proofs relying on parametricity (including iterated parametricity).
 Unlike previous type theories with internalized parametricity
 \citep{bernardy_computational_2012, bernardy_type-theory_2013}, the
 system presented here lacks equalities which allow to compute
-parametricity types. Expressed in our syntax, those equalities would become the conversion rules:
-$$U \op i A = A → U$$
-and
-$$((x:A) → B[x]) \op i f = (x:A) → (x' : A \op i x) → B[\CP i x {x'}] \op i (f x).$$
+parametricity types. Expressed in our syntax, those equalities would
+become the conversion rules:
+\begin{center}$U \op i A = A → U$, and\end{center}
+\begin{center}$((x:A) → B[x]) \op i f = (x:A) → (x' : A \op i x) → B[\CP i x {x'}] \op i (f x).$\end{center}
 
 The absence of the above equalities allows for a simpler system, but
 how can we ensure that all parametricity theorems hold?  The answer is
 that the above relationships hold as isomorphisms.
-
+%
 We say that $A$ is \emph{isomorphic to} $B$ iff.
 \begin{enumerate}
-  \item There exist $f : A → B$
-  \item There exist $g : B → A$
-  \item For any $x$, $f\, (g\, x) = x$
-  \item For any $x$, $g\, (f\, x) = x$
+  \item There exist $f : A → B$,
+  \item There exist $g : B → A$,
+  \item For any $x$, $f\, (g\, x) = x$, and
+  \item For any $x$, $g\, (f\, x) = x$.
 \end{enumerate}
 This notion of isomorphism is quite strong, because the equality used
 in its definition is the conversion relation (\fref{def:conversion}).
@@ -489,15 +490,12 @@ distinction between types and their codes.)
 \begin{example}
   \label{ex:poly-id}
   Any function $f : (X : U) → X → X$ is the polymorphic identity, \ie,
-  its output is Leibniz-equal to its second argument.
-  Assume a context $Γ$ with
-  \begin{itemize}
-    \item $f : (X : U) → X → X$,
-    \item $A : U$,
-    \item $P : A → U$,
-    \item $a : A$, and
-    \item $p : P\, A$.
-  \end{itemize}
+  its output is Leibniz-equal to its second argument. Assume a context
+  $$Γ = f : (X : U) → X → X,\enspace
+    A : U,\enspace
+    P : A → U,\enspace
+    a : A,\enspace
+    p : P\, A$$
   Then
   $Γ, i:𝕀⊢\CTimes i {x:A} {(P\,x)}$
   and by \textsc{Pair-Pred}
@@ -508,24 +506,22 @@ distinction between types and their codes.)
   \begin{align*}
    Γ ⊢(f\, (\CTimes i {x:A} {(P\,x)})\, {\CP i a p}) \param i
    &: (\CTimes i {x:A} {(P\,x)}) \op i \proj i {(f\, (\CTimes i {x:A} {(P\,x)})\, {\CP i a p})} \\
-   &= P\, \proj i {(f\, (\CTimes i {x:A} {(P\,x)})\, {\CP i a p})} \\
-   &= P\, (f\, A\, a)
+   &= P\, \proj i {(f\, (\CTimes i {x:A} {(P\,x)})\, {\CP i a p})}
+    = P\, (f\, A\, a)
   \end{align*}
 \end{example}
 
 \begin{example}
   \label{ex:church-nat}
 Let $N = (X : U) → X → (X → X) → X$.
-Proving (unary) parametricity for $N$ means that, assuming a context $Γ$ with
-\begin{itemize}
-\item $f : N$,
-\item $A : U$,
-\item $P : A → U$,
-\item $z : A$,
-\item $z' : P\, z$,
-\item $s : A → A$, and
-\item $s' : (x:A) → P\, x → P\, (s\, x)$,
-\end{itemize}
+Proving (unary) parametricity for $N$ means that, assuming a context $Γ$
+  $$f : N,\enspace
+    A : U,\enspace
+    P : A → U,\enspace
+    z : A,\enspace
+    z' : P\, z,\enspace
+    s : A → A,\enspace
+    s' : (x:A) → P\, x → P\, (s\, x),$$
 we can prove $P\, (f\, A\, z\, s)$.
 
 Indeed
@@ -534,12 +530,11 @@ Indeed
   $Γ, i:𝕀⊢ \CP i z {z'} : \CTimes i {x:A} {(P\,x)}$ and
   $Γ, i:𝕀⊢ \fp i s {s'} : \CTimes i {x:A} {(P\,x)} → \CTimes i {x:A} {(P\,x)}$,
 thus
-  $$Γ, i:𝕀 ⊢ f\, (\CTimes i {x:A} {(P\,x)})\, {\CP i z {z'}}\, \fp i s {s'} : \CTimes i {x:A} {(P\,x)}$$
-  and finally
   \begin{align*}
-    Γ ⊢ (f\, (\CTimes i {x:A} {(P\,x)})\, {\CP i z {z'}}\, \fp i s {s'}) \param i
-     &: (\CTimes i {x:A} {(P\,x)}) \op i (f\, A\, z\, s) \\
-     &= P\, (f\, A\, z\, s) \\
+    &Γ, i:𝕀 ⊢ f\, (\CTimes i {x:A} {(P\,x)})\, {\CP i z {z'}}\, \fp i s {s'} : \CTimes i {x:A} {(P\,x)}\text{, and finally}\\
+    &Γ ⊢ (f\, (\CTimes i {x:A} {(P\,x)})\, {\CP i z {z'}}\, \fp i s {s'}) \param i
+       : (\CTimes i {x:A} {(P\,x)}) \op i (f\, A\, z\, s)
+       = P\, (f\, A\, z\, s)
   \end{align*}
 \end{example}
 
@@ -558,30 +553,31 @@ proof of their type, as illustrated in the following example.
 
 \begin{example}
   Let $F = (X : U) → ((X → X) → X) → X$.
-  Proving (unary) parametricity for $F$ means that, assuming a context $Γ$ with
-  \begin{itemize}
-    \item $f : F$,
-    \item $A : U$,
-    \item $P : A → U$,
-    \item $g : (A → A) → A$, and
-    \item $g' : (h : A → A) → ((x : A) → P\, x → P\, (h\, x)) → P\, (g\, h)$,
-  \end{itemize}
+  Proving (unary) parametricity for $F$ means that, assuming a context
+  %\begin{multline*}
+    $Γ = f : F,\enspace
+    A : U,\enspace
+    P : A → U,\enspace
+    g : (A → A) → A,\enspace
+    g' : (h : A → A) → ((x : A) → P\, x → P\, (h\, x)) → P\, (g\, h)$,
+  %\end{multline*}
   we can prove $P\, (f\, A\, g)$.
 
   Let $T = \CTimes i {x:A} {(P\,x)}$.
 %  and $Δ = Γ, h:A → A, h': (T → T) \op i h$.
   We have $Γ, i:𝕀 ⊢ T$ and
-  $$Γ, h:A → A, h': (T → T) \op i h, x : A, x' : P\, x, i:𝕀 ⊢ \CP i h {h'} : T → T$$
-  hence
-  $$Γ, h:A → A, h': (T → T) \op i h, x : A, x' : P\, x ⊢ (\CP i h {h'}\, \CP i x {x'}) \param i : T \op i (h\, x) = P\, (h\, x)$$
-  then
-  $$Γ, h:A → A, h': (T → T) \op i h ⊢ g'\, h\, (λ (x : A).\, λ (x' : P\, x).\, (\CP i h {h'}\, \CP i x {x'}) \param i) : P\, (g\, h)
-  $$
-  Let $g'' = λ (h:A → A).\, λ (h': (T → T) \op i h).\, g'\, h\, (λ (x : A).\, λ (x' : P\, x).\, (\CP i h {h'}\, \CP i x {x'}) \param i)$.
-  Since $Γ ⊢ g'' : (h:A → A) → (T → T) \op i h → P\, (g\, h)$
+  \begin{align*}
+    \!\!\!&Γ, h:A → A, h': (T → T) \op i h, x : A, x' : P\, x, i:𝕀 ⊢ \CP i h {h'} : T → T\text{, hence}
+    \\
+    \!\!\!&Γ, h:A → A, h': (T → T) \op i h, x : A, x' : P\, x ⊢ (\CP i h {h'}\, \CP i x {x'}) \param i : T \op i h\, x = P\, (h\, x)
+    \\
+    \!\!\!&Γ, h:A → A, h': (T → T) \op i h ⊢ g'\, h\, (λ (x : A).\, λ (x' : P\, x).\, (\CP i h {h'}\, \CP i x {x'}) \param i) : P\, (g\, h)
+  \end{align*}
+  Let $g'' = λ h.\, λ h'.\, g'\, h\, λ (x : A).\, λ (x' : P\, x).\, (\CP i h {h'}\, \CP i x {x'}) \param i$.
+  Since we have $Γ ⊢ g'' : (h:A → A) → (T → T) \op i h → P\, (g\, h)$
   we can pair it with $g$ and
-  $Γ, i:𝕀 ⊢ \fp i g {g''} : (T → T) → T$. We can finally conclude as before:
-  $$Γ ⊢ (f\, T\, \fp i g {g''}) \param i : P\, (f\, A\, g)$$
+  $Γ, i:𝕀 ⊢ \fp i g {g''} : (T → T) → T$. We can finally conclude as before, that
+  $Γ ⊢ (f\, T\, \fp i g {g''}) \param i : P\, (f\, A\, g)$.
 \end{example}
 
 \subsection{Iterating Parametricity}
@@ -599,12 +595,10 @@ applications of Parametricity can trivialy be enforced in our system by
 limiting the number of free colors in the context.)
 We can iterate the operator $A \op {·} $ to construct
 relations between parametricity witnesses. That is, given a context with
-\begin{align*}
-  x & :A \\
-  y & : A \op j x\\
-  z & : A \op i x
-\end{align*}
-Then the type $A \op i \CP j x y \op j z$ is well formed ($∋$ is left
+$$x :A,\enspace
+  y : A \op j x,\enspace
+  z : A \op i x,$$
+the type $A \op i \CP j x y \op j z$ is well formed ($∋$ is left
 associative), and can be understood as a relation
 between the parametricity proofs $y$ and $z$. The following results about this relation illustrate the expressivity of our system.
 \begin{theorem}
@@ -621,23 +615,20 @@ If the type $A$ does not depend on either $i$ or $j$, the relation $λy z. A \op
 \end{proof}
 
 \begin{theorem}
-  The function $\sigma_1$ (defined above) is involutive in its last argument:
-  \[ \sigma_1\, y\, x\, z\, (\sigma_1\, x\, y\, z\, w) = w \]
+  The types $A \op i \CP j x y \op j z$ and $A \op j \CP i x z \op i y$ are isomorphic.
 \end{theorem}
 \begin{proof}
+  We show that %the function $\sigma_1$ (defined above) is involutive in its last argument, \ie,
+  $\sigma_1\, y\, x\, z\, (\sigma_1\, x\, y\, z\, w) = w$.
   Let
-  \begin{align*}
-    t &= \CP i {\CP j x y}{\CP j z w} \\
-    w' &= t \param j \param i \\
-    t' &= \CP j {\CP i x z}{\CP i y {w'}}
-  \end{align*}
+    $t = \CP i {\CP j x y}{\CP j z w},\enspace
+    w' = t \param j \param i,\enspace
+    t' = \CP j {\CP i x z}{\CP i y {w'}}.$
   Then
-  \begin{align*}
-    \proj i {t'} &= \CP j x y = \proj i t \\
-    \proj j {t'} &= \CP i x z = \proj j t \\
-    \projp i {t\param j} &= y
-  \end{align*}
-We continue to reason by deduction:
+  $\proj i {t'} = \CP j x y = \proj i t$,
+  $\proj j {t'} = \CP i x z = \proj j t$, and
+  $\projp i {t\param j} = y$.
+We now continue to reason by deduction:
   \begin{align*}
     w' &= t \param j \param i & \text{By def}\\
     {\CP i y {w'}} &= t\param j & \text{Because $\projp i {t\param j} = y $}  \\
@@ -649,9 +640,6 @@ We continue to reason by deduction:
   \qedhere
   \end{align*}
 \end{proof}
-\begin{corollary}
-  The types $A \op i \CP j x y \op j z$ and $A \op j \CP i x z \op i y$ are isomorphic.
-\end{corollary}
 
 \begin{remark}
   At this point one may wonder if the system could have been set up to have
@@ -716,8 +704,8 @@ In this section we show how to interpret our type theory by a presheaf model.
   p.~176]{PittsAM:nomsns} for another description of this category).
 \end{definition}
 
-If $f : I → J$, $i ∈ 𝕀 \backslash I$ and $j ∈ 𝕀 \backslash J$ we note
-$(f, i = j) : I,i → J,j$ the map defined $(f,i=j)(i) = j$ and
+If $f : I → J$, $i ∉ I$ and $j ∉ J$, we note
+$(f, i = j) : I,i → J,j$ the map defined by $(f,i=j)(i) = j$ and
 $(f,i=j)(k) = k$ $∀ k ∈ I$.
 
 If $f : I,i → J$ is such that $f(i) = 0$, we note $f-i : I → J$ the map
@@ -743,19 +731,19 @@ map, defined by $ι_i(k) = k$ $∀ k ∈ I$.
   Any morphism $f : I → J$ has a
   unique decomposition into a projection map
   $α : I → I_α$ and a total map $h : I_α ↣ J$.
-  \ifthenelse{\boolean{tikz}}{
-  \begin{center}%
-  \begin{tikzpicture}[node distance=4\baselineskip]%
-      \node              (I)  {$I$};
-      \node[below of=I]  (Ia) {$I_α$};
-      \node[right of=Ia] (J)  {$J$};
-
-      \draw[->,dotted] (I) to node[left] {$α$} (Ia);
-      \draw[->] (I) to node[above right] {$f$} (J);
-      \draw[to reversed->,dotted] (Ia) to node[below] {$h$} (J);
-  \end{tikzpicture}%
-  \end{center}%
-  }{}
+%  \ifthenelse{\boolean{tikz}}{
+%  \begin{center}%
+%  \begin{tikzpicture}[node distance=4\baselineskip]%
+%      \node              (I)  {$I$};
+%      \node[below of=I]  (Ia) {$I_α$};
+%      \node[right of=Ia] (J)  {$J$};
+%
+%      \draw[->,dotted] (I) to node[left] {$α$} (Ia);
+%      \draw[->] (I) to node[above right] {$f$} (J);
+%      \draw[to reversed->,dotted] (Ia) to node[below] {$h$} (J);
+%  \end{tikzpicture}%
+%  \end{center}%
+%  }{}
 \end{remark}
 
 \begin{definition}[$I$-set]
@@ -775,7 +763,6 @@ map, defined by $ι_i(k) = k$ $∀ k ∈ I$.
   $u · i ≔ (u_{J,i})_{J ⊆ I}$.
   (Hence by definition $u = (u (i\,0) ,_i u · i)$.)
 
-\bigskip
 Recall that a \emph{presheaf} $F$ on $\pI^\opp$ is given by a family of
 sets $F(I)$ together with restriction maps $F(I) → F(J)$, $u ↦ uf$ for
 $f : I → J$ satisfying $u1 = u$ and $(uf)g = u(fg)$.
@@ -794,29 +781,25 @@ We use a refined presheaf on $\pI^\opp$ by requiring two further conditions:
 Seeing an $I$-element $u$ as a tuple indexed by projection maps
 $α : I → I_α$, the second requirement can be written $(uα)_β = u_{αβ}$.
 
-\bigskip
+\smallskip
 A context $Γ ⊢$ is interpreted by a (usual) presheaf on $\pI^\opp$, \ie,
 by a family of sets $Γ(I)$ for each object $I$, together with
 restriction maps $Γ(I) → Γ(J)$, $ρ ↦ ρf$ for $f : I → J$ satisfying the
 conditions $ρ1 = ρ$ and $(ρf)g = ρ(fg)$.
 
-\medskip
 A type $Γ ⊢ A$ is interpreted by an $I$-set $Aρ$ for each object $I$ and
 $ρ ∈ Γ(I)$,
 together with restriction maps $Aρ → A(ρf)$, $u ↦ uf$ if $f : I → J$
 satisfying $u1 = u$ and $(uf)g = u(fg)$ for any $g : J → K$.
 Furthermore the map $Aρ → A(ρα)$, $u ↦ uα$ is the projection operation.
 
-\medskip
 A term $Γ ⊢ a : A$ is interpreted by a $I$-element $aρ ∈ Aρ$ for each
 object $I$ and $ρ ∈ Γ(I)$, such that $aρf = a(ρf)$ for any $f : I → J$.
 
-\medskip
 If $Γ⊢$ and $Γ ⊢ A$ we define the interpretation of $Δ = Γ,x:A$
 by taking $⟨ρ,x=u⟩ ∈ Δ(I)$ to mean $ρ ∈ Γ(I)$ and $u ∈ Aρ$.
 The restriction map is defined by $⟨ρ,x=u⟩f = ⟨ρf, x=uf⟩$.
 
-\smallskip
 If $Γ⊢$ we define the interpretation of $Δ = Γ,i:𝕀$ by taking
 $[ρ,i=φ] ∈ Δ(I)$ to mean either $φ = 0$ and $ρ ∈ Γ(I)$, or
 $φ = j ∈ I$ and $ρ ∈ Γ(I\backslash\{j\})$.
@@ -831,7 +814,7 @@ $[ρ,i=0]f = [ρf,i=0]$ and $[ρ,i=j]f = [ρ(f-j),i=f(j)]$.
   interpretation of $Γ⊢$ and $𝕀 ∪ \{0\}$:
   $$Γ ∗ 𝕀(I) = \{ [ρ,i=0] \mid ρ ∈ Γ(I) \} ∪
                \{ [ρ,i=j] \mid j ∈ I, ρ ∈ Γ(I\backslash\{j\}) \}$$
-
+  %
   We also note that $Γ,i:𝕀,j:𝕀 ⊢$ and $Γ,j:𝕀,i:𝕀 ⊢$ are respectively
   interpeted as the sets of $[ρ,i=φ,j=φ']$ and $[ρ,j=φ,i=φ']$, which are
   trivially isomorphic.
@@ -843,14 +826,12 @@ $[ρ,i=0]f = [ρf,i=0]$ and $[ρ,i=j]f = [ρ(f-j),i=f(j)]$.
 %  \end{align*}
 \end{remark}
 
-
-\bigskip
 The above refinement on presheaves is necessary for the interpretation
 of some of our syntactic constructions.  Indeed, without this refinement,
 it is not clear how to validate the equality \textsc{Pair-Pred}:
 ${{(\CTimes i {x:A} P[x])} \op i a = P[a]}$.
 
-\bigskip
+\smallskip
 The semantics we define satisfies the substitution law. That is, if $Γ,x:A ⊢ B$
 and $Γ ⊢ a:A$ then for any $ρ ∈ Γ(I)$ we have
 $B[a]ρ = B⟨ρ,x=aρ⟩$.
@@ -861,7 +842,7 @@ $A(i 0)ρ = A[ρ,i=0] = A[ρ,i=j](j\, 0)$.
 $A[ρ,i=0]$ are $I$-sets while $A[ρ,i=j]$ is a $(I,j)$-set.)
 For establishing these properties, we proceed as \citet{Aczel98onrelating}.
 
-\bigskip
+\smallskip
 We proceed to interpret each type construction.
 \begin{description}
   \item[\sc Pi.]
@@ -877,7 +858,7 @@ We proceed to interpret each type construction.
 
     If $f : I → J$ is an arbitrary map, we define $λ f$ to be the tuple
     $(λf_β)$ where $λf_β$ is the family $λf_{βg} = λ_{fβg}$.
-
+    %
     With this definition, we directly have $λα_{β} = λ_{αβ}$.
 
     This is similar to the usual interpretation of dependent product in
@@ -902,7 +883,7 @@ We proceed to interpret each type construction.
     If $f : I → J$ is an arbitrary map, we define $Af$ by taking $Af_{βg}$
     to be the set $A_{fβg}$, together with restriction maps $Af_{βg} → Af_{βgh}$
     defined as the given maps $A_{fβg} → A_{fβgh}$.
-
+    %
     We can then check, as before, that we have $Aα_{β} = A_{αβ}$
 
     As before, this is similar to the usual interpretation of universe in
@@ -980,7 +961,7 @@ We now describe how to interpret terms.
     we define $w = {\fp i t u}[ρ,i=j]_f$ by $\app{w}{a} = \app{tρ_{f-j}}{a}$.
     If $φ = j ∈ I$ and $f(j) = k ∈ J$, then $ρ ∈ Γ(I\backslash\{j\})$ and $ρ(f-j) ∈ Γ(J\backslash\{k\})$;
     we define $w = {\fp i t u}[ρ,i=j]_f$ by
-    $$\app{w}{(a ,_k b)} = ( \app{tρ_{f-j}}{a} ,_k {\app{\app{uρ_{f-j}}{a}}{b}} )$$
+    $\app{w}{(a ,_k b)} = ( \app{tρ_{f-j}}{a} ,_k {\app{\app{uρ_{f-j}}{a}}{b}} )$.
 
   \item[\sc Color-Elim.]
     Assume $ρ ∈ Γ(I)$.  We define $(a \param i)ρ$ as
@@ -991,9 +972,9 @@ We now describe how to interpret terms.
   \label{thm:convertible-in-model}
   \begin{itemize}
     \item If $Γ ⊢ A₁$ and $Γ ⊢ A₂$ with $A₁ = A₂$, then
-      $A₁ρ = A₂ρ$ for any object $I$ and $ρ : Γ(I)$.
+      $A₁ρ = A₂ρ$ for any $ρ : Γ(I)$.
     \item If $Γ ⊢ a₁ : A$ and $Γ ⊢ a₂ : A$ with $a₁ = a₂$, then
-      $a₁ρ = a₂ρ$ for any object $I$ and $ρ : Γ(I)$.
+      $a₁ρ = a₂ρ$ for any $ρ : Γ(I)$.
   \end{itemize}
 \end{theorem}
 \begin{proof}
@@ -1020,23 +1001,19 @@ We now describe how to interpret terms.
 
     \item[\sc Pair-Pred.]
       Let $ρ ∈ Γ(I)$ and $j = \fresh I$.  We have
-      \begin{align*}
-         & ((a ,_i p) \param i)ρ
-        \\=~& (a ,_i p)[ρ,i=j]·j
-      \\=~& (aρ ,_j pρ) · j
-      \\=~& pρ
-      \end{align*}
+      $ ((a ,_i p) \param i)ρ
+      = (a ,_i p)[ρ,i=j]·j
+      = (aρ ,_j pρ) · j
+      = pρ$
 
     \item[\sc Surj-Param.]
       For each $ρ ∈ Γ(I)$ we have
       $(t(i\,0) ,_i t·i)[ρ,i=0] = t(i\,0)ρ = t[ρ,i=0]$, and
-      if $j ∉ I$ then we have
-      \begin{align*}
-        & (t(i\,0) ,_i t·i)[ρ,i=j]
-        \\=~& (t(i\,0)ρ ,_j (t·i)ρ)
-        \\=~& (t[ρ,i=j](j\,0) ,_j t[ρ,i=j]·j)
-        \\=~& t[ρ,i=j]
-      \end{align*}
+      if $j ∉ I$ then
+      $ (t(i\,0) ,_i t·i)[ρ,i=j]
+      = (t(i\,0)ρ ,_j (t·i)ρ)
+      = (t[ρ,i=j](j\,0) ,_j t[ρ,i=j]·j)
+      = t[ρ,i=j]$.
       Hence $(t(i\,0) ,_i t·i)ρ = tρ$ for any $ρ ∈ Γ∗𝕀(I)$.
       \qedhere
   \end{description}
@@ -1062,7 +1039,7 @@ We now describe how to interpret terms.
     \text{ iff. }& ((Xρ ,_k Pρ) ,_l (Qρ ,_k v)) ∈ U(l,k)
   \end{align*}
 
-  and on the other hand
+  while on the other hand
   \begin{align*}
     &v ∈ (U \op j (X ,_i Q) \op i P) ρ
     \\
