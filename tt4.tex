@@ -1,9 +1,12 @@
-\documentclass[english]{PaperTools/latex/lipics}
+\documentclass[english]{PaperTools/latex/entcs}
+\usepackage{graphicx}
+\sloppy
+
 \graphicspath{{PaperTools/latex/}}
-\usepackage{natbib}
+\usepackage[numbers]{natbib}
 \usepackage[utf8]{inputenc}
 \usepackage{stmaryrd}
-\usepackage{amssymb,amstext,amsmath}
+\usepackage{amssymb,amstext,amsmath,amsthm}
 \usepackage{mathtools}
 \usepackage{mathpartir}
 \usepackage{fancyref}
@@ -11,6 +14,16 @@
 \input{fancyrefs}
 \usepackage{tikz}
 \usetikzlibrary{arrows}
+
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{example}[theorem]{Example}
+\theoremstyle{remark}
+\newtheorem*{remark}{Remark}
 
 \newcommand\CC[4]{(#2,_{#1} #3)}
 \newcommand\CP[3]{(#2,_{#1} #3)}
@@ -39,42 +52,19 @@
 \def\El#1{\mathrm{El}(#1)}
 \def\opp{\mathrm{op}}
 
-\newtheorem{conjecture}[theorem]{Conjecture}
 \newboolean{tikz}
 \setboolean{tikz}{true} % XXX set to false to disable diagrams
 
-\title{A presheaf model of parametric type theory}
-
-\author{Jean-Philippe Bernardy}
-\author{Thierry Coquand}
-\author{Guilhem Moulin}
-% {Chalmers University of Technology and University of Gothenburg}
-\affil{Chalmers University of Technology and University of Gothenburg \\
-\texttt{\{bernardy,coquand,mouling\}@chalmers.se}}
-\authorrunning{J-P. Bernardy, T. Coquand and G. Moulin}
-\Copyright[-nd]{J-P. Bernardy, T. Coquand and G. Moulin}
-% JP: I prefer by-sa if possible
-\subjclass{{F.4.1.} {Mathematical logic.} {Lambda calculus and related
-  systems.}}
-
-%Editor-only macros:: begin (do not touch as author)%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\serieslogo{}%please provide filename (without suffix)
-\volumeinfo%(easychair interface)
-  {Billy Editor and Bill Editors}% editors
-  {2}% number of editors: 1, 2, ....
-  {Conference title on which this volume is based on}% event
-  {1}% volume
-  {1}% issue
-  {1}% starting page number
-\EventShortName{}
-\DOI{10.4230/LIPIcs.xxx.yyy.p}% to be completed by the volume editor
-% Editor-only macros::end %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\date{\today}
-
+\def\lastname{J-P. Bernardy, T. Coquand and G. Moulin}
 \begin{document}
-\maketitle
-
+\begin{frontmatter}
+  \title{A presheaf model of parametric type theory}
+  \author{Jean-Philippe Bernardy}
+  \author{Thierry Coquand}
+  \author{Guilhem Moulin}
+  \address{Chalmers University of Technology and University of Gothenburg \\
+  \href{mailto:bernardy@chalmers.se,coquand@chalmers.se,mouling@chalmers.se}%
+       {\textnormal\tt\{bernardy,coquand,mouling\}@chalmers.se}}
 \begin{abstract}
   We propose a new type theory with internalized
   parametricity. Compared to previous similar proposals, this version
@@ -84,9 +74,13 @@
   nominal sets with restriction.  The present calculus is a candidate for the
   core of a proof assistant with internalized parametricity.
 \end{abstract}
+\begin{keyword}
+  Parametricity, Presheaf semantics, Type theory
+\end{keyword}
+\end{frontmatter}
 
 \section{Introduction}
-\cite{reynolds_types_1983} proved a general \emph{abstraction theorem} (sometimes called
+\citet{reynolds_types_1983} proved a general \emph{abstraction theorem} (sometimes called
 \emph{parametricity theorem}) about polymorphic functions. His argument is
 about a set theoretic semantic.  As he stated it, {\em the underlying
   idea is that the meanings of an expression in ``related''
@@ -100,7 +94,7 @@ this statement binary relations by $n$-ary relations, and in particular
 unary relations (predicates). In the latter case, the statement is the following:
 if $A$ is a set and $P$ is a predicate on $A$, then we have
 $P([t_X]_{X=A}(a))$ whenever $P(a)$ holds.
-\cite{wadler_theorems_1989} illustrates by many examples how this
+\citet{wadler_theorems_1989} illustrates by many examples how this
 result is useful for reasoning about functional programs.
 
 The argument and result of Reynolds are model-theoretic in nature.
@@ -111,7 +105,7 @@ $(A : ★) → ★ → ★$ --- the type of the polymorphic identity --- then th
 following proposition holds:
 $$ (A : ★) → (P : A → ★) → (x : A) → P\, x → P (f\, A\, x) $$
 %
-Indeed \citet{bernardy_proofs_2012} proves such a result as a
+Indeed \citet{bernardy_proofs_2012} prove such a result as a
 (syntactical) meta-theorem about type systems. However this result is
 not provable internally, \ie, the following is not provable:
 $$ (f : (A:★) → A → A) →  (A : ★) → (P : A → ★) → (x : A) → P\, x → P (f\, A\, x) $$
@@ -134,7 +128,7 @@ Our technical contributions are as follows:
 \begin{itemize}
 \item We present a type theory (\fref{sec:syntax}) which internalizes parametricity (as we show in \fref{sec:parametricity})
   and can be seen as a simplification and generalization of the systems of
-  \cite{bernardy_computational_2012,bernardy_type-theory_2013}.
+  \citet{bernardy_computational_2012,bernardy_type-theory_2013}.
   In particular, given a $λ$-term we have a special pairing construction
   to associate it to its parametricity proof, as well as special
   projections to isolate the proof. As seen in \fref{ex:poly-id}, these
@@ -204,8 +198,7 @@ We give a few intuitions to interpret the novel syntax, before giving formally t
   swapping described in that paper.)
   Furthermore these predicates are definable
   in the logic: The type $A \op i a$ expresses that $a$ satisfies
-  the parametricity predicate associated with the type $A$ on color
-  $i$.
+  the parametricity predicate associated with the type $A$ on color~$i$.
 \item The term $a \param i$ yields a proof of $A \op i \proj i a$, where
   $\proj i a$ denotes the realizer part of $a$,
   obtained by erasing the color $i$. (Erasure is detailed in
@@ -1172,7 +1165,7 @@ presheaf, but they also have the same underlying category $\pI$.
 This means as all these models have an additional cubical structure.
 We find remarkable that cubical structures are useful for modeling both
 parametricity and univalence.
-\cite{altenkirch2014syntax} give a syntax for
+\citet{altenkirch2014syntax} give a syntax for
 \citeauthor{bezem2014model}'s Cubical Type Theory, effectively modelling
 univalence by internalization of their model.
 The present work further refines the model by interpreting terms as
@@ -1200,7 +1193,7 @@ earlier version of this paper, and helping us to fix it.
 We also thank Peter Dybjer and Patrik Jansson for valuable feedback and
 discussion.
 
+\newcommand{\newblock}{}
 \bibliographystyle{abbrvnat}
 \bibliography{PaperTools/bibtex/jp,tt}
-
 \end{document}
