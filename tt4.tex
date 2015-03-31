@@ -116,7 +116,7 @@ As a workaround, users relying on the parametricity conditions have
 postulated the parametricity axiom
 \citep{pouillard_nameless_2011,chlipala_parametric_2008,atkey_unembedding_2009}.
 However, %this approach has a fundamental drawback:
-because such postulate does not have a computational interpretation,
+because postulates does not have a computational interpretation, such
 parametricity conditions can only be used in computationally-irrelevant
 positions.
 
@@ -139,14 +139,14 @@ Our technical contributions are as follows:
   projections as the first projection does not commute with
   application.)  Furthermore we distinguish between multiple uses of the
   parametricity by naming (a.k.a \emph{coloring}) the pairs and
-  projections; this is analogous to building hypercubes and accessing to
+  projections; this is analogous to building hypercubes and accessing
   their vertices as in \citep{bernardy_computational_2012}.
   However, unlike previous type theories with internalized parametricity
   \citep{bernardy_computational_2012, bernardy_type-theory_2013}, the
   system presented here does not allow computation of parametricity types:
-  For instance, the parametricity predicated of $a : ★$ is
+  for instance, the parametricity condition for $a : ★$ is
   \emph{isomorphic to} rather than convertible to $A → ★$.  (As shown in
-  \fref{sec:parametricity}, this does not seem to be an issue in
+  Sec. \ref{sec:parametricity}, this does not seem to be an issue in
   practice.)
 \item We provide a \emph{denotational} semantics, in the form of a presheaf model, for this type theory (\fref{sec:model}).
       This model is a refinement of the presheaf semantics used to
@@ -194,15 +194,15 @@ We give a few intuitions to interpret the novel syntax, before giving formally t
 \item \citet{reynolds_types_1983} associates each type with a
   predicate. Here, each type is associated not a single predicate, but
   many: one for every color. (Using a new name for each application of
-  Parametricity is analogous to naming dimensions in the hypercubes of
+  parametricity is analogous to naming dimensions in the hypercubes of
   our earlier syntax \citep{bernardy_computational_2012}; making a
   distincition between these dimensions solves the problem of
   swapping described in that paper.)
   Furthermore these predicates are definable
-  in the logic: The type $A \op i a$ expresses that $a$ satisfies
+  in the logic: the type $A \op i a$ expresses that $a$ satisfies
   the parametricity predicate associated with the type $A$ on color~$i$.
 \item The term $a \param i$ yields a proof of $A \op i \proj i a$, where
-  $\proj i a$ denotes the realizer part of $a$,
+  $\proj i a$ denotes the realizing part of $a$,
   obtained by erasing the color $i$. (Erasure is detailed in
   \fref{def:color-erasure}.)
 \item The forms $\CP i a p$, $\CTimes i {x:A} P$ and $\fp i t u$ allow to
@@ -546,7 +546,7 @@ support direct computation of free theorems: in particular $(A → B) \op i a$
 does not reduce.
 
 At this point one may wonder, since a new syntactic construction was
-introduced for function types, if yet another construction is required
+introduced for function types, whether yet another construction is required
 for higher order functions.  It turns out $\fp i t u$ can be combined
 with $\CP i a p$ to pair higher order functions with the parametricity
 proof of their type, as illustrated in the following example.
@@ -589,10 +589,10 @@ p\, X\, x &= x\param i
 We have already seen that $A \op i $ corresponds to the parametricity
 predicate for type $A$.
 As we hinted at in the introduction, the color index $i$ allows us to
-distinguish each application of Parametricity.  (As a side remark, since
-the \textsc{Param} rules ``consumes'' a color, limiting nested
-applications of Parametricity can trivialy be enforced in our system by
-limiting the number of free colors in the context.)
+distinguish each application of parametricity.  (As a side remark, since
+the \textsc{Param} rule ``consumes'' a color, limiting the depth of
+nested applications of parametricity can trivialy be enforced in our
+system by limiting the number of free colors in the context.)
 We can iterate the operator $A \op {·} $ to construct
 relations between parametricity witnesses. That is, given a context with
 $$x :A,\enspace
@@ -972,9 +972,9 @@ We now describe how to interpret terms.
   \label{thm:convertible-in-model}
   \begin{itemize}
     \item If $Γ ⊢ A₁$ and $Γ ⊢ A₂$ with $A₁ = A₂$, then
-      $A₁ρ = A₂ρ$ for any $ρ : Γ(I)$.
+      $A₁ρ = A₂ρ$ for any $ρ ∈ Γ(I)$.
     \item If $Γ ⊢ a₁ : A$ and $Γ ⊢ a₂ : A$ with $a₁ = a₂$, then
-      $a₁ρ = a₂ρ$ for any $ρ : Γ(I)$.
+      $a₁ρ = a₂ρ$ for any $ρ ∈ Γ(I)$.
   \end{itemize}
 \end{theorem}
 \begin{proof}
@@ -1138,7 +1138,8 @@ an underlying calculus, while in the present work they refine a presheaf structu
 The presheaf construction used in this paper follows a known template,
 used for example by \citet{bezem2014model,DBLP:journals/corr/Pitts14}
 to model univalence in type theory. Not only both models use a
-presheaf, but they also have the same underlying category $\pI$.
+presheaf, but they also use a category closely connected to the
+underlying category $\pI$.
 This means as all these models have an additional cubical structure.
 We find remarkable that cubical structures are useful for modeling both
 parametricity and univalence.
