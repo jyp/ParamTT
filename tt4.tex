@@ -115,7 +115,16 @@ Indeed \citet{bernardy_proofs_2012} proves such a result as a
 not provable internally, \ie, the following is not provable:
 $$ (f : (A:★) → A → A) →  (A : ★) → (P : A → ★) → (x : A) → P\, x → P (f\, A\, x) $$
 
-Several attempts have been made
+As a workaround, users relying on the parametricity conditions have
+postulated the parametricity axiom
+\citep{pouillard_nameless_2011,chlipala_parametric_2008,atkey_unembedding_2009}.
+However, %this approach has a fundamental drawback:
+because such postulate does not have a computational interpretation,
+parametricity conditions can only be used in computationally-irrelevant
+positions.
+
+Instead, one would like to be able to rely on parametricity conditions
+within proof assistants themselves.  Several attempts have been made
 \citep{bernardy_computational_2012,bernardy_type-theory_2013} --- or are currently
 developed \citep{altenkirch2014syntax} ---
 for designing an extension of dependent type theory in which such an internal form of
@@ -128,7 +137,7 @@ Our technical contributions are as follows:
   In particular, given a $λ$-term we have a special pairing construction
   to associate it to its parametricity proof, as well as special
   projections to isolate the proof. As seen in \fref{ex:poly-id}, these
-  new constructions enable us to proof the above proposition
+  new constructions enable us to prove the above proposition
   \emph{internally}.  (This is not possible with usual pair and
   projections as the first projection does not commute with
   application.)  Furthermore we distinguish between multiple uses of the
@@ -146,8 +155,8 @@ Our technical contributions are as follows:
       This model is a refinement of the presheaf semantics used to
       interpret nominal sets with
       restrictions~\citep{bezem2014model,DBLP:journals/corr/Pitts14}.
-\item We conjecture that conversion and type-checking are decidable for this system.
 \end{itemize}
+We conjecture that conversion and type-checking are decidable for this system.
 
 \section{Syntax}
 \label{sec:syntax}
@@ -187,7 +196,12 @@ We give a few intuitions to interpret the novel syntax, before giving formally t
 \begin{enumerate}
 \item \citet{reynolds_types_1983} associates each type with a
   predicate. Here, each type is associated not a single predicate, but
-  many: one for every color. Furthermore these predicates are definable
+  many: one for every color. (Using a new name for each application of
+  Parametricity is analogous to naming dimensions in the hypercubes of
+  our earlier syntax \citep{bernardy_computational_2012}; making a
+  distincition between these dimensions solves the problem of
+  swapping described in that paper.)
+  Furthermore these predicates are definable
   in the logic: The type $A \op i a$ expresses that $a$ satisfies
   the parametricity predicate associated with the type $A$ on color
   $i$.
@@ -682,7 +696,7 @@ In this section we show how to interpret our type theory by a presheaf model.
 \begin{definition}
   If $I$ and $J$ are two \emph{finite} subsets of $𝕀$, we call
   \emph{color map} any function $f : I → J ∪ \{0\}$ such that
-  $f(i_1) = f(i_2)$ iff. $i_1 = i_2$ whenever $f(i_1) = f(i_2) ∈ J$.
+  $i_1 = i_2$ for any $i_1, i_2 ∈ I$ with $f(i_1) = f(i_2) ∈ J$.
   We then note $f : I → J$.
 \end{definition}
 
@@ -749,8 +763,10 @@ map, defined by $ι_i(k) = k$ $∀ k ∈ I$.
   If $a,b$ are $I$-elements and $j ∉ I$, we define the $(I,j)$-element
   $(a ,_j b)$ as $(a ,_j b)_J ≔ a_J$ if $j ∉ J$ and $(a ,_j b)_{J,j} ≔ b_J$.
   %
-  Any $(I,i)$-element can be written $u = (u_J)_{J ⊆ \{I,i\}} = (u_J)_{J ⊆ I} ∪ (u_{J,i})_{J ⊆ I}$;
-  We can therefore define the $I$-elements $u (i\,0) ≔ (u_J)_{J ⊆ I}$ and $u · i ≔ (u_{J,i})_{J ⊆ I}$.
+  Any $(I,i)$-element (where $I,i$ is a shorthand for $I ∪ \{i\}$ with
+  $i ∉ I$) can be written $u = (u_J)_{J ⊆ I,i} = (u_J)_{J ⊆ I} ∪ (u_{J,i})_{J ⊆ I}$;
+  We can therefore define the $I$-elements $u (i\,0) ≔ (u_J)_{J ⊆ I}$ and
+  $u · i ≔ (u_{J,i})_{J ⊆ I}$.
   (Hence by definition $u = (u (i\,0) ,_i u · i)$.)
 
 \bigskip
