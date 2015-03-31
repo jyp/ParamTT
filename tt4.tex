@@ -590,7 +590,13 @@ p &: (X:U) → (x:X) → X \op i x\\
 p\, X\, x &= x\param i
 \end{align*}
 We have already seen that $A \op i $ corresponds to the parametricity
-predicate for type $A$. We can iterate this operator to construct
+predicate for type $A$.
+As we hinted at in the introduction, the color index $i$ allows us to
+distinguish each application of Parametricity.  (As a side remark, since
+the \textsc{Param} rules ``consumes'' a color, limiting nested
+applications of Parametricity can trivialy be enforced in our system by
+limiting the number of free colors in the context.)
+We can iterate the operator $A \op {·} $ to construct
 relations between parametricity witnesses. That is, given a context with
 \begin{align*}
   x & :A \\
