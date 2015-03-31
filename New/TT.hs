@@ -106,6 +106,24 @@ data Val = Var String
          | Psi Val
          | Ni Val Val
 
+parens x = "(" ++ x ++ ")"
+showVal :: [String] -> Val -> String
+showVal su@(s:ss) v0 = case v0 of
+  Var x -> x
+  Pi a f -> "Π" ++ parens (sv a) ++ sv f
+  U -> "U"
+  Lam f -> "\\" ++ s ++ "->" ++ showVal ss (f $ Var s)
+  CPair a b -> "[" ++ sv a ++ "," ++ sv b ++ "]"
+  CApp a b -> sv a ++ "@" ++ show b
+  Param a -> sv a ++ "!"
+  CLam f -> "<" ++ s ++ ">" ++ showVal ss (f $ CVar s)
+  CPi f -> "Π" ++ sv f
+  Psi a -> "Ψ" ++ sv a
+  Ni a b -> sv a ++ "∋" ++ sv b
+ where sv = showVal su
+instance Show Val where
+  show = showVal ["α","β","γ"]
+  
 eval :: Term -> Env -> Val
 eval t0 rho =
   let ev t = eval t rho
@@ -114,7 +132,9 @@ eval t0 rho =
   TPi a b -> Pi (ev a) (ev b)
   TLam x a -> Lam (\v -> eval a ((x,v):rho))
   TApp a b -> app (ev a) (ev b)
-  TVar x -> Var x
+  TVar x -> case lookup x rho of
+    Nothing -> Var x
+    Just v -> v
   TCPair a b -> cpair (ev a) (ev b)
   TCApp f i -> capp (ev f) i
   TCLam xi a -> clam xi (ev a)
@@ -123,10 +143,11 @@ eval t0 rho =
   TPsi a -> Psi (ev a)
   TPhi a -> Phi (ev a)
   TParam a -> param (ev a)
-  TILam i x a -> Lam (\v -> eval a ((x,CLam $ \j -> ceval i j v):rho))
+  TILam i x a -> Lam (\v -> eval a ((x,clam i v):rho))
 
 clam' :: (CVal -> Val) -> Val
 clam' f | (CApp a (CVar "__RESERVED__")) <- f (CVar "__RESERVED__") = a
+        | otherwise = CLam f
    -- eta contraction (no need for occurs check!)
 
 clam :: Color -> Val -> Val
@@ -143,6 +164,7 @@ ceval' :: (Color -> CVal) -> Val -> Val
 ceval' s v0 =
   let ev = ceval' s in
   case v0 of
+    Var x -> Var x
     Pi a b -> Pi (ev a) (ev b)
     App a b -> app (ev a) (ev b)
     U -> U
@@ -167,7 +189,7 @@ proj i = ceval i Zero
 
 app :: Val -> Val -> Val
 app (Lam f) a = f a
-app (CApp (CPair f (Phi g)) (CVar i)) a = CPair (f `app` proj i a) (g `app` CLam (\j -> ceval i j a)) `capp` CVar i
+app (CApp (CPair f (Phi g)) (CVar i)) a = CPair (f `app` proj i a) (g `app` clam i a) `capp` CVar i
 app f a = App f a
 
 face :: Val -> Val
