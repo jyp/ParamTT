@@ -84,5 +84,3 @@ ti ctx t0 = let ev x = eval x [] in case t0 of
       case tTy of
         CPi b -> do
           return (b `ni` face (ev t))
-    
-    
