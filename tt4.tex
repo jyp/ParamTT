@@ -680,7 +680,7 @@ We continue to reason by deduction:
 We can construct the following closed term:
   \begin{align*}
     &q   : (A:U) → (x:A) → (x':A \op i x) → A \op i \CP j x {x \param i} \op j x'\\
-    &q   : (A:U) → (x:A) → (x':A \op i x) → A \op i x \op j x' &\text {by \fref{cor:equalities}}\\
+    &q   : (A:U) → (x:A) → (x':A \op i x) → A \op i x \op j x' &\text{by \textsc{Surj-Param}}\\
     &q\, A\, x\, x' = x' \param j
   \end{align*}
 The result is obtained by substituting $a$ for $x$ and $a'$ for $x'$.
@@ -989,7 +989,7 @@ We now describe how to interpret terms.
 \begin{proof}
   By simultaneous induction on the derivation.
   We only show the conversion rules \textsc{Pair-Param},
-  \textsc{Pair-Pred} and \textsc{Surj-Pair} here; other rules involving
+  \textsc{Pair-Pred} and \textsc{Surj-Param} here; other rules involving
   colors can be proven in a similar fashion, while $β$ and $η$ can be
   proven in the usual way.
 
@@ -1017,7 +1017,7 @@ We now describe how to interpret terms.
       \\=~& pρ
       \end{align*}
 
-    \item[\sc Surj-Pair.]
+    \item[\sc Surj-Param.]
       For each $ρ ∈ Γ(I)$ we have
       $(t(i\,0) ,_i t·i)[ρ,i=0] = t(i\,0)ρ = t[ρ,i=0]$, and
       if $j ∉ I$ then we have
