@@ -3,7 +3,7 @@
 \sloppy
 
 \graphicspath{{PaperTools/latex/}}
-\usepackage[numbers]{natbib}
+\usepackage[numbers,sort,compress]{natbib}
 \usepackage[utf8]{inputenc}
 \usepackage{stmaryrd}
 \usepackage{amssymb,amstext,amsmath,amsthm}
@@ -60,7 +60,7 @@
 \def\lastname{J-P. Bernardy, T. Coquand and G. Moulin}
 \begin{document}
 \begin{frontmatter}
-  \title{A presheaf model of parametric type theory}
+  \title{A Presheaf Model of Parametric Type Theory}
   \author{Jean-Philippe Bernardy}
   \author{Thierry Coquand}
   \author{Guilhem Moulin}
@@ -110,7 +110,10 @@ $$ (A : ★) → (P : A → ★) → (x : A) → P\, x → P (f\, A\, x) $$
 Indeed \citet{bernardy_proofs_2012} prove such a result as a
 (syntactical) meta-theorem about type systems. However this result is
 not provable internally, \ie, the following is not provable:
-$$ (f : (A:★) → A → A) →  (A : ★) → (P : A → ★) → (x : A) → P\, x → P (f\, A\, x) $$
+\begin{equation}
+  \label{eq:param-id}
+  (f : (A:★) → A → A) →  (A : ★) → (P : A → ★) → (x : A) → P\, x → P (f\, A\, x)
+\end{equation}
 
 As a workaround, users relying on the parametricity conditions have
 postulated the parametricity axiom
@@ -134,8 +137,8 @@ Our technical contributions are as follows:
   In particular, given a $λ$-term we have a special pairing construction
   to associate it to its parametricity proof, as well as special
   projections to isolate the proof. As seen in \fref{ex:poly-id}, these
-  new constructions enable us to prove the above proposition
-  \emph{internally}.  (This is not possible with usual pair and
+  new constructions enable us to prove the proposition (\ref{eq:param-id})
+  \emph{internally}.  (This is not possible with usual pairs and
   projections as the first projection does not commute with
   application.)  Furthermore we distinguish between multiple uses of the
   parametricity by naming (a.k.a \emph{coloring}) the pairs and
@@ -143,10 +146,10 @@ Our technical contributions are as follows:
   their vertices as in \citep{bernardy_computational_2012}.
   However, unlike previous type theories with internalized parametricity
   \citep{bernardy_computational_2012, bernardy_type-theory_2013}, the
-  system presented here does not allow computation of parametricity types:
-  for instance, the parametricity condition for $a : ★$ is
-  \emph{isomorphic to} rather than convertible to $A → ★$.  (As shown in
-  Sec. \ref{sec:parametricity}, this does not seem to be an issue in
+  system presented here does not \emph{compute} parametricity types:
+  for instance, parametricity conditions are \emph{isomorphic to}
+  functions, rather than functions themselves.  (As shown in
+  Sec. \ref{sec:parametricity}, this does not appear to be an issue in
   practice.)
 \item We provide a \emph{denotational} semantics, in the form of a presheaf model, for this type theory (\fref{sec:model}).
       This model is a refinement of the presheaf semantics used to
@@ -191,24 +194,22 @@ colors.
 
 We give a few intuitions to interpret the novel syntax, before giving formally the typing rules of the system. 
 \begin{enumerate}
-\item \citet{reynolds_types_1983} associates each type with a
+\item Reynolds associates each type with a
   predicate. Here, each type is associated not a single predicate, but
-  many: one for every color. (Using a new name for each application of
-  parametricity is analogous to naming dimensions in the hypercubes of
-  our earlier syntax \citep{bernardy_computational_2012}; making a
-  distincition between these dimensions solves the problem of
-  swapping described in that paper.)
+  many: one for every color.
+  These multiple predicates are essential to interpret parametricity when
+  it is nested.  Indeed, using a single predicate yields
+  inconsistencies (see \fref{sec:nested-parametricity}).
   Furthermore these predicates are definable
   in the logic: the type $A \op i a$ expresses that $a$ satisfies
   the parametricity predicate associated with the type $A$ on color~$i$.
-\item The term $a \param i$ yields a proof of $A \op i \proj i a$, where
-  $\proj i a$ denotes the realizing part of $a$,
-  obtained by erasing the color $i$. (Erasure is detailed in
-  \fref{def:color-erasure}.)
+  For each term $a$ and color $i$, the term $\proj i a$ is the erasure
+  of $i$ in $a$.  It is defined by induction on $a$
+  (\fref{def:color-erasure}) and can be understood as a
+  realizer~\cite{bernardy_realizability_2011} of $a$.
+\item The term $a \param i$ yields a proof of $A \op i \proj i a$.
 \item The forms $\CP i a p$, $\CTimes i {x:A} P$ and $\fp i t u$ allow to
   locally associate parametricity proofs with a given realizer.
-\item Free colors appear in the context, and bound using the
-  constructs $A \op i {}$ and $a \param$
 \end{enumerate}
 
 
@@ -270,7 +271,7 @@ remove colors from scope.
 The equality relation used in the {\sc Conv} rule is detailed below in
 \fref{def:conversion}.  The \textsc{Swap} rules allow us to use
 \textsc{Out} and \textsc{Color-Elim} with any free color, provided that
-no variable vas introduced after that color (see \eg, \fref{thm:param-2-sym}).
+no variable was introduced after that color (see \eg, \fref{thm:param-2-sym}).
 
 Additionally, for the above system to be well-founded, we need to
 distinguish small and big types, and allow only small types to be
@@ -336,8 +337,8 @@ to keep the presentation concise, we leave it implicit in the syntax.
 \begin{definition}[Conversion]
 \label{def:conversion}
 The convertibility of types used in the {\sc Conv} rule and written
-simply ($=$) is defined as the smallest congruence containing the
-following rules.
+simply ($=$) is defined as the smallest reflexive-symmetric-transitive
+congruence containing the following rules.
 \begin{mathpar}
   \inferrule[Pair-Param]{}{{(a,_i p)}\param i   = p}
 \and
@@ -347,9 +348,6 @@ following rules.
     \\
     %\inferrule[Surj-Param]{\proj i t = a \\ t \param i = p} {t = \CP i a p }
     \inferrule[Surj-Param]{} {t = \CP i {\proj i t} {t \param i} }
-    \and
-    %\inferrule[Surj-Fun]{\proj i t = u \\ (t \CP i x y) \param i = v x y} {t = \fp i u v }
-    \inferrule[Surj-Fun]{} {t = \fp i {\proj i t} {λx x'. (t \CP i x {x'}) \param i}}
     \and
     %\inferrule[Surj-Typ]{\proj i T = A \\ T \op i x = B} {T = \CTimes i {x:A} B }
     \inferrule[Surj-Typ]{} {T = \CTimes i {x:{\proj i T}} {(T \op i x)} }
@@ -361,17 +359,16 @@ following rules.
     \inferrule[β]{}{(λx:A. b[x]) u = b[u]}
 \and
     \inferrule[η]{t x = b} {t = λ x:A.b}
-    \\
-    \inferrule[Refl]{~}{a = a}
-    \and
-    \inferrule[Sym]{a = b}{b = a}
-    \and
-    \inferrule[Trans]{a = b \\ b = c}{a = c}
   \end{mathpar}
 \end{definition}
 
+\begin{corollary}[\textsc{Surj-Fun}]
+  \label{cor:surj-fun}
+  $t = \fp i {\proj i t} {λx x'. (t \CP i x {x'}) \param i}$
+\end{corollary}
+
 \begin{remark}
-  In order to be well-typed the context of the conclusion of the
+  In order to be well-typed any context for the conclusion of the
   \textsc{Pair-App}, \textsc{Surj-Param}, \textsc{Surj-Fun} and
   \textsc{Surj-Typ} needs to end with the color binding $i : 𝕀$.
 \end{remark}
@@ -397,6 +394,8 @@ conversion relation is decidable.
 In this section we prove that our system properly internalizes
 parametricity. We also illustrate the system by giving a few simple
 proofs relying on parametricity (including iterated parametricity).
+For the sake of readability, we leave out the distinction between types
+and their codes, which plays no role here.
 
 Unlike previous type theories with internalized parametricity
 \citep{bernardy_computational_2012, bernardy_type-theory_2013}, the
@@ -484,8 +483,6 @@ In practice, when carrying out parametricity proofs, many of the steps
 of the above isomorphisms cancel each other and one obtains a simpler
 proof. This behaviour is illustrated by the following example:
 parametricity for the polymorphic identity and Church-encoded natural numbers.
-(For the sake of simplicity, in the remainder of this section, we leave out the
-distinction between types and their codes.)
 
 \begin{example}
   \label{ex:poly-id}
@@ -538,7 +535,7 @@ thus
   \end{align*}
 \end{example}
 
-As seen in \fref{ex:church-nat}, one needs to use the
+As seen in \fref{ex:church-nat}, one needs to use
 $\fp i t u$ to pair a function with the parametricity proof of its type
 if one wants to apply that pair to some argument and reduce the
 application.  This is because as noted above, our system does not
@@ -547,9 +544,10 @@ does not reduce.
 
 At this point one may wonder, since a new syntactic construction was
 introduced for function types, whether yet another construction is required
-for higher order functions.  It turns out $\fp i t u$ can be combined
+for higher order functions.  This objection is preemptively refuted by
+\fref{thm:iso-fun}: it turns out that $\fp i t u$ can be combined
 with $\CP i a p$ to pair higher order functions with the parametricity
-proof of their type, as illustrated in the following example.
+proof of their type.  The following example illustrates this technique:
 
 \begin{example}
   Let $F = (X : U) → ((X → X) → X) → X$.
@@ -581,17 +579,18 @@ proof of their type, as illustrated in the following example.
 \end{example}
 
 \subsection{Iterating Parametricity}
+\label{sec:nested-parametricity}
 In our system, one can use parametricity generically as follows:
-\begin{align*}
-p &: (X:U) → (x:X) → X \op i x\\
-p\, X\, x &= x\param i
-\end{align*}
+$$\begin{array}[t]{l@{\,}l}
+  p &: (X:U) → (x:X) → X \op i x\\
+  p & X\, x = x\param i
+\end{array}$$
 We have already seen that $A \op i $ corresponds to the parametricity
 predicate for type $A$.
 As we hinted at in the introduction, the color index $i$ allows us to
 distinguish each application of parametricity.  (As a side remark, since
 the \textsc{Param} rule ``consumes'' a color, limiting the depth of
-nested applications of parametricity can trivialy be enforced in our
+nested applications of parametricity can trivially be enforced in our
 system by limiting the number of free colors in the context.)
 We can iterate the operator $A \op {·} $ to construct
 relations between parametricity witnesses. That is, given a context with
@@ -691,12 +690,13 @@ In this section we show how to interpret our type theory by a presheaf model.
   If $I$ and $J$ are two \emph{finite} subsets of $𝕀$, we call
   \emph{color map} any function $f : I → J ∪ \{0\}$ such that
   $i_1 = i_2$ for any $i_1, i_2 ∈ I$ with $f(i_1) = f(i_2) ∈ J$.
-  We then note $f : I → J$.
+  %We then note $f : I → J$.
 \end{definition}
 
 \begin{definition}[Category $\pI{}$]
   \label{def:pI}
-  Let objects be finite color sets and morphisms be color maps.
+  Let objects be finite color sets and morphisms be color maps
+  (the Hom-set $I → J$ denotes functions $I → J ∪ \{0\}$).
   If $f : I → J$ and $g : J → K$, we define the composition $fg : I → K$
   as $fg(i) = 0$ if $f(i) = 0$ and $fg(i) = g(f(i))$ if $f(i) ∈ J$.
   We write $1_I : I → I$ for the identity map, and define it as $1_I(i) = i$ for each $i ∈ I$.
@@ -766,16 +766,19 @@ map, defined by $ι_i(k) = k$ $∀ k ∈ I$.
 Recall that a \emph{presheaf} $F$ on $\pI^\opp$ is given by a family of
 sets $F(I)$ together with restriction maps $F(I) → F(J)$, $u ↦ uf$ for
 $f : I → J$ satisfying $u1 = u$ and $(uf)g = u(fg)$.
-Note that the category of presheaves on $\pI^\opp$ is equivalent to the
-category $\mathbf{Res}$ of nominal restriction sets \cite[rem.~9.9 p.~161]{PittsAM:nomsns}.
+(Note that the category of presheaves on $\pI^\opp$ is equivalent to the
+category $\mathbf{Res}$ of nominal restriction sets
+\cite[rem.~9.9 p.~161]{PittsAM:nomsns}.)
 %
 We use a refined presheaf on $\pI^\opp$ by requiring two further conditions:
 %
 \begin{enumerate}
   \item for any object $I$, $F(I)$ is an $I$-set; and
+    \label{itm:presheaf-refinement-1}
   \item for any projection map $α : I → I_α$, the restriction
     map $F(I) → F(I_α)$, $u ↦ uα$ is the projection operation, \ie,
     $uα_J = u_J$ for any $J ⊆ I$.
+    \label{itm:presheaf-refinement-2}
 \end{enumerate}
 %
 Seeing an $I$-element $u$ as a tuple indexed by projection maps
@@ -816,7 +819,7 @@ $[ρ,i=0]f = [ρf,i=0]$ and $[ρ,i=j]f = [ρ(f-j),i=f(j)]$.
                \{ [ρ,i=j] \mid j ∈ I, ρ ∈ Γ(I\backslash\{j\}) \}$$
   %
   We also note that $Γ,i:𝕀,j:𝕀 ⊢$ and $Γ,j:𝕀,i:𝕀 ⊢$ are respectively
-  interpeted as the sets of $[ρ,i=φ,j=φ']$ and $[ρ,j=φ,i=φ']$, which are
+  interpreted as the sets of $[ρ,i=φ,j=φ']$ and $[ρ,j=φ,i=φ']$, which are
   trivially isomorphic.
 %  \begin{align*}
 %    Γ ∗ 𝕀 ∗ 𝕀(I) =& \{ [ρ,i=0,j=0] \mid ρ ∈ Γ(I) \} ∪
@@ -826,7 +829,9 @@ $[ρ,i=0]f = [ρf,i=0]$ and $[ρ,i=j]f = [ρ(f-j),i=f(j)]$.
 %  \end{align*}
 \end{remark}
 
-The above refinement on presheaves is necessary for the interpretation
+The above refinement on presheaves (conditions
+(\ref{itm:presheaf-refinement-1}) and
+(\ref{itm:presheaf-refinement-2}) is necessary for the interpretation
 of some of our syntactic constructions.  Indeed, without this refinement,
 it is not clear how to validate the equality \textsc{Pair-Pred}:
 ${{(\CTimes i {x:A} P[x])} \op i a = P[a]}$.
@@ -1086,7 +1091,7 @@ We now describe how to interpret terms.
 
 \section{Related Work}
 
-\subsection{Our own line of work}
+\paragraph{Our own line of work}
 This work continues a line of work aiming at a smooth integration of
 parametricity with dependent types
 \citep{bernardy_parametricity_2010,bernardy_realizability_2011,bernardy_proofs_2012,bernardy_computational_2012,bernardy_type-theory_2013}. The present work offers two improvements over previous publications:
@@ -1106,24 +1111,23 @@ parametric interpretation of functions is instead merely isomorphic to
 a function, thanks to the {\sc In-Fun} rule (\fref{thm:iso-fun}). This
 isomorphism (rather than equality) means on the one hand that the
 swapping of arguments is handled by the usual rules of logic, instead
-of special-purpose ones. On the other hand, obtaining the classical
+of special-purpose ones. On the other hand, obtaining the usual
 parametric interpretation of types requires some purely mechanical
 work by the user of the logic.
 
-\subsection{Parametric Models of Type Theory vs. Parametric Type Theories}
-
+\paragraph{Parametric Models of Type Theory vs. Parametric Type Theories}
 Two pieces of work propose alternative parametric models of
 type theory
 \citep{atkey_relationally_2014,krishnaswami_internalizing_2013}, but
 do not integrate parametricity in the syntax of the calculus. This
 means that, while certain consequences of parametricity can be made
-available in the logic, via constants validated by the model,
+available in the logic (\eg, via constants validated by the model),
 parametricity itself is not available. In this paper, we not only
 propose a parametric model, but also show how it can be used to
 interpret parametricity straight up in the syntax of the type theory.
 
 
-\subsection{Various kinds of models}
+\paragraph{Various kinds of models}
 Another characterizing feature of proposals for parametricity is the
 kind of model underlying the
 semantics. \Citet{krishnaswami_internalizing_2013} propose a model
@@ -1133,10 +1137,9 @@ on reflexive graphs. The model that we use is based on cubes
 our 2012 work the cubes were reified as syntax in
 an underlying calculus, while in the present work they refine a presheaf structure.
 
-\subsection{Presheaf models}
-
+\paragraph{Presheaf models}
 The presheaf construction used in this paper follows a known template,
-used for example by \citet{bezem2014model,DBLP:journals/corr/Pitts14}
+used for example by \citet{bezem2014model} and \citet{DBLP:journals/corr/Pitts14}
 to model univalence in type theory. Not only both models use a
 presheaf, but they also use a category closely connected to the
 underlying category $\pI$.
@@ -1160,7 +1163,7 @@ parametricity.
 
 \bigskip
 \noindent
-\textbf{Acknowledgment:}
+\textbf{Acknowledgments:}
 The fact that the category of partial bijections \pI{} should be
 relevant for internalization of parametricity became apparent through
 discussions between Thorsten Altenkirch and the second  author about
@@ -1168,8 +1171,8 @@ the paper \citep{bernardy_computational_2012}.
 
 We are extremely grateful to Simon Huber for finding a flaw in an
 earlier version of this paper, and helping us to fix it.
-We also thank Peter Dybjer and Patrik Jansson for valuable feedback and
-discussion.
+We also thank Steve Awodey, Peter Dybjer and Patrik Jansson for valuable
+feedback and discussion.
 
 \newcommand{\newblock}{}
 \bibliographystyle{abbrvnat}
