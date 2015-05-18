@@ -119,7 +119,7 @@ As a workaround, users relying on the parametricity conditions have
 postulated the parametricity axiom
 \citep{pouillard_nameless_2011,chlipala_parametric_2008,atkey_unembedding_2009}.
 However, %this approach has a fundamental drawback:
-because postulates does not have a computational interpretation, such
+because postulates do not have a computational interpretation, such
 parametricity conditions can only be used in computationally-irrelevant
 positions.
 
@@ -589,7 +589,7 @@ We have already seen that $A \op i $ corresponds to the parametricity
 predicate for type $A$.
 As we hinted at in the introduction, the color index $i$ allows us to
 distinguish each application of parametricity.  (As a side remark, since
-the \textsc{Param} rule ``consumes'' a color, limiting the depth of
+the \textsc{Color-elim} rule introduces a color, limiting the depth of
 nested applications of parametricity can trivially be enforced in our
 system by limiting the number of free colors in the context.)
 We can iterate the operator $A \op {·} $ to construct
@@ -598,8 +598,8 @@ $$x :A,\enspace
   y : A \op j x,\enspace
   z : A \op i x,$$
 the type $A \op i \CP j x y \op j z$ is well formed ($∋$ is left
-associative), and can be understood as a relation
-between the parametricity proofs $y$ and $z$. The following results about this relation illustrate the expressivity of our system.
+associative), and can be understood as a binary relation
+between the parametricity \emph{proofs} $y$ and $z$. The following results about this relation illustrate the expressivity of our system.
 \begin{theorem}
   \label{thm:param-2-sym}
 If the type $A$ does not depend on either $i$ or $j$, the relation $λy z. A \op i \CP j x y \op j z$ is symmetric.

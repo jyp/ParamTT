@@ -1,0 +1,371 @@
+>                                                                                                                                                                                                                                                                
+> 
+> ----------------------- REVIEW 1 ---------------------
+> PAPER: 4
+> TITLE: A Presheaf Model of Parametric Type Theory
+> AUTHORS: Jean-Philippe Bernardy, Thierry Coquand and Guilhem Moulin
+> 
+> 
+> ----------- REVIEW ----------- Previous work of the first and third
+> author (on "type theory in color") has proposed a version of dependent
+> type theory in which parametric polymorphism is internalized -- a
+> proof-relevant version of parametricity one might say. This submission
+> simplifies (in some ways -- the system is still complicated, alas) and
+> generalizes that work in very interesting ways. In particular, some of
+> the work the second author (and others) has done on cubical sets
+> models of Homotopy Type Theory using presheaves and nominal techniques
+> is applied here to give a semantics for the new type theory. More
+> precisely, the semantics uses presheaves over a category of "renamings
+> and 0-substitution", whereas the cubical models use presheaves over a
+> category of "renamings and 01-substitution". Intriguingly, the first
+> category of presheaves is (by a result of Staton) equivalent to Pitts'
+> category of nominal sets equipped with a "name restriction
+> operation". Thus the operation _(i 0) of substituting a name!  d color
+> i by 0 is a form of local scoping of named colors. (Colors name
+> instances of the parametricity predicate associated with a type.)
+> 
+> The authors say it is "remarkable that cubical structures are useful
+> for modelling both parametricity and univalence". I agree. But maybe
+> it is no coincidence and there is a deeper connection between the two
+> concepts? Future work will tell. In the meantime, even though the
+> submission is a bit rough and this reviewer cannot vouch that the
+> technical results are error-free, I think it should definitely be
+> accepted so that the interesting new ideas it contains get a public
+> airing.
+> 
+> Questions/comments for the authors:
+> 
+> On page 8 you say "(As a side remark, since the PARAM rule..." but I
+> could not find a PARAM rule anywhere. Do you mean COLoR-ELIM?
+
+Fixed
+ 
+> The last paragraph of section 3.1 mentions iterating
+> parametricity. Are you saying that binary, ternary,...,n-ary
+> relational parametricity (in the usual sense) can be encoded in this
+> type theory?
+
+No; but we have no space to discuss this.
+
+> Definition 19: can you explain the intuition behind the notion of
+> I-set" and "I-element". Your semantics makes crucial use of these
+> notions, but I came away not really understanding why. It would help
+> if you could give a hint at the point they are defined why these
+> notions are needed.
+> 
+> On page 10 you say "we use a refined presheaf...requiring two further
+> conditions". Does that mean that subsequently when you say "presheaf"
+> you always mean "presheaf satisfying those conditions". If so it would
+> be clearer to make up a name for this kind of presheaf and use it.
+> 
+> 
+> ----------------------- REVIEW 2 ---------------------
+> PAPER: 4
+> TITLE: A Presheaf Model of Parametric Type Theory
+> AUTHORS: Jean-Philippe Bernardy, Thierry Coquand and Guilhem Moulin
+> 
+> 
+> ----------- REVIEW -----------
+> The paper introduces a dependent type theory where relational
+> parametricity has been internalised, in the following sense: for each
+> type A depending on a "color" i, there is, in the type theory, a
+> predicate (A \ni_i) : A (i 0) -> Type over the "i-erasure" A (i 0) of
+> A (corresponding to Reynolds relational interpretation), and for each
+> term a : A, there is a proof (a \cdot i) : (A \ni_i) (a (i 0)) that
+> the i-erasure of a satisfies the predicate associated with A
+> (corresponding to Reynolds Abstraction Theorem). The use of colors is
+> a continuation of the author's previous work, and what makes the
+> approach different from external attempts at parametricity for
+> dependent type theory. I still don't know how to think about colors,
+> though, or their deeper meaning. This paper also gives the welcome
+> contribution of a denotational semantics for the type system in
+> question, something which has been missing in previous work.
+> 
+> The paper is interesting, and certainly in scope for
+> MFPS. Unfortunately, it is not very easy to read, and it's hard to
+> judge how well it succeeds; for instance, in a series of examples, it
+> is demonstrated that unary parametricity for Church encodings of
+> certain data types is derivable, but this in turn is never used
+> further. That this scales to the usual arguments is not obvious at
+> least to me, since the "standard" consequences of parametricity
+> usually are derived (i) for binary, not unary parametricity [which is
+> strictly weaker by Rummelhoff's result in his paper "Polynat in PER
+> models", as Mogelberg remarks in his thesis], (ii) in an impredicative
+> setting, and (iii) with equality and the Identity Extension Property
+> around. Hence it would be interesting to see examples where internal
+> parametricity is actually used. Some of this motivation can be found
+> in the authors' previous paper "Type-Theory in Color", but in a
+> different system, in particular with inductive types. The second part
+> of the paper where the model is presented is particularly hard to
+> read, with lots of details crammed in, and not much motivation.
+> 
+> For these reasons, I am weakly recommending the paper to be accepted.
+> In what follows, I give some general comments on the paper, and
+> suggestions for the authors:
+> 
+> - Colored function pairs are definable. When first seeing the type
+>   system, the existence of *three* different introduction forms for
+>   function types (lambdas, colored pairs and colored function pairs)
+>   made me uneasy. However, at closer scrutiny, there is no need to
+>   introduce colored function pairs, as they are definable from the
+>   other forms: by PAIR-APP and eta conversion, we always have the
+>   equality <t ,i u> = lam x (t x ,i u x (x . i)), so we might as well
+>   define the former to be the latter (this is well-typed since
+>   Gamma |- x : A implies Gamma |- x : A (i 0) for a variable x by
+>   Thm 4). This also makes Cor 6 more or less obvious. I would strongly
+>   suggest not having colored function pairs as an unneccessary
+>   primitive notion, but to define them (this might save you some space
+>   for more motivation as well).
+
+Wrong! Wrong! Wrong!
+
+<t ,i u> = lam x (t x ,i u x (x . i))
+
+in the above x.i re-binds i, so this does not work.v
+
+TODO: should we discuss this in the paper? It's a thorny problem that
+confused us before.
+
+
+
+> 
+> - The Universe. As I'm sure you know, your treatment of the universe U
+>   is non-standard; having |A| : U for any (small) type A instead of
+>   defining U by induction-recursion is weird, and the equality |El(A)|
+>   = A in particular feels quite strong. With a normal definition, this
+>   requirement seems to disappear. A normal definition would also make
+>   it clearer that your universe is actually empty at the moment, since
+>   there are no small base types... (This can of course be fixed by
+>   introducing e.g. a basic unit type, or better, inductive types in
+>   general.) It would also be good if the smallness hypothesis made it
+>   into at least the semantics, instead of being brushed over there as
+>   well. (Personally, I think it is instructive to be explicit about
+>   the universe also in Thm 7, e.g. f : U \ni_i A -> El A -> U with 
+>   f Q x = | (El (A ,i Q)) \ni_i x |.)
+> 
+> - Standard meta-theory. Have you proved properties such as
+>   Church-Rosser, subject reduction and strong normalization for your
+>   system? I guess they are all expected, and similar enough to your
+>   proofs in "Type-Theory in Color", but since the setting is slightly
+>   different, and every type has two different introduction forms (with
+>   the colored pair canonical in some sense), a proof would be
+>   reassuring.
+
+TODO: Guilhem: Isn't this a consequence of the model construction?
+
+
+> 
+> - Predicates vs relations. The paper only treats unary relations, but
+>   notes that "by iterating parametricity n times, one creates n-ary
+>   relations between proofs of relations of arity n - 1". Can this be
+>   extended to also create n-ary relations between *types*? To be
+>   concrete, can you prove the binary version of e.g. Thm 8 or Example
+>   10? A clarification of this, and Section 3.1 in general would be
+>   most welcome -- I do not properly understand the significance of
+>   Thms 12--14.
+
+JP: I've adapted the text slightly, but it was already pretty clear
+what's going on.
+
+> - The Identity Extension Property. Reynolds' Identity Extension
+>   Property, i.e. that all relational liftings preserve the equality
+>   relation, is not commented on at all in your setting. This is
+>   usually what is used to e.g. show that all transformations of the
+>   right type are natural, or that many initial algebras exist. Can
+>   this property be formulated in your setting? Proven? Does it play a
+>   role? If not, do you know why not?
+> 
+> - Relationship with previous work. In the related work section, you
+>   spend quite a lot of space reiterating that in the current type
+>   theory, the relational interpretation of e.g. the function space is
+>   not a function space on the nose, but just isomorphic to it, in
+>   contrast with your previous type theories. I would rather be
+>   interested in if there are any deeper connection between this and
+>   your previous work: for instance, can the model interpret also your
+>   Type Theory with Colors? Are the type theories interdefinable?
+
+They are inter-definable, but I think that the current text gives more
+precise info, so I (JP) do not recommend changing it.
+
+> Remarks/typos spotted for the authors
+> -------------------------------------
+> 
+> page 1, last para: You don't need dependent types to state the
+> Abstraction Theorem syntactically, see e.g. Wadler "The
+> Girard-Reynolds Isomorphism".
+> page 1, last line: It's probably good to mention that this says that x
+> is Leibniz-equal to (f A x).
+> page 2: replace "postulates does not have a computational interpretation"
+> with "postulates do not have computational interpretations".
+> page 2, last bullet: Is the presheaf a semantics for nominal sets, or
+> HoTT, as the references suggest?
+> page 3: replace "giving formally" with "formally giving"
+> page 3: the parametricity predicates are not so much *definable*, as
+> assumed to exist.
+> page 4: "provided that no variable was introduced after that color"
+> what goes wrong if this restriction is not enforced?
+> page 4, def 3: delete "some".
+> page 5, first line: you define "a(i phi)", so don't sometimes define
+> "a(j phi)", i.e. swap i and j (and below).
+> page 5: is j = fresh({i}) correct, or should j be fresh for all colors
+> currently in context?
+> page 5, def 5: why don't you state this as a typed conversion
+> relation? you'll need it later for the model anyway, presumably.
+> page 7: what do you mean by "many of the steps above cancel"? Since
+> the equality used is definitional, they all cancel up to definitional
+> equality...
+> page 7, example 9: "p : P A" should be "p : P a"
+> page 8: "can be understood as a relation between the parametricity
+> proofs y and z" what relation? When are y and z related?
+> page 8, Thm 13: hypothesis "If A does not depend on either i or j" is
+> missing (the proof continues from the proof of Thm 12).
+> page 9: why is (x : X) -> P x -> Q x -> U = (x : X) -> Q x -> P x -> U
+> obviously inconsistent? The types are isomorphic, and I don't see the
+> obviousness, but maybe I'm overlooking something basic. If it's indeed
+> obvious, it shouldn't be hard to say exactly why.
+> page 10, first line: move "color map" until end of sentence.
+> page 10, def 16: why is the category called pI?
+> page 10, def 16: please use a different notation for morphisms in the
+> category, e.g. \longrightarrow.
+> page 10, def 18: rephrase to make clear what is being defined.
+> page 11: missing ")" after "(conditions (i) and (ii)".
+> page 11, last para: you haven't defined app. 
+> page 12, universe: make clear where smallness is used. Also is the
+> presheaf over pI^op as before, and is it restricted?
+> page 12, remark: replace "base type" with "base types".
+> page 15: replace "not only both models" with "not only do both models"
+> reference [5]: replace "pure type systems" with "{P}ure {T}ype {S}ystems"
+> reference [15]: replace "bezem-coquand-huber" with "{B}ezem-{C}oquand-{H}uber"
+> 
+> 
+> ----------------------- REVIEW 3 ---------------------
+> PAPER: 4
+> TITLE: A Presheaf Model of Parametric Type Theory
+> AUTHORS: Jean-Philippe Bernardy, Thierry Coquand and Guilhem Moulin
+> 
+> 
+> ----------- REVIEW -----------
+> The authors present a type theory which satisfies an internal parametricity principle, and a presheaf semantics for such a theory. The type theory has special gadgets (colors) with which we can encode parametricity proofs. The colors are needed for handling of several such proofs. It looks like the theory was motivated by the semantics.
+> 
+> I think this is a nice result which is relevant to MFPS. Parametricity in general is a an important topic in type theory and the theory of programming languages.
+> 
+> The paper is written a bit unclearly in various places, see technical remarks below. Please try to improve it.
+> 
+> 
+> Technical remarks:
+> 
+> Page 1, bottom: the type of polymorphic identity should be
+> 
+>   (A : *) -> A -> A
+> 
+> and not
+> 
+>   (A : *) -> * -> *
+> 
+> as you wrote.
+> 
+> Page 2, 2nd paragraph: "because postulates does not have" -> "because postulates do not have"
+> 
+> Page 2, last paragraph: I do not understand why you call i, j
+> "meta-syntactic" when later on they appear in the syntax in definition
+> 1. Also, it's a bit weird to have the "fresh" function operate on
+> something that is META-syntactic. I think these are just "syntactic".
+> 
+> Page 3, item (i) here without much warning you use the notation
+> a(i0). A reader who is not familiar with cubical sets or some such
+> device will not be able to guess that this is a form of
+> substitution. Instead, he'll try to figure out how you manged to apply
+> a to i0 and whether i0 means "i applied to 0".
+> 
+> Page 3, definition 2: your notation for "Gamma is a context" is very
+> cool, but also confusing because it looks like you forgot to put
+> something on the right-hand side of âŠ¢. For instance, I thought
+> something was wrong with the VAR rule until I remembered that Î“âŠ¢
+> was an unlucky notation for "it's a context".
+> 
+> Page 6, first displayed equation: please put in some parentheses for
+> better readability, maybe:
+> 
+>    (U âˆ‹áµ¢ A) = (A â†’ U)
+> 
+> Page 6, after the first displayed equation: there should be no
+> indentation here, it's not a new paragraph. That is, remove the empty
+> line in your LaTeX just before "The absence of the above ..."
+> 
+> Page 6, the first set of items: please fix the grammar. You cannot end
+> a sentence with "iff" like you do on line 10. And you can't have item
+> (iii) say "and" when item (iv) starts with a capital letter.
+> 
+> Page 7, example 9: the last A in the displayed equation should be a,
+> so "p : P a" instead of "p : P A". This example is very hard to read,
+> mostly because of long strings of formulas without any formatting or
+> parentheses to guide the reader.
+> 
+> Page 10, Definitions 15 and 16: you may or may not be aware of this
+> (probably you are) but there is a very strong relation with what you
+> are describing here and the theory of inverse semigroups. You should
+> look into this, since some work has been done on the classifying
+> toposes for inverse semigroups and things like that. And maybe you
+> could also tell people that in Definition 15 you're just defining
+> what's normally known as "partial injection".
+> 
+> Page 10, Definition 16: I think the notation such as
+> 
+>    (f,i=j)(k) = k âˆ€k âˆˆ I
+> 
+> is unbecoming of a logician. It's unusual to put "âˆ€k âˆˆ I" at the
+> end of an expression like that. Either use a reasonable symbolic
+> notation or just write in words "for all k âˆˆ I".
+> 
+> Page 10, paragraph after Definition 19: you introduce the notation I,i
+> in a parenthetical remark here, as far as I remember from reading the
+> paper. This is the wrong place to do it because you already used it
+> earlier in Definition 16. If you did introduce it somewhere earlier,
+> well then I am sorry that I do not remember it, but in any case the
+> parenthetical remark isn't helpful.
+> 
+> Page 10, bottom, introduction of presheaves: you are using an
+>   extremely confusing formulation of presheaves which you should
+>   change. The problem is that it's nearly impossible to live with
+>   pI^op because one never knows whether your writing f : I â†’ J means
+>   that f is a partial injection from I to J, or the other way
+>   around. The reader can only guess this by looking around to see
+>   whether you used f as a restriction in some presheaf. Instead, you
+>   should say that you will consider *functors* F from pI to Set, that
+>   these are also known as *covariant presheaves*, and that they could
+>   be *presheaves on pI^op*. If you do so, then f : I â†’ J always
+>   means just one thing, namely a partial injection from I to J. But
+>   now partial injections need to act on the *left*, rather than on the
+>   right. So if F : pI â†’ Set is a functor and x âˆˆ F(I) then f.x âˆˆ
+>   F(J). This way things will work out without acrobatics. If you
+>   insist on "presheaves on pI^op" then at least use a special notation
+>   for!  morphisms in pI^op, for instance write f : I â†’áµ’áµ– J or
+>   some such to tell that f is backwards.
+> 
+> Page 11, 4th paragraph: you write here <Ï,x=u> for a dependent
+> pair without explanation where "x=" came from. Pairs are usually
+> written just <Ï,u> and you should either stick to this or
+> introduce your notation explicitly. Also, when you write "Î” = Î“, x :
+> A" that's pretty unreadable without parentheses. How far does = bind?
+> Please write "Î” = (Î“, x : A)".
+> 
+> Page 11, paragraph in the middle, starting with "The above refinement
+> on ...": missing ) after (ii).
+> 
+> Page 12, construction of the universe: you should discuss smallness
+> conditions here. Presumably you have a universe in your
+> meta-set-theory or whatever your meta theory is, and you are taking
+> only tuples from that universe?
+> 
+> Page 12, paragraph 4, starting with "If f : I â†’ J is an ...":
+> missing period at the end of the paragraph.
+> 
+> Page 12, construction of OUT: you say "By the induction
+> hypotheses". What induction hypotheses? I would assume your semantics
+> is compositional, but it looks like here you're performing an
+> induction on the derivation that a type is well-formed. In this case
+> you need to discuss (lack of) coherence issues: what if there are two
+> derivations for the same type, do they give the same semantics?
+> 
+> Page 12, remark after DECODE: did you mean "n_J = 0" to be "n_J = âˆ…"?
+> 
