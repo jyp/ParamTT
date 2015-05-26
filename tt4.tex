@@ -350,7 +350,7 @@ congruence containing the following rules.
     \inferrule[Surj-Param]{} {t = \CP i {\proj i t} {t \param i} }
     \and
     %\inferrule[Surj-Typ]{\proj i T = A \\ T \op i x = B} {T = \CTimes i {x:A} B }
-    \inferrule[Surj-Typ]{} {T = \CTimes i {x:{\proj i T}} {(T \op i x)} }
+    \inferrule[Surj-Typ]{} {T = \CTimes i {x:{\proj i T}} {(T(i\,j) \op j x)} }
     \\
     \inferrule{}{\El{|A|} = A}
 \and
@@ -706,16 +706,14 @@ In this section we show how to interpret our type theory by a presheaf model.
 
 If $f : I → J$, $i ∉ I$ and $j ∉ J$, we note
 $(f, i = j) : I,i → J,j$ the map defined by $(f,i=j)(i) = j$ and
-$(f,i=j)(k) = k$ $∀ k ∈ I$.
+$(f,i=j)(k) = f(k)$ for every $k ∈ I$.
 
-If $f : I,i → J$ is such that $f(i) = 0$, we note $f-i : I → J$ the map
-defined by $(f-i)(k) = f(k)$ $∀ k ∈ I$.
+If $f : I,i → J$ (resp. $f : I,i → J,j$) is such that $f(i) = 0$ (resp.
+$f(i) = j$), we note $f-i : I → J$ the map defined by $(f-i)(k) = f(k)$
+for every $k ∈ I$.
 
-If $f : I,i → J,j$ is such that $f(i) = j$, we note $f-i : I → J$ the map
-defined by $(f-i)(k) = f(k)$ $∀ k ∈ I$.
-
-For an object $I$ and $i ∉ I$, we note $ι_i : I → I,i$ the inclusion
-map, defined by $ι_i(k) = k$ $∀ k ∈ I$.
+For any object $I$ and $i ∉ I$, we note $ι_i : I → I,i$ the inclusion
+map, defined by $ι_i(k) = k$ for every $k ∈ I$.
 
 \begin{definition}[Projection]
    We say that a morphism $α : I → I_α$ is a \emph{projection} if
@@ -931,7 +929,7 @@ We proceed to interpret each type construction.
   by modifying their usual interpretation as a constant presheaf into an
   isomorphic $I$-set.
   For instance, the base type of natural numbers would be interpreted as
-  the $I$-set of $(n_J)_{J ⊆ I}$ where $n_∅ ∈ ℕ$ and $n_J = 0$ for any
+  the $I$-set of $(n_J)_{J ⊆ I}$ where $n_∅ ∈ ℕ$ and $n_J = ∅$ for any
   non-empty $J ⊆ I$.
 \end{remark}
 
