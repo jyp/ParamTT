@@ -45,6 +45,7 @@
 
 \def\pI{\ensuremath{\mathbf{pI}}}
 \def\fresh#1{\mathsf{fresh}(#1)}
+\def\support#1{\mathsf{supp}(#1)}
 \def\Hom#1#2{\mathbf{Hom}(#1,#2)}
 \def\ie{\textit{i.e.}}
 \def\eg{\textit{e.g.}}
@@ -103,13 +104,13 @@ The argument and result of Reynolds are model-theoretic in nature.
 In lambda-calculi with dependent types, it is possible to state such an
 abstraction result in a purely syntactical way.
 One states for example that if a function $f$ has type
-$(A : ★) → A → A$ --- the type of the polymorphic identity --- then the
-following proposition holds:
+$(A : ★) → A → A$ --- the type of the polymorphic identity --- then
+$f\,A\,x$ is Leibniz-equal to $x$, \ie, the following proposition holds:
 $$ (A : ★) → (P : A → ★) → (x : A) → P\, x → P (f\, A\, x) $$
 %
 Indeed \citet{bernardy_proofs_2012} prove such a result as a
 (syntactical) meta-theorem about type systems. However this result is
-not provable internally, \ie, the following is not provable:
+not provable internally, \ie, the following proposition is not provable:
 \begin{equation}
   \label{eq:param-id}
   (f : (A:★) → A → A) →  (A : ★) → (P : A → ★) → (x : A) → P\, x → P (f\, A\, x)
@@ -119,7 +120,7 @@ As a workaround, users relying on the parametricity conditions have
 postulated the parametricity axiom
 \citep{pouillard_nameless_2011,chlipala_parametric_2008,atkey_unembedding_2009}.
 However, %this approach has a fundamental drawback:
-because postulates do not have a computational interpretation, such
+because postulates do not have computational interpretations, such
 parametricity conditions can only be used in computationally-irrelevant
 positions.
 
@@ -172,7 +173,8 @@ $\fresh{I} ∈ 𝕀 \backslash I$ for any finite color set $I$.
 %
 The main innovation of the type theory
 presented here is that terms may depend on (a finite number of)
-colors.
+colors.  For any term $a$, we note $\support{a}$ the set of free colors
+in $a$.
 \begin{definition}[Syntax of terms and contexts]
   \begin{align*}
     A,B,P,T,a,b,p,t,u &
@@ -192,7 +194,7 @@ colors.
   \end{align*}
 \end{definition}
 
-We give a few intuitions to interpret the novel syntax, before giving formally the typing rules of the system. 
+We give a few intuitions to interpret the novel syntax, before formally giving the typing rules of the system.
 \begin{enumerate}
 \item Reynolds associates each type with a
   predicate. Here, each type is associated not a single predicate, but
@@ -281,7 +283,7 @@ to keep the presentation concise, we leave it implicit in the syntax.
 
 \begin{definition}[Color renaming and erasure]~
   \label{def:color-erasure}
-  We consider a color $i ∈ 𝕀$ and some $φ ∈ 𝕀 ∪ \{0\}$,
+  We consider a color $i ∈ 𝕀$ and $φ ∈ 𝕀 ∪ \{0\}$,
   and define the term $a(i\,φ)$ by induction on $a$.
 \begin{align*}
   x \mor{i}{φ} & = x \\
@@ -293,18 +295,18 @@ to keep the presentation concise, we leave it implicit in the syntax.
   ((x:A)→B)\mor{i}{φ} &= (x:A\mor{i}{φ})→(B\mor{i}{φ}) \\
   {\CP {i} a p}\mor{i}{0} &= a \\
   {\CP {i} a p}\mor{i}{j} &= \CP {j} a p \\
-  {\CP {i} a p}\mor{j}{φ} &= \CP {i} {a\mor{j}{φ}} {p\mor{j}{φ}} &\text{if $i ≠ j$} \\
+  {\CP {j} a p}\mor{i}{φ} &= \CP {j} {a\mor{i}{φ}} {p\mor{i}{φ}} &\text{if $i ≠ j$} \\
   (\CTimes {i} {x:A} P)\mor{i}{0} &= A \\
   (\CTimes {i} {x:A} P)\mor{i}{j} &= \CTimes {j} {x:A} P \\
-  (\CTimes {i} {x:A} P)\mor{j}{φ} &= \CTimes {i} {x:A\mor{j}{φ}} {P\mor{j}{φ}} &\text{if $i ≠ j$} \\
+  (\CTimes {j} {x:A} P)\mor{i}{φ} &= \CTimes {j} {x:A\mor{i}{φ}} {P\mor{i}{φ}} &\text{if $i ≠ j$} \\
   {\fp {i} t u}\mor{i}{0} &= t \\
   {\fp {i} t u}\mor{i}{j} &= \fp {j} t u \\
-  {\fp {i} t u}\mor{j}{φ} &= \fp {i} {t\mor{j}{φ}} {u\mor{j}{φ}} &\text{if $i ≠ j$} \\
-  (A \op {i} a)\mor{i}{φ} &= {A\mor{i}{j}\mor{i}{φ}} \op {j} {a\mor{i}{φ}} &\text{where $j = \fresh{\{i\}}$} \\
-  (A \op {i} a)\mor{j}{φ} &= (A\mor{j}{φ}) \op {i} (a\mor{j}{φ}) &\text{if $i ≠ j$} \\
+  {\fp {j} t u}\mor{i}{φ} &= \fp {j} {t\mor{i}{φ}} {u\mor{i}{φ}} &\text{if $i ≠ j$} \\
+  (A \op {i} a)\mor{i}{φ} &= {A\mor{i}{j}\mor{i}{φ}} \op {j} {a\mor{i}{φ}} &\text{where $j = \fresh{\support A}$} \\
+  (A \op {j} a)\mor{i}{φ} &= (A\mor{i}{φ}) \op {j} (a\mor{i}{φ}) &\text{if $i ≠ j$} \\
 %
-  (a · i)\mor{i}{φ} &= a \mor{i}{j}\mor{i}{φ} · j &\text{where $j = \fresh{\{i\}}$} \\
-  (a · i)\mor{j}{φ} &= a\mor{j}{φ} · i &\text{if $i ≠ j$} \\
+  (a · i)\mor{i}{φ} &= a \mor{i}{j}\mor{i}{φ} · j &\text{where $j = \fresh{\support a}$} \\
+  (a · j)\mor{i}{φ} &= a\mor{i}{φ} · j &\text{if $i ≠ j$} \\
   \end{align*}
 \end{definition}
 
@@ -402,19 +404,21 @@ Unlike previous type theories with internalized parametricity
 system presented here lacks equalities which allow to compute
 parametricity types. Expressed in our syntax, those equalities would
 become the conversion rules:
-\begin{center}$U \op i A = A → U$, and\end{center}
-\begin{center}$((x:A) → B[x]) \op i f = (x:A) → (x' : A \op i x) → B[\CP i x {x'}] \op i (f x).$\end{center}
-
+\begin{align*}
+  U \op i A              &~=~ A → U\text{, and} \\
+  ((x:A) → B[x]) \op i f &~=~ (x:A) → (x' : A \op i x) → B[\CP i x {x'}] \op i (f x)\text{.}
+\end{align*}
+%
 The absence of the above equalities allows for a simpler system, but
 how can we ensure that all parametricity theorems hold?  The answer is
 that the above relationships hold as isomorphisms.
 %
 We say that $A$ is \emph{isomorphic to} $B$ iff.
 \begin{enumerate}
-  \item There exist $f : A → B$,
-  \item There exist $g : B → A$,
-  \item For any $x$, $f\, (g\, x) = x$, and
-  \item For any $x$, $g\, (f\, x) = x$.
+  \item there exist $f : A → B$,
+  \item there exist $g : B → A$,
+  \item for any $x$, $f\, (g\, x) = x$, and
+  \item for any $x$, $g\, (f\, x) = x$.
 \end{enumerate}
 This notion of isomorphism is quite strong, because the equality used
 in its definition is the conversion relation (\fref{def:conversion}).
@@ -492,7 +496,7 @@ parametricity for the polymorphic identity and Church-encoded natural numbers.
     A : U,\enspace
     P : A → U,\enspace
     a : A,\enspace
-    p : P\, A$$
+    p : P\, a$$
   Then
   $Γ, i:𝕀⊢\CTimes i {x:A} {(P\,x)}$
   and by \textsc{Pair-Pred}
@@ -614,7 +618,8 @@ If the type $A$ does not depend on either $i$ or $j$, the relation $λy z. A \op
 \end{proof}
 
 \begin{theorem}
-  The types $A \op i \CP j x y \op j z$ and $A \op j \CP i x z \op i y$ are isomorphic.
+  If the type $A$ does not depend on either $i$ or $j$, then
+  the types $A \op i \CP j x y \op j z$ and $A \op j \CP i x z \op i y$ are isomorphic.
 \end{theorem}
 \begin{proof}
   We show that %the function $\sigma_1$ (defined above) is involutive in its last argument, \ie,
@@ -687,7 +692,7 @@ In this section we show how to interpret our type theory by a presheaf model.
 % \todo{General idea for those who won't read it}
 
 \begin{definition}
-  If $I$ and $J$ are two \emph{finite} subsets of $𝕀$, we call
+  If $I$ and $J$ are two \emph{finite} subsets of $𝕀$, we call a
   \emph{color map} any function $f : I → J ∪ \{0\}$ such that
   $i_1 = i_2$ for any $i_1, i_2 ∈ I$ with $f(i_1) = f(i_2) ∈ J$.
   %We then note $f : I → J$.
@@ -696,7 +701,7 @@ In this section we show how to interpret our type theory by a presheaf model.
 \begin{definition}[Category $\pI{}$]
   \label{def:pI}
   Let objects be finite color sets and morphisms be color maps
-  (the Hom-set $I → J$ denotes functions $I → J ∪ \{0\}$).
+  (a.k.a. partial injections; the Hom-set $I → J$ denotes functions $I → J ∪ \{0\}$).
   If $f : I → J$ and $g : J → K$, we define the composition $fg : I → K$
   as $fg(i) = 0$ if $f(i) = 0$ and $fg(i) = g(f(i))$ if $f(i) ∈ J$.
   We write $1_I : I → I$ for the identity map, and define it as $1_I(i) = i$ for each $i ∈ I$.
@@ -705,7 +710,8 @@ In this section we show how to interpret our type theory by a presheaf model.
 \end{definition}
 
 If $f : I → J$, $i ∉ I$ and $j ∉ J$, we note
-$(f, i = j) : I,i → J,j$ the map defined by $(f,i=j)(i) = j$ and
+$(f, i = j) : I,i → J,j$ (where $I,i$ is a shorthand for $I ∪ \{i\}$)
+the map defined by $(f,i=j)(i) = j$ and
 $(f,i=j)(k) = f(k)$ for every $k ∈ I$.
 
 If $f : I,i → J$ (resp. $f : I,i → J,j$) is such that $f(i) = 0$ (resp.
@@ -722,8 +728,8 @@ map, defined by $ι_i(k) = k$ for every $k ∈ I$.
    $α(i) = i$ for each $i ∈ I_α$.
 \end{definition}
 \begin{definition}[Total maps]
-  Injective morphisms, noted $h : I ↣ J$, are the \emph{total} ones, \ie,
-  those verifying $h(i) ≠ 0$ for all $i ∈ I$.
+   We say that a morphism $h : I → J$ is \emph{total}, and note $h : I ↣ J$,
+   if it is injective, \ie, if $h(i) ≠ 0$ for each $i ∈ I$.
 \end{definition}
 \begin{remark}[Morphism decomposition]
   Any morphism $f : I → J$ has a
@@ -755,8 +761,7 @@ map, defined by $ι_i(k) = k$ for every $k ∈ I$.
   If $a,b$ are $I$-elements and $j ∉ I$, we define the $(I,j)$-element
   $(a ,_j b)$ as $(a ,_j b)_J ≔ a_J$ if $j ∉ J$ and $(a ,_j b)_{J,j} ≔ b_J$.
   %
-  Any $(I,i)$-element (where $I,i$ is a shorthand for $I ∪ \{i\}$ with
-  $i ∉ I$) can be written $u = (u_J)_{J ⊆ I,i} = (u_J)_{J ⊆ I} ∪ (u_{J,i})_{J ⊆ I}$;
+  Any $(I,i)$-element can be written $u = (u_J)_{J ⊆ I,i} = (u_J)_{J ⊆ I} ∪ (u_{J,i})_{J ⊆ I}$;
   We can therefore define the $I$-elements $u (i\,0) ≔ (u_J)_{J ⊆ I}$ and
   $u · i ≔ (u_{J,i})_{J ⊆ I}$.
   (Hence by definition $u = (u (i\,0) ,_i u · i)$.)
@@ -799,11 +804,11 @@ Furthermore the map $Aρ → A(ρα)$, $u ↦ uα$ is the projection operation.
 A term $Γ ⊢ a : A$ is interpreted by a $I$-element $aρ ∈ Aρ$ for each
 object $I$ and $ρ ∈ Γ(I)$, such that $aρf = a(ρf)$ for any $f : I → J$.
 
-If $Γ⊢$ and $Γ ⊢ A$ we define the interpretation of $Δ = Γ,x:A$
+If $Γ⊢$ and $Γ ⊢ A$ we define the interpretation of $Δ = (Γ,x:A)$
 by taking $⟨ρ,x=u⟩ ∈ Δ(I)$ to mean $ρ ∈ Γ(I)$ and $u ∈ Aρ$.
 The restriction map is defined by $⟨ρ,x=u⟩f = ⟨ρf, x=uf⟩$.
 
-If $Γ⊢$ we define the interpretation of $Δ = Γ,i:𝕀$ by taking
+If $Γ⊢$ we define the interpretation of $Δ = (Γ,i:𝕀)$ by taking
 $[ρ,i=φ] ∈ Δ(I)$ to mean either $φ = 0$ and $ρ ∈ Γ(I)$, or
 $φ = j ∈ I$ and $ρ ∈ Γ(I\backslash\{j\})$.
 The restriction map is defined by
@@ -831,7 +836,7 @@ $[ρ,i=0]f = [ρf,i=0]$ and $[ρ,i=j]f = [ρ(f-j),i=f(j)]$.
 
 The above refinement on presheaves (conditions
 (\ref{itm:presheaf-refinement-1}) and
-(\ref{itm:presheaf-refinement-2}) is necessary for the interpretation
+(\ref{itm:presheaf-refinement-2})) is necessary for the interpretation
 of some of our syntactic constructions.  Indeed, without this refinement,
 it is not clear how to validate the equality \textsc{Pair-Pred}:
 ${{(\CTimes i {x:A} P[x])} \op i a = P[a]}$.
@@ -872,7 +877,7 @@ We proceed to interpret each type construction.
     each element as a tuple, which can be done naturally by repartitioning
     the family as follows:
     $(λ_f)_{f : I → J} = (λ_{αg})_{I_α ⊆ I, g : I_α ↣ J} ≅
-     ((λ_{αg})_{g : I_α ↣ J})_{I_α ⊆ I}$
+     ((λ_{αg})_{g : I_α ↣ J})_{I_α ⊆ I}$.
 
 
   \item[\sc Universe.]
@@ -889,7 +894,7 @@ We proceed to interpret each type construction.
     to be the set $A_{fβg}$, together with restriction maps $Af_{βg} → Af_{βgh}$
     defined as the given maps $A_{fβg} → A_{fβgh}$.
     %
-    We can then check, as before, that we have $Aα_{β} = A_{αβ}$
+    We can then check, as before, that we have $Aα_{β} = A_{αβ}$.
 
     As before, this is similar to the usual interpretation of universe in
     presheaf models, where each element is presented as a tuple.
@@ -927,7 +932,7 @@ We proceed to interpret each type construction.
 \end{description}
 
 \begin{remark}
-  Our calculus does not have any base type, but they could be interpreted
+  Our calculus does not have any base types, but they could be interpreted
   by modifying their usual interpretation as a constant presheaf into an
   isomorphic $I$-set.
   For instance, the base type of natural numbers would be interpreted as
@@ -1140,7 +1145,7 @@ an underlying calculus, while in the present work they refine a presheaf structu
 \paragraph{Presheaf models}
 The presheaf construction used in this paper follows a known template,
 used for example by \citet{bezem2014model} and \citet{DBLP:journals/corr/Pitts14}
-to model univalence in type theory. Not only both models use a
+to model univalence in type theory. Not only do both models use a
 presheaf, but they also use a category closely connected to the
 underlying category $\pI$.
 This means as all these models have an additional cubical structure.
@@ -1171,8 +1176,8 @@ the paper \citep{bernardy_computational_2012}.
 
 We are extremely grateful to Simon Huber for finding a flaw in an
 earlier version of this paper, and helping us to fix it.
-We also thank Peter Dybjer, Patrik Jansson and an anonymous referee for
-valuable feedback and discussion.
+We also thank Peter Dybjer, Patrik Jansson, Andrea Vezzosi and the
+anonymous referees for valuable feedback and discussion.
 
 \newcommand{\newblock}{}
 \bibliographystyle{abbrvnat}

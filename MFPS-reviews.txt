@@ -127,11 +127,11 @@ Wrong! Wrong! Wrong!
 in the above x.i re-binds i, so this does not work.v
 
 TODO: should we discuss this in the paper? It's a thorny problem that
-confused us before.
+confused us before -- JP.
+I got the remark at TYPES.  Might help to write that it doesn't work,
+but we don't have enough space to discuss why (except maybe an informal
+justification) -- G.
 
-
-
-> 
 > - The Universe. As I'm sure you know, your treatment of the universe U
 >   is non-standard; having |A| : U for any (small) type A instead of
 >   defining U by induction-recursion is weird, and the equality |El(A)|
@@ -145,7 +145,11 @@ confused us before.
 >   well. (Personally, I think it is instructive to be explicit about
 >   the universe also in Thm 7, e.g. f : U \ni_i A -> El A -> U with 
 >   f Q x = | (El (A ,i Q)) \ni_i x |.)
-> 
+
+Wouldn't expanding on that overflow the paper?  The novelty here is what
+we add on top of say, LF.  The treatment of U is mostly orthogonal here
+-- G.
+
 > - Standard meta-theory. Have you proved properties such as
 >   Church-Rosser, subject reduction and strong normalization for your
 >   system? I guess they are all expected, and similar enough to your
@@ -155,9 +159,10 @@ confused us before.
 >   reassuring.
 
 TODO: Guilhem: Isn't this a consequence of the model construction?
+We can't really discuss Strong Normalization without a way to reify
+semantic terms back into the syntax.  Church-Rosser isn't hard to prove
+once the conversion rules are oriented -- G.
 
-
-> 
 > - Predicates vs relations. The paper only treats unary relations, but
 >   notes that "by iterating parametricity n times, one creates n-ary
 >   relations between proofs of relations of arity n - 1". Can this be
@@ -177,7 +182,9 @@ what's going on.
 >   right type are natural, or that many initial algebras exist. Can
 >   this property be formulated in your setting? Proven? Does it play a
 >   role? If not, do you know why not?
-> 
+
+This is out of scope for this paper.
+
 > - Relationship with previous work. In the related work section, you
 >   spend quite a lot of space reiterating that in the current type
 >   theory, the relational interpretation of e.g. the function space is
@@ -197,48 +204,48 @@ precise info, so I (JP) do not recommend changing it.
 > Abstraction Theorem syntactically, see e.g. Wadler "The
 > Girard-Reynolds Isomorphism".
 > page 1, last line: It's probably good to mention that this says that x
-> is Leibniz-equal to (f A x).
+> is Leibniz-equal to (f A x). [DONE]
 > page 2: replace "postulates does not have a computational interpretation"
-> with "postulates do not have computational interpretations".
+> with "postulates do not have computational interpretations". [DONE]
 > page 2, last bullet: Is the presheaf a semantics for nominal sets, or
 > HoTT, as the references suggest?
-> page 3: replace "giving formally" with "formally giving"
+> page 3: replace "giving formally" with "formally giving" [DONE]
 > page 3: the parametricity predicates are not so much *definable*, as
 > assumed to exist.
 > page 4: "provided that no variable was introduced after that color"
 > what goes wrong if this restriction is not enforced?
-> page 4, def 3: delete "some".
+> page 4, def 3: delete "some". [DONE]
 > page 5, first line: you define "a(i phi)", so don't sometimes define
-> "a(j phi)", i.e. swap i and j (and below).
+> "a(j phi)", i.e. swap i and j (and below). [DONE]
 > page 5: is j = fresh({i}) correct, or should j be fresh for all colors
-> currently in context?
+> currently in context? [DONE]
 > page 5, def 5: why don't you state this as a typed conversion
 > relation? you'll need it later for the model anyway, presumably.
 > page 7: what do you mean by "many of the steps above cancel"? Since
 > the equality used is definitional, they all cancel up to definitional
 > equality...
-> page 7, example 9: "p : P A" should be "p : P a"
+> page 7, example 9: "p : P A" should be "p : P a" [DONE]
 > page 8: "can be understood as a relation between the parametricity
 > proofs y and z" what relation? When are y and z related?
 > page 8, Thm 13: hypothesis "If A does not depend on either i or j" is
-> missing (the proof continues from the proof of Thm 12).
+> missing (the proof continues from the proof of Thm 12). [DONE]
 > page 9: why is (x : X) -> P x -> Q x -> U = (x : X) -> Q x -> P x -> U
 > obviously inconsistent? The types are isomorphic, and I don't see the
 > obviousness, but maybe I'm overlooking something basic. If it's indeed
 > obvious, it shouldn't be hard to say exactly why.
 > page 10, first line: move "color map" until end of sentence.
-> page 10, def 16: why is the category called pI?
+> page 10, def 16: why is the category called pI? [DONE]
 > page 10, def 16: please use a different notation for morphisms in the
 > category, e.g. \longrightarrow.
-> page 10, def 18: rephrase to make clear what is being defined.
-> page 11: missing ")" after "(conditions (i) and (ii)".
-> page 11, last para: you haven't defined app. 
+> page 10, def 18: rephrase to make clear what is being defined. [DONE]
+> page 11: missing ")" after "(conditions (i) and (ii)". [DONE]
+> page 11, last para: you haven't defined app. [TODO]
 > page 12, universe: make clear where smallness is used. Also is the
-> presheaf over pI^op as before, and is it restricted?
-> page 12, remark: replace "base type" with "base types".
-> page 15: replace "not only both models" with "not only do both models"
-> reference [5]: replace "pure type systems" with "{P}ure {T}ype {S}ystems"
-> reference [15]: replace "bezem-coquand-huber" with "{B}ezem-{C}oquand-{H}uber"
+> presheaf over pI^op as before, and is it restricted? [TODO]
+> page 12, remark: replace "base type" with "base types". [DONE]
+> page 15: replace "not only both models" with "not only do both models" [DONE]
+> reference [5]: replace "pure type systems" with "{P}ure {T}ype {S}ystems" [DONE]
+> reference [15]: replace "bezem-coquand-huber" with "{B}ezem-{C}oquand-{H}uber" [DONE]
 > 
 > 
 > ----------------------- REVIEW 3 ---------------------
@@ -266,9 +273,11 @@ precise info, so I (JP) do not recommend changing it.
 >   (A : *) -> * -> *
 > 
 > as you wrote.
-> 
-> Page 2, 2nd paragraph: "because postulates does not have" -> "because postulates do not have"
-> 
+
+DONE.  Funny that no one saw it before.
+
+> Page 2, 2nd paragraph: "because postulates does not have" -> "because postulates do not have" [DONE]
+
 > Page 2, last paragraph: I do not understand why you call i, j
 > "meta-syntactic" when later on they appear in the syntax in definition
 > 1. Also, it's a bit weird to have the "fresh" function operate on
@@ -279,26 +288,36 @@ precise info, so I (JP) do not recommend changing it.
 > device will not be able to guess that this is a form of
 > substitution. Instead, he'll try to figure out how you manged to apply
 > a to i0 and whether i0 means "i applied to 0".
-> 
+
+The last sentence of item (i) explains that notation -- G.
+
 > Page 3, definition 2: your notation for "Gamma is a context" is very
 > cool, but also confusing because it looks like you forgot to put
 > something on the right-hand side of âŠ¢. For instance, I thought
 > something was wrong with the VAR rule until I remembered that Î“âŠ¢
 > was an unlucky notation for "it's a context".
-> 
+
+I believe it is common enough when building models of TT (see eg,
+Peter's CwF papers) -- G.
+
 > Page 6, first displayed equation: please put in some parentheses for
 > better readability, maybe:
 > 
 >    (U âˆ‹áµ¢ A) = (A â†’ U)
-> 
+
+Fixed alignment and added space around = instead -- G.
+
 > Page 6, after the first displayed equation: there should be no
 > indentation here, it's not a new paragraph. That is, remove the empty
-> line in your LaTeX just before "The absence of the above ..."
-> 
+> line in your LaTeX just before "The absence of the above ..." [DONE]
+
 > Page 6, the first set of items: please fix the grammar. You cannot end
 > a sentence with "iff" like you do on line 10. And you can't have item
 > (iii) say "and" when item (iv) starts with a capital letter.
-> 
+
+This is not a new sentence, and the . denotes an abrevation...  I
+removed the capitalization -- G.
+
 > Page 7, example 9: the last A in the displayed equation should be a,
 > so "p : P a" instead of "p : P A". This example is very hard to read,
 > mostly because of long strings of formulas without any formatting or
@@ -311,7 +330,7 @@ precise info, so I (JP) do not recommend changing it.
 > toposes for inverse semigroups and things like that. And maybe you
 > could also tell people that in Definition 15 you're just defining
 > what's normally known as "partial injection".
-> 
+
 > Page 10, Definition 16: I think the notation such as
 > 
 >    (f,i=j)(k) = k âˆ€k âˆˆ I
@@ -319,14 +338,16 @@ precise info, so I (JP) do not recommend changing it.
 > is unbecoming of a logician. It's unusual to put "âˆ€k âˆˆ I" at the
 > end of an expression like that. Either use a reasonable symbolic
 > notation or just write in words "for all k âˆˆ I".
-> 
+
+DONE
+
 > Page 10, paragraph after Definition 19: you introduce the notation I,i
 > in a parenthetical remark here, as far as I remember from reading the
 > paper. This is the wrong place to do it because you already used it
 > earlier in Definition 16. If you did introduce it somewhere earlier,
 > well then I am sorry that I do not remember it, but in any case the
-> parenthetical remark isn't helpful.
-> 
+> parenthetical remark isn't helpful. [DONE]
+
 > Page 10, bottom, introduction of presheaves: you are using an
 >   extremely confusing formulation of presheaves which you should
 >   change. The problem is that it's nearly impossible to live with
@@ -344,31 +365,33 @@ precise info, so I (JP) do not recommend changing it.
 >   insist on "presheaves on pI^op" then at least use a special notation
 >   for!  morphisms in pI^op, for instance write f : I â†’áµ’áµ– J or
 >   some such to tell that f is backwards.
-> 
+
+TODO:  Should we address this?  We say clearly that f : I → J notes a
+partial injection I → J -- G.
+
 > Page 11, 4th paragraph: you write here <Ï,x=u> for a dependent
 > pair without explanation where "x=" came from. Pairs are usually
 > written just <Ï,u> and you should either stick to this or
 > introduce your notation explicitly. Also, when you write "Î” = Î“, x :
 > A" that's pretty unreadable without parentheses. How far does = bind?
-> Please write "Î” = (Î“, x : A)".
-> 
+> Please write "Î” = (Î“, x : A)". [DONE]
+
 > Page 11, paragraph in the middle, starting with "The above refinement
-> on ...": missing ) after (ii).
-> 
+> on ...": missing ) after (ii). [DONE]
+
 > Page 12, construction of the universe: you should discuss smallness
 > conditions here. Presumably you have a universe in your
 > meta-set-theory or whatever your meta theory is, and you are taking
-> only tuples from that universe?
-> 
+> only tuples from that universe? [TODO]
+
 > Page 12, paragraph 4, starting with "If f : I â†’ J is an ...":
-> missing period at the end of the paragraph.
-> 
+> missing period at the end of the paragraph. [DONE]
+
 > Page 12, construction of OUT: you say "By the induction
 > hypotheses". What induction hypotheses? I would assume your semantics
 > is compositional, but it looks like here you're performing an
 > induction on the derivation that a type is well-formed. In this case
 > you need to discuss (lack of) coherence issues: what if there are two
-> derivations for the same type, do they give the same semantics?
-> 
-> Page 12, remark after DECODE: did you mean "n_J = 0" to be "n_J = âˆ…"?
-> 
+> derivations for the same type, do they give the same semantics? [TODO]
+
+> Page 12, remark after DECODE: did you mean "n_J = 0" to be "n_J = âˆ…"? [DONE]
