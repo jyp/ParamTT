@@ -52,13 +52,16 @@ No; but we have no space to discuss this.
 > notions, but I came away not really understanding why. It would help
 > if you could give a hint at the point they are defined why these
 > notions are needed.
-> 
+
+There is already a short paragraph on p. 10.
+
 > On page 10 you say "we use a refined presheaf...requiring two further
 > conditions". Does that mean that subsequently when you say "presheaf"
 > you always mean "presheaf satisfying those conditions". If so it would
 > be clearer to make up a name for this kind of presheaf and use it.
-> 
-> 
+
+Unless written otherwise, yes.  Should be clearer now.
+
 > ----------------------- REVIEW 2 ---------------------
 > PAPER: 4
 > TITLE: A Presheaf Model of Parametric Type Theory

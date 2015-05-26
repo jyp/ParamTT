@@ -778,12 +778,14 @@ We use a refined presheaf on $\pI^\opp$ by requiring two further conditions:
     $uα_J = u_J$ for any $J ⊆ I$.
     \label{itm:presheaf-refinement-2}
 \end{enumerate}
-%
+Unless written otherwise, any presheaf in the remaining of this section
+is assumed to satisfy these conditions.
+
 Seeing an $I$-element $u$ as a tuple indexed by projection maps
 $α : I → I_α$, the second requirement can be written $(uα)_β = u_{αβ}$.
 
 \smallskip
-A context $Γ ⊢$ is interpreted by a (usual) presheaf on $\pI^\opp$, \ie,
+A context $Γ ⊢$ is interpreted by a (non-refined) presheaf on $\pI^\opp$, \ie,
 by a family of sets $Γ(I)$ for each object $I$, together with
 restriction maps $Γ(I) → Γ(J)$, $ρ ↦ ρf$ for $f : I → J$ satisfying the
 conditions $ρ1 = ρ$ and $(ρf)g = ρ(fg)$.
