@@ -116,7 +116,7 @@ not provable internally, \ie, the following proposition is not provable:
   (f : (A:★) → A → A) →  (A : ★) → (P : A → ★) → (x : A) → P\, x → P (f\, A\, x)
 \end{equation}
 
-As a workaround, users relying on the parametricity conditions have
+Therefore users relying on the parametricity conditions have
 postulated the parametricity axiom
 \citep{pouillard_nameless_2011,chlipala_parametric_2008,atkey_unembedding_2009}.
 However, %this approach has a fundamental drawback:
@@ -135,9 +135,9 @@ Our technical contributions are as follows:
 \item We present a type theory (\fref{sec:syntax}) which internalizes parametricity (as we show in \fref{sec:parametricity})
   and can be seen as a simplification and generalization of the systems of
   \citet{bernardy_computational_2012,bernardy_type-theory_2013}.
-  In particular, given a $λ$-term we have a special pairing construction
-  to associate it to its parametricity proof, as well as special
-  projections to isolate the proof. As seen in \fref{ex:poly-id}, these
+  In particular, given a $λ$-term~$a$ we have a special pairing construction
+  $\CP i a p$ to associate it to its parametricity proof~$p$, as well as special
+  projections to extract the proof. As seen in \fref{ex:poly-id}, these
   new constructions enable us to prove the proposition (\ref{eq:param-id})
   \emph{internally}.  (This is not possible with usual pairs and
   projections as the first projection does not commute with
@@ -164,7 +164,7 @@ We conjecture that conversion and type-checking are decidable for this system.
 In this section we define the syntax and typing rules of our
 parametric type theory, as well as the equality judgment.
 
-We assume a special symbol ‘0’, and a countable infinite set $𝕀$ of
+We assume a special symbol ‘0’, and a countably infinite set $𝕀$ of
 other symbols, called \emph{colors}.
 The metasyntactic variables $i,j,\ldots$ range over colors,
 while $φ$ range over $𝕀 ∪ \{0\}$.
@@ -177,14 +177,16 @@ colors.  For any term $a$, we note $\support{a}$ the set of free colors
 in $a$.
 \begin{definition}[Syntax of terms and contexts]
   \begin{align*}
-    A,B,P,T,a,b,p,t,u &
-              \coloneqq x & \text {variable} \\
-            & \mid U & \text{universe} \\ 
-            & \mid |A| & \text{code} \\ 
-            & \mid \El{A} & \text{decode} \\
-            & \mid λx:A. b & \text{abstraction} \\
-            & \mid t u & \text{application} \\ 
+    A,B,P,T,a,p,t,u
+            & \coloneqq x & \text {variable} \\
+            & \mid t u & \text{application} \\
+            & \mid λx:A. t & \text{abstraction} \\
             & \mid (x:A) → B & \text{product} \\
+%
+            & \mid |A| & \text{code} \\
+            & \mid \El{A} & \text{decode} \\
+            & \mid U & \text{universe} \\
+%
             & \mid \CP i a p & \text{colored pair} \\
             & \mid \CTimes i {x:A} P & \text{colored type pair} \\
             & \mid \fp i t u & \text{colored function pair}\\
@@ -197,7 +199,7 @@ in $a$.
 We give a few intuitions to interpret the novel syntax, before formally giving the typing rules of the system.
 \begin{enumerate}
 \item Reynolds associates each type with a
-  predicate. Here, each type is associated not a single predicate, but
+  predicate. Here, each type is associated not with a single predicate, but
   many: one for every color.
   These multiple predicates are essential to interpret parametricity when
   it is nested.  Indeed, using a single predicate yields
@@ -215,72 +217,6 @@ We give a few intuitions to interpret the novel syntax, before formally giving t
 \end{enumerate}
 
 
-
-\begin{definition}[Typing judgements — à la Tarski]~\\\indent
-\fbox{$Γ⊢$}
-  \begin{mathpar}
-    \inferrule[Empty]{~}{() ⊢ }
-
-    \inferrule[NewVar]{Γ⊢ \\ Γ ⊢ A }{ Γ,x:A ⊢ }
-
-    \inferrule[NewCol]{Γ⊢ }{ Γ,i:𝕀 ⊢ }
-  \end{mathpar}
- 
-\fbox{$Γ⊢ A$}
- \begin{mathpar}
-    \inferrule[Universe]{~}{Γ ⊢ U}
-
-    \inferrule[Decode]{Γ ⊢ A : U}{Γ ⊢ \El{A}}
-
-    \inferrule[Swap]{Γ, i:𝕀, j:𝕀, Δ ⊢ A}{Γ, j:𝕀, i:𝕀, Δ  ⊢ A}
- \end{mathpar}
- \begin{mathpar}
-    \inferrule[Pi]{Γ ⊢ A \\ Γ,x:A ⊢ B}{Γ ⊢ (x:A) → B}
-
-    \inferrule[Out]{Γ, i:𝕀 ⊢ A \\ Γ ⊢ a : \proj i A}{Γ ⊢ A \op i  a}
-
-    \inferrule[In-Pred]{Γ ⊢ A \\ Γ,x:A ⊢ P}{Γ, i:𝕀 ⊢ \CTimes i {x:A} P}
- \end{mathpar}
-
-\fbox{$Γ⊢ a : A$}
-  \begin{mathpar}
-    \inferrule[Conv]{Γ ⊢ t:A \\ A = B}{Γ ⊢ t : B}
-
-    \inferrule[Var]{Γ ⊢ \\ x : A ∈ Γ}{Γ ⊢ x : A}
-
-    \inferrule[Code]{Γ ⊢ A }{Γ ⊢ |A| : U}
-
-    \inferrule[Swap]{Γ, i:𝕀, j:𝕀, Δ ⊢ a : A}{Γ, j:𝕀, i:𝕀, Δ  ⊢ a : A}
-    \\
-    \inferrule[Lam]{Γ,x:A ⊢ b : B}{Γ ⊢ λx:A.b : (x:A) → B}
- 
-    \inferrule[App]{Γ ⊢ t : (x:A) → B[x] \\ Γ ⊢ u : A}{Γ ⊢ t u: B[u]}
-    \\
-    \inferrule[In-Abs]{Γ ⊢ a : \proj i A \\Γ ⊢ p : A \op i a}{Γ, i:𝕀 ⊢ \CP i a p : A}
-
-    \inferrule[In-Fun]
-        {Γ ⊢ t : \projp i {(x:A) → P[x]}\\\\
-         Γ ⊢ u : (x:\proj i A) → (x':A \op i x) → P[\CP i x {x'}] \op i t x}
-        {Γ, i:𝕀 ⊢ \fp i t u : (x:A) → P[x]}
-
-    \inferrule[Color-Elim]{Γ, i:𝕀 ⊢ a : A}{Γ ⊢ a \param i : A \op i {\proj i a}}
-  \end{mathpar}
-\end{definition}
-
-The parametricity constructions ($·$ and $∋$) act like color
-binders (they bring colors into scope), while the pairing constructs
-remove colors from scope.
-The equality relation used in the {\sc Conv} rule is detailed below in
-\fref{def:conversion}.  The \textsc{Swap} rules allow us to use
-\textsc{Out} and \textsc{Color-Elim} with any free color, provided that
-no variable was introduced after that color (see \eg, \fref{thm:param-2-sym}).
-
-Additionally, for the above system to be well-founded, we need to
-distinguish small and big types, and allow only small types to be
-encoded in $U$. Small types are closed under product, $×_i$ and
-$∋_i$. The distinction between big and small types being standard, and
-to keep the presentation concise, we leave it implicit in the syntax.
-
 \begin{definition}[Color renaming and erasure]~
   \label{def:color-erasure}
   We consider a color $i ∈ 𝕀$ and $φ ∈ 𝕀 ∪ \{0\}$,
@@ -290,7 +226,7 @@ to keep the presentation concise, we leave it implicit in the syntax.
   U \mor{i}{φ} & = U \\
   \El{A} \mor{i}{φ} & = \El {A\mor{i}{φ}} \\
   |A| \mor{i}{φ} & = |A\mor{i}{φ}| \\
-  (λ(x:A).b)\mor{i}{φ} &= λ(x:A\mor{i}{φ}).b\mor{i}{φ} \\
+  (λ(x:A).t)\mor{i}{φ} &= λ(x:A\mor{i}{φ}).t\mor{i}{φ} \\
   (t\,u)\mor{i}{φ} &= (t\mor{i}{φ}) \, (u\mor{i}{φ}) \\
   ((x:A)→B)\mor{i}{φ} &= (x:A\mor{i}{φ})→(B\mor{i}{φ}) \\
   {\CP {i} a p}\mor{i}{0} &= a \\
@@ -309,6 +245,71 @@ to keep the presentation concise, we leave it implicit in the syntax.
   (a · j)\mor{i}{φ} &= a\mor{i}{φ} · j &\text{if $i ≠ j$} \\
   \end{align*}
 \end{definition}
+
+\begin{definition}[Typing judgements — à la Tarski]~\\\indent
+\fbox{$Γ⊢$}
+  \begin{mathpar}
+    \inferrule[Empty]{~}{() ⊢ }
+
+    \inferrule[NewVar]{Γ⊢ \\ Γ ⊢ A }{ Γ,x:A ⊢ }
+
+    \inferrule[NewCol]{Γ⊢ }{ Γ,i:𝕀 ⊢ }
+  \end{mathpar}
+ 
+\fbox{$Γ⊢ A$}
+ \begin{mathpar}
+    \inferrule[Universe]{~}{Γ ⊢ U}
+
+    \inferrule[Decode]{Γ ⊢ A : U}{Γ ⊢ \El{A}}
+
+    \inferrule[Swap]{Γ, i:𝕀, j:𝕀, Δ ⊢ A}{Γ, j:𝕀, i:𝕀, Δ  ⊢ A}
+
+    \inferrule[Pi]{Γ ⊢ A \\ Γ,x:A ⊢ B}{Γ ⊢ (x:A) → B}
+
+    \inferrule[Out]{Γ, i:𝕀 ⊢ A \\ Γ ⊢ a : \proj i A}{Γ ⊢ A \op i  a}
+
+    \inferrule[In-Pred]{Γ ⊢ A \\ Γ,x:A ⊢ P}{Γ, i:𝕀 ⊢ \CTimes i {x:A} P}
+ \end{mathpar}
+
+\fbox{$Γ⊢ a : A$}
+  \begin{mathpar}
+    \inferrule[Conv]{Γ ⊢ t:A \\ A = B}{Γ ⊢ t : B}
+
+    \inferrule[Var]{Γ ⊢ \\ x : A ∈ Γ}{Γ ⊢ x : A}
+
+    \inferrule[Code]{Γ ⊢ A }{Γ ⊢ |A| : U}
+
+    \inferrule[Swap]{Γ, i:𝕀, j:𝕀, Δ ⊢ a : A}{Γ, j:𝕀, i:𝕀, Δ  ⊢ a : A}
+    \\
+    \inferrule[Lam]{Γ,x:A ⊢ t : B}{Γ ⊢ λx:A.t : (x:A) → B}
+ 
+    \inferrule[App]{Γ ⊢ t : (x:A) → B[x] \\ Γ ⊢ u : A}{Γ ⊢ t u: B[u]}
+
+    \inferrule[In-Abs]{Γ ⊢ a : \proj i A \\Γ ⊢ p : A \op i a}{Γ, i:𝕀 ⊢ \CP i a p : A}
+  \end{mathpar}
+  \begin{mathpar}
+    \inferrule[In-Fun]
+        {Γ ⊢ t : \projp i {(x:A) → P[x]}\\\\
+         Γ ⊢ u : (x:\proj i A) → (x':A \op i x) → P[\CP i x {x'}] \op i t x}
+        {Γ, i:𝕀 ⊢ \fp i t u : (x:A) → P[x]}
+
+    \inferrule[Color-Elim]{Γ, i:𝕀 ⊢ a : A}{Γ ⊢ a \param i : A \op i {\proj i a}}
+  \end{mathpar}
+\end{definition}
+
+The parametricity constructions ($·$ and $∋$) are color
+binders (they bring colors into scope), while the pairing constructs
+remove colors from scope.
+The equality relation used in the {\sc Conv} rule is detailed below in
+\fref{def:conversion}.  The \textsc{Swap} rules allow us to use
+\textsc{Out} and \textsc{Color-Elim} with any free color, provided that
+no variable was introduced after that color (see \eg, \fref{thm:param-2-sym}).
+
+Additionally, for the above system to be well-founded, we need to
+distinguish small and big types, and allow only small types to be
+encoded in $U$. Small types are closed under product, $×_i$ and
+$∋_i$. The distinction between big and small types being standard, and
+to keep the presentation concise, we leave it implicit in the syntax.
 
 \begin{theorem}[Color erasure and substitution preserve typing]
   If $Γ,i:𝕀  ⊢ a : A$ then the terms $a(i\,φ)$ and $A(i\,φ)$ are
@@ -336,6 +337,7 @@ to keep the presentation concise, we leave it implicit in the syntax.
 \end{definition}
 }
 
+\vspace{-.25\baselineskip}
 \begin{definition}[Conversion]
 \label{def:conversion}
 The convertibility of types used in the {\sc Conv} rule and written
@@ -358,17 +360,18 @@ congruence containing the following rules.
 \and
     \inferrule{}{|\El{A}| = A}
 \and
-    \inferrule[β]{}{(λx:A. b[x]) u = b[u]}
+    \inferrule[β]{}{(λx:A. t[x]) u = t[u]}
 \and
-    \inferrule[η]{t x = b} {t = λ x:A.b}
+    \inferrule[η]{t x = u} {t = λ x:A.u}
   \end{mathpar}
 \end{definition}
-
+%
 \begin{corollary}[\textsc{Surj-Fun}]
   \label{cor:surj-fun}
   $t = \fp i {\proj i t} {λx x'. (t \CP i x {x'}) \param i}$
 \end{corollary}
 
+\vspace{-.25\baselineskip}
 \begin{remark}
   In order to be well-typed any context for the conclusion of the
   \textsc{Pair-App}, \textsc{Surj-Param}, \textsc{Surj-Fun} and
@@ -385,7 +388,7 @@ congruence containing the following rules.
 %  \end{itemize}
 %\end{corollary}
 
-Our conversion relation is intentional for functions, but extensional
+Our conversion relation is intensional for functions, but extensional
 when it comes to dependencies on colors. Because there is at any point
 only a finite number of colors to consider, we conjecture that our
 conversion relation is decidable.
@@ -491,7 +494,7 @@ parametricity for the polymorphic identity and Church-encoded natural numbers.
 \begin{example}
   \label{ex:poly-id}
   Any function $f : (X : U) → X → X$ is the polymorphic identity, \ie,
-  its output is Leibniz-equal to its second argument. Assume a context
+  its output is Leibniz-equal to its second input. Assume a context
   $$Γ = f : (X : U) → X → X,\enspace
     A : U,\enspace
     P : A → U,\enspace
@@ -610,10 +613,13 @@ If the type $A$ does not depend on either $i$ or $j$, the relation $λy z. A \op
 \end{theorem}
 \begin{proof}
   We first construct the proof term:
+  \vspace{-.5\baselineskip}
   \begin{align*}
     &\sigma_1 : (x:A) → (y : A \op i x) → (z : A \op i x) → A \op i \CP j x y \op j z → A \op j \CP i x z \op i y \\
     &\sigma_1\, x\, y\, z\, w = \CP i {\CP j x y}{\CP j z w} \param j \param i
   \end{align*}
+
+  \vspace{-.5\baselineskip}\noindent
   And, by α-equivalence on colors, $A \op j \CP i x z \op i y = A \op i \CP j x z \op j y$.
 \end{proof}
 
@@ -949,7 +955,7 @@ We now describe how to interpret terms.
     $x(ρι_j)$ if $φ = j$.
 
   \item[\sc Lam.]
-    We define $\app{(λ x:A.b)ρ_f}{u}$ to be $b⟨ρf,x=u⟩$
+    We define $\app{(λ x:A.t)ρ_f}{u}$ to be $t⟨ρf,x=u⟩$
 
   \item[\sc App.]
     We define $(t\,u)ρ$ to be $\app{tρ_1}{uρ}$
@@ -1103,7 +1109,7 @@ parametricity with dependent types
 1. a denotational semantics, and
 2. a much simplified syntax, suitable as the basis of a proof assistant.
 
-The simplification of syntax is allowed by foregoing the preservation
+The simplification of syntax is allowed by not requiring the preservation
 of functions by parametricity. We call preservation of functions by
 parametricity the property that if $f$ were a function, then the
 canonical proof that $f$ is parametric (denoted $f \param i$ here) is
@@ -1129,7 +1135,7 @@ means that, while certain consequences of parametricity can be made
 available in the logic (\eg, via constants validated by the model),
 parametricity itself is not available. In this paper, we not only
 propose a parametric model, but also show how it can be used to
-interpret parametricity straight up in the syntax of the type theory.
+interpret parametricity in the syntax of the type theory.
 
 
 \paragraph{Various kinds of models}
@@ -1138,9 +1144,9 @@ kind of model underlying the
 semantics. \Citet{krishnaswami_internalizing_2013} propose a model
 based on Q-PER. \Citet{atkey_relationally_2014} propose a model based
 on reflexive graphs. The model that we use is based on cubes
-(functions from subsets of colors). In
-our 2012 work the cubes were reified as syntax in
-an underlying calculus, while in the present work they refine a presheaf structure.
+(functions from subsets of colors). In \citet{bernardy_computational_2012}
+the cubes were reified as syntax in an underlying calculus, while in the
+present work they refine a presheaf structure.
 
 \paragraph{Presheaf models}
 The presheaf construction used in this paper follows a known template,
@@ -1148,7 +1154,7 @@ used for example by \citet{bezem2014model} and \citet{DBLP:journals/corr/Pitts14
 to model univalence in type theory. Not only do both models use a
 presheaf, but they also use a category closely connected to the
 underlying category $\pI$.
-This means as all these models have an additional cubical structure.
+This means that all these models have an additional cubical structure.
 We find remarkable that cubical structures are useful for modeling both
 parametricity and univalence.
 \citet{altenkirch2014syntax} give a syntax for
