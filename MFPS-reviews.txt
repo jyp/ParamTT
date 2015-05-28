@@ -239,9 +239,9 @@ precise info, so I (JP) do not recommend changing it.
 > category, e.g. \longrightarrow.
 > page 10, def 18: rephrase to make clear what is being defined. [DONE]
 > page 11: missing ")" after "(conditions (i) and (ii)". [DONE]
-> page 11, last para: you haven't defined app. [TODO]
+> page 11, last para: you haven't defined app. [DONE]
 > page 12, universe: make clear where smallness is used. Also is the
-> presheaf over pI^op as before, and is it restricted? [TODO]
+> presheaf over pI^op as before, and is it restricted? [DONE]
 > page 12, remark: replace "base type" with "base types". [DONE]
 > page 15: replace "not only both models" with "not only do both models" [DONE]
 > reference [5]: replace "pure type systems" with "{P}ure {T}ype {S}ystems" [DONE]
@@ -382,7 +382,7 @@ partial injection I → J -- G.
 > Page 12, construction of the universe: you should discuss smallness
 > conditions here. Presumably you have a universe in your
 > meta-set-theory or whatever your meta theory is, and you are taking
-> only tuples from that universe? [TODO]
+> only tuples from that universe? [DONE]
 
 > Page 12, paragraph 4, starting with "If f : I â†’ J is an ...":
 > missing period at the end of the paragraph. [DONE]
@@ -392,6 +392,9 @@ partial injection I → J -- G.
 > is compositional, but it looks like here you're performing an
 > induction on the derivation that a type is well-formed. In this case
 > you need to discuss (lack of) coherence issues: what if there are two
-> derivations for the same type, do they give the same semantics? [TODO]
+> derivations for the same type, do they give the same semantics?
+
+DONE: the semantic is compositional, the induction is on A not on the
+derivation.  I removed the "By the induction hypotheses" anyway.
 
 > Page 12, remark after DECODE: did you mean "n_J = 0" to be "n_J = âˆ…"? [DONE]

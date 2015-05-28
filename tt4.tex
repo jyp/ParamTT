@@ -309,7 +309,11 @@ Additionally, for the above system to be well-founded, we need to
 distinguish small and big types, and allow only small types to be
 encoded in $U$. Small types are closed under product, $×_i$ and
 $∋_i$. The distinction between big and small types being standard, and
-to keep the presentation concise, we leave it implicit in the syntax.
+to keep the presentation concise, we leave it implicit in the
+syntax\footnote{Our rules are semantically justified in
+\fref{sec:model}; the use of codes enables a presentation à la Tarski,
+while avoiding us to split each constructor in two flavors, one for small
+types and one for large ones.}.
 
 \begin{theorem}[Color erasure and substitution preserve typing]
   If $Γ,i:𝕀  ⊢ a : A$ then the terms $a(i\,φ)$ and $A(i\,φ)$ are
@@ -402,8 +406,10 @@ conversion relation is decidable.
 \section{Parametricity}
 \label{sec:parametricity}
 %\todo{more examples: any $f : U → Bool$ is constant,…}
-In this section we prove that our system properly internalizes
-parametricity. We also illustrate the system by giving a few simple
+In this section we prove that our system properly internalizes unary
+parametricity; it could naturally be extended to the $n$-ary case by
+using further special symbols $0,1,…,n-1$.
+We also illustrate the system by giving a few simple
 proofs relying on parametricity (including iterated parametricity).
 For the sake of readability, we leave out the distinction between types
 and their codes, which plays no role here.
@@ -714,7 +720,8 @@ In this section we show how to interpret our type theory by a presheaf model.
   \label{def:pI}
   Let objects be finite color sets and morphisms be color maps
   (a.k.a. partial injections; the Hom-set $I → J$ denotes functions $I → J ∪ \{0\}$).
-  If $f : I → J$ and $g : J → K$, we define the composition $fg : I → K$
+  If $f : I → J$ and $g : J → K$, we define the composition as the
+  Kleisli one: $fg : I → K$
   as $fg(i) = 0$ if $f(i) = 0$ and $fg(i) = g(f(i))$ if $f(i) ∈ J$.
   We write $1_I : I → I$ for the identity map, and define it as $1_I(i) = i$ for each $i ∈ I$.
   It is easy to check that \pI{} is a category (see \cite[ex.~9.7
@@ -874,7 +881,8 @@ We proceed to interpret each type construction.
     $$λ_{α f} ∈ \prod_{u ∈ A(ραf)} B⟨ραf,x=u⟩$$
     such that
     $\app{λ_{αf}}{u} g = \app{λ_{α fg}}{ug}$ for $f : I_α ↣ J$ total and
-    for \emph{any} $g : J → K$.
+    for \emph{any} $g : J → K$ (where $\mathsf{app}$ is the semantic
+    application).
     Because any map $I → J$ has an unique decomposition as a projection and a total
     map, we can consider $λ_f$ for an arbitrary map $f : I → J$.
 
@@ -894,8 +902,9 @@ We proceed to interpret each type construction.
 
   \item[\sc Universe.]
     The universe $U$ is interpreted as a presheaf over \pI. An element $A$ of
-    $U(I)$ is a tuple $(A_α)$ where each $A_α$ is a family of sets
-    $A_{α f}$ for $f : I_α ↣ J$ \emph{total} together with restriction
+    $U(I)$ is a tuple $(A_α)$ where each $A_α$ is a family $(A_{α f})$ of
+    $\mathcal U$-small sets (where $\mathcal U$ is a fixed Grothendieck universe)
+    indexed by $f : I_α ↣ J$ \emph{total} together with restriction
     maps $A_{α f} → A_{α fg}$, $u ↦ ug$ for $f : I_α ↣ J$ total
     and $g : J → K$ arbitrary, such that $u1 = u$ and $(ug)h = u(gh)$.
 
@@ -914,8 +923,7 @@ We proceed to interpret each type construction.
 
   \item[\sc Out.]
     Assume $ρ ∈ Γ(I)$. We need to define the $I$-set $(A \op {i} a)ρ$.
-    Let $j = \fresh I$.
-    By the induction hypotheses we get a $(I,j)$-set $A[ρ,i=j]$,
+    Let $j = \fresh I$.  We get a $(I,j)$-set $A[ρ,i=j]$,
     and the $I$-element $aρ$ belongs to
     $A(i\,0)ρ = A[ρ,i=0] = A[ρ,i=j](j 0)$.
 
