@@ -69,8 +69,9 @@
   \href{mailto:bernardy@chalmers.se,coquand@chalmers.se,mouling@chalmers.se}%
        {\textnormal\tt\{bernardy,coquand,mouling\}@chalmers.se}}
 \begin{abstract}
-  We propose a new type theory with internalized
-  parametricity. Compared to previous similar proposals, this version
+  We extend Martin-Löf's Logical Framework with special constructions
+  and typing rules providing internalized parametricity.
+  Compared to previous similar proposals, this version
   comes with a denotational semantics which is a refinement of the
   standard presheaf semantics of dependent type theory. Further, this
   presheaf semantics is a refinement of the one used to interpret
@@ -92,8 +93,8 @@ that if $t_X$ is a term of type $X → X$ and if we consider two sets
 $A_0$, $A_1$ and a relation $R ⊆ A_0 × A_1$, then we have
 $R([t_X]_{X=A_0}(a_0),[t_X]_{X=A_1}(a_1))$ whenever $R(a_0,a_1)$,
 where $[t_X]_{X=A}$ denotes the meaning of the expression $t_X$ where
-$X$ is interpreted by the set $A$. As he noted, one can replace in
-this statement binary relations by $n$-ary relations, and in particular
+$X$ is interpreted by the set $A$. As he noted, one can replace binary
+relations by $n$-ary relations in this statement, and in particular
 unary relations (predicates). In the latter case, the statement is the following:
 if $A$ is a set and $P$ is a predicate on $A$, then we have
 $P([t_X]_{X=A}(a))$ whenever $P(a)$ holds.
@@ -101,19 +102,19 @@ $P([t_X]_{X=A}(a))$ whenever $P(a)$ holds.
 result is useful for reasoning about functional programs.
 
 The argument and result of Reynolds are model-theoretic in nature.
-In lambda-calculi with dependent types, it is possible to state such an
+In the Logical Framework, it is possible to state such an
 abstraction result in a purely syntactical way.
 One states for example that if a function $f$ has type
-$(A : ★) → A → A$ --- the type of the polymorphic identity --- then
+$(A : U) → A → A$ --- the type of the polymorphic identity --- then
 $f\,A\,x$ is Leibniz-equal to $x$, \ie, the following proposition holds:
-$$ (A : ★) → (P : A → ★) → (x : A) → P\, x → P (f\, A\, x) $$
+$$ (A : U) → (P : A → U) → (x : A) → P\, x → P (f\, A\, x) $$
 %
 Indeed \citet{bernardy_proofs_2012} prove such a result as a
 (syntactical) meta-theorem about type systems. However this result is
 not provable internally, \ie, the following proposition is not provable:
 \begin{equation}
-  \label{eq:param-id}
-  (f : (A:★) → A → A) →  (A : ★) → (P : A → ★) → (x : A) → P\, x → P (f\, A\, x)
+  \label{eq:param-id}\tag{★}
+  (f : (A:U) → A → A) →  (A:U) → (P : A → U) → (x : A)\\ → P\, x → P (f\, A\, x)
 \end{equation}
 
 Therefore users relying on the parametricity conditions have
@@ -125,26 +126,31 @@ parametricity conditions can only be used in computationally-irrelevant
 positions.
 
 Instead, one would like to be able to rely on parametricity conditions
-within proof assistants themselves.  Several attempts have been made
+within the theory itself.  Several attempts have been made
 \citep{bernardy_computational_2012,bernardy_type-theory_2013} --- or are currently
 developed \citep{altenkirch2014syntax} ---
 for designing an extension of dependent type theory in which such an internal form of
 parametricity holds. We propose another such system here.
 Our technical contributions are as follows:
 \begin{itemize}
-\item We present a type theory (\fref{sec:syntax}) which internalizes parametricity (as we show in \fref{sec:parametricity})
+\item We present an extension of Martin-Löf's Logical Framework
+  (\fref{sec:syntax}) which internalizes parametricity (as we show in \fref{sec:parametricity})
   and can be seen as a simplification and generalization of the systems of
   \citet{bernardy_computational_2012,bernardy_type-theory_2013}.
-  In particular, given a $λ$-term~$a$ we have a special pairing construction
-  $\CP i a p$ to associate it to its parametricity proof~$p$, as well as special
-  projections to extract the proof. As seen in \fref{ex:poly-id}, these
-  new constructions enable us to prove the proposition (\ref{eq:param-id})
-  \emph{internally}.  (This is not possible with usual pairs and
-  projections as the first projection does not commute with
-  application.)  Furthermore we distinguish between multiple uses of the
-  parametricity by naming (a.k.a \emph{coloring}) the pairs and
-  projections; this is analogous to building hypercubes and accessing
-  their vertices as in \citep{bernardy_computational_2012}.
+  In particular, we have a special construction $\CP i a p$ which pairs
+  a term $a$ with its parametricity proof $p$, as well as special
+  projections to extract the proof.  As we will show in \fref{ex:poly-id},
+  these new constructions enable us to prove the proposition
+  (\ref{eq:param-id}) \emph{internally}.  (This is not possible with
+  usual pairs and projections since the first projection does not commute
+  with application.)
+  The name $i$ in the above construction is what we call a “color”;
+  we want internalized parametricity not only for LF but also for the
+  extended calculus, and as explains in
+  \cite{bernardy_type-theory_2013}, colors enable nested
+  parametricity by keeping track of the different uses
+  (this is analogous to building hypercubes and accessing
+  their vertices as in \citep{bernardy_computational_2012}).
   However, unlike previous type theories with internalized parametricity
   \citep{bernardy_computational_2012, bernardy_type-theory_2013}, the
   system presented here does not \emph{compute} parametricity types:
@@ -175,6 +181,9 @@ The main innovation of the type theory
 presented here is that terms may depend on (a finite number of)
 colors.  For any term $a$, we note $\support{a}$ the set of free colors
 in $a$.
+
+We do not attempt to explain what lead us to consider Colored Type
+Theory; for that we refer to \cite{bernardy_type-theory_2013} instead.
 \begin{definition}[Syntax of terms and contexts]
   \begin{align*}
     A,B,P,T,a,p,t,u
@@ -203,7 +212,7 @@ We give a few intuitions to interpret the novel syntax, before formally giving t
   many: one for every color.
   These multiple predicates are essential to interpret parametricity when
   it is nested.  Indeed, using a single predicate yields
-  inconsistencies (see \fref{sec:nested-parametricity}).
+  inconsistencies.
   Furthermore these predicates are definable
   in the logic: the type $A \op i a$ expresses that $a$ satisfies
   the parametricity predicate associated with the type $A$ on color~$i$.
@@ -223,12 +232,14 @@ We give a few intuitions to interpret the novel syntax, before formally giving t
   and define the term $a(i\,φ)$ by induction on $a$.
 \begin{align*}
   x \mor{i}{φ} & = x \\
-  U \mor{i}{φ} & = U \\
-  \El{A} \mor{i}{φ} & = \El {A\mor{i}{φ}} \\
-  |A| \mor{i}{φ} & = |A\mor{i}{φ}| \\
-  (λ(x:A).t)\mor{i}{φ} &= λ(x:A\mor{i}{φ}).t\mor{i}{φ} \\
   (t\,u)\mor{i}{φ} &= (t\mor{i}{φ}) \, (u\mor{i}{φ}) \\
+  (λ(x:A).t)\mor{i}{φ} &= λ(x:A\mor{i}{φ}).t\mor{i}{φ} \\
   ((x:A)→B)\mor{i}{φ} &= (x:A\mor{i}{φ})→(B\mor{i}{φ}) \\
+%
+  |A| \mor{i}{φ} & = |A\mor{i}{φ}| \\
+  \El{A} \mor{i}{φ} & = \El {A\mor{i}{φ}} \\
+  U \mor{i}{φ} & = U \\
+%
   {\CP {i} a p}\mor{i}{0} &= a \\
   {\CP {i} a p}\mor{i}{j} &= \CP {j} a p \\
   {\CP {j} a p}\mor{i}{φ} &= \CP {j} {a\mor{i}{φ}} {p\mor{i}{φ}} &\text{if $i ≠ j$} \\
@@ -379,7 +390,7 @@ congruence containing the following rules.
 \begin{remark}
   In order to be well-typed any context for the conclusion of the
   \textsc{Pair-App}, \textsc{Surj-Param}, \textsc{Surj-Fun} and
-  \textsc{Surj-Typ} needs to end with the color binding $i : 𝕀$.
+  \textsc{Surj-Typ} needs to end with a color binding.
 \end{remark}
 \begin{remark}
   Although it looks as if $\fp i t u$ can be definable as
@@ -498,9 +509,9 @@ $((x:A) → B[x]) \op i f$ is isomorphic to $$(x:A) → (x' : A \op i x) → B[\
   \end{enumerate}
 \end{proof}
 
-In practice, when carrying out parametricity proofs, many of the steps
+In practice however, when carrying out parametricity proofs, many of the steps
 of the above isomorphisms cancel each other and one obtains a simpler
-proof. This behaviour is illustrated by the following example:
+proof. This behaviour is illustrated by the following examples:
 parametricity for the polymorphic identity and Church-encoded natural numbers.
 
 \begin{example}
@@ -605,7 +616,7 @@ $$\begin{array}[t]{l@{\,}l}
   p & X\, x = x\param i
 \end{array}$$
 We have already seen that $A \op i $ corresponds to the parametricity
-predicate for type $A$.
+predicate for the type $A$.
 As we hinted at in the introduction, the color index $i$ allows us to
 distinguish each application of parametricity.  (As a side remark, since
 the \textsc{Color-elim} rule introduces a color, limiting the depth of
@@ -728,16 +739,15 @@ In this section we show how to interpret our type theory by a presheaf model.
   p.~176]{PittsAM:nomsns} for another description of this category).
 \end{definition}
 
-If $f : I → J$, $i ∉ I$ and $j ∉ J$, we note
-$(f, i = j) : I,i → J,j$ (where $I,i$ is a shorthand for $I ∪ \{i\}$)
-the map defined by $(f,i=j)(i) = j$ and
-$(f,i=j)(k) = f(k)$ for every $k ∈ I$.
+If $f : I → J$, $i ∉ I$ and $j ∉ J$, let
+$(f, i = j) : I,i → J,j$ (where $I,i$ is a shorthand for $I ∪ \{i\}$) denote the map
+defined by $(f,i=j)(i) = j$ and $(f,i=j)(k) = f(k)$ for every $k ∈ I$.
 
 If $f : I,i → J$ (resp. $f : I,i → J,j$) is such that $f(i) = 0$ (resp.
-$f(i) = j$), we note $f-i : I → J$ the map defined by $(f-i)(k) = f(k)$
+$f(i) = j$), let $f-i : I → J$ denote the map defined by $(f-i)(k) = f(k)$
 for every $k ∈ I$.
 
-For any object $I$ and $i ∉ I$, we note $ι_i : I → I,i$ the inclusion
+For any object $I$ and $i ∉ I$, let $ι_i : I → I,i$ denote the inclusion
 map, defined by $ι_i(k) = k$ for every $k ∈ I$.
 
 \begin{definition}[Projection]
@@ -770,8 +780,8 @@ map, defined by $ι_i(k) = k$ for every $k ∈ I$.
 \end{remark}
 
 \begin{definition}[$I$-set]
-  We call $I$-element any tuple indexed by the subsets of $I$: $(u_J)_{J ⊆ I}$.
-  An $I$-set is a set of $I$-elements.  For instance, the elements of a
+  Let an $I$-element be any tuple indexed by the subsets of $I$: $(u_J)_{J ⊆ I}$.
+  An $I$-set is a set of $I$-elements.  For instance, the elements of an
   $\{i,j\}$-set are of the form $u = (u_∅,u_i,u_j,u_{i,j})$.
   Alternatively, such an element can be seen as a tuple $(u_α)$ indexed
   by the projections $α : I → I_α$.
@@ -802,7 +812,7 @@ We use a refined presheaf on $\pI^\opp$ by requiring two further conditions:
     $uα_J = u_J$ for any $J ⊆ I$.
     \label{itm:presheaf-refinement-2}
 \end{enumerate}
-Unless written otherwise, any presheaf in the remaining of this section
+Unless written otherwise, any presheaf in the remainder of this section
 is assumed to satisfy these conditions.
 
 Seeing an $I$-element $u$ as a tuple indexed by projection maps
@@ -820,7 +830,7 @@ together with restriction maps $Aρ → A(ρf)$, $u ↦ uf$ if $f : I → J$
 satisfying $u1 = u$ and $(uf)g = u(fg)$ for any $g : J → K$.
 Furthermore the map $Aρ → A(ρα)$, $u ↦ uα$ is the projection operation.
 
-A term $Γ ⊢ a : A$ is interpreted by a $I$-element $aρ ∈ Aρ$ for each
+A term $Γ ⊢ a : A$ is interpreted by an $I$-element $aρ ∈ Aρ$ for each
 object $I$ and $ρ ∈ Γ(I)$, such that $aρf = a(ρf)$ for any $f : I → J$.
 
 If $Γ⊢$ and $Γ ⊢ A$ we define the interpretation of $Δ = (Γ,x:A)$
@@ -1169,8 +1179,8 @@ to model univalence in type theory. Not only do both models use a
 presheaf, but they also use a category closely connected to the
 underlying category $\pI$.
 This means that all these models have an additional cubical structure.
-We find remarkable that cubical structures are useful for modeling both
-parametricity and univalence.
+We think that it is remarkable that cubical structures are useful for
+modeling both parametricity and univalence.
 \citet{altenkirch2014syntax} give a syntax for
 \citeauthor{bezem2014model}'s Cubical Type Theory, effectively modelling
 univalence by internalization of their model.
