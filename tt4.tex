@@ -11,6 +11,7 @@
 \usepackage{mathpartir}
 \usepackage{fancyref}
 \usepackage{todonotes}
+\usepackage{enumitem,multicol}
 \input{fancyrefs}
 \usepackage{tikz}
 \usetikzlibrary{arrows}
@@ -113,8 +114,10 @@ Indeed \citet{bernardy_proofs_2012} prove such a result as a
 (syntactical) meta-theorem about type systems. However this result is
 not provable internally, \ie, the following proposition is not provable:
 \begin{equation}
+  \hspace{-.25ex}
   \label{eq:param-id}\tag{★}
   (f : (A:U) → A → A) →  (A:U) → (P : A → U) → (x : A)\\ → P\, x → P (f\, A\, x)
+  \hspace{-1.75ex}
 \end{equation}
 
 Therefore users relying on the parametricity conditions have
@@ -267,6 +270,7 @@ We give a few intuitions to interpret the novel syntax, before formally giving t
     \inferrule[NewCol]{Γ⊢ }{ Γ,i:𝕀 ⊢ }
   \end{mathpar}
  
+\vspace{-.5\baselineskip}
 \fbox{$Γ⊢ A$}
  \begin{mathpar}
     \inferrule[Universe]{~}{Γ ⊢ U}
@@ -282,6 +286,7 @@ We give a few intuitions to interpret the novel syntax, before formally giving t
     \inferrule[In-Pred]{Γ ⊢ A \\ Γ,x:A ⊢ P}{Γ, i:𝕀 ⊢ \CTimes i {x:A} P}
  \end{mathpar}
 
+\vspace{-.5\baselineskip}
 \fbox{$Γ⊢ a : A$}
   \begin{mathpar}
     \inferrule[Conv]{Γ ⊢ t:A \\ A = B}{Γ ⊢ t : B}
@@ -295,15 +300,17 @@ We give a few intuitions to interpret the novel syntax, before formally giving t
     \inferrule[Lam]{Γ,x:A ⊢ t : B}{Γ ⊢ λx:A.t : (x:A) → B}
  
     \inferrule[App]{Γ ⊢ t : (x:A) → B[x] \\ Γ ⊢ u : A}{Γ ⊢ t u: B[u]}
-
-    \inferrule[In-Abs]{Γ ⊢ a : \proj i A \\Γ ⊢ p : A \op i a}{Γ, i:𝕀 ⊢ \CP i a p : A}
   \end{mathpar}
   \begin{mathpar}
+    \hspace{-1.5em}
+    \inferrule[In-Abs]{Γ ⊢ a : \proj i A \\Γ ⊢ p : A \op i a}{Γ, i:𝕀 ⊢ \CP i a p : A}
+    \and
     \inferrule[In-Fun]
         {Γ ⊢ t : \projp i {(x:A) → P[x]}\\\\
          Γ ⊢ u : (x:\proj i A) → (x':A \op i x) → P[\CP i x {x'}] \op i t x}
         {Γ, i:𝕀 ⊢ \fp i t u : (x:A) → P[x]}
-
+    \hspace{-1.5em}
+    \\
     \inferrule[Color-Elim]{Γ, i:𝕀 ⊢ a : A}{Γ ⊢ a \param i : A \op i {\proj i a}}
   \end{mathpar}
 \end{definition}
@@ -440,12 +447,14 @@ how can we ensure that all parametricity theorems hold?  The answer is
 that the above relationships hold as isomorphisms.
 %
 We say that $A$ is \emph{isomorphic to} $B$ iff.
+\begin{multicols}{2}
 \begin{enumerate}
   \item there exist $f : A → B$,
   \item there exist $g : B → A$,
   \item for any $x$, $f\, (g\, x) = x$, and
   \item for any $x$, $g\, (f\, x) = x$.
 \end{enumerate}
+\end{multicols}
 This notion of isomorphism is quite strong, because the equality used
 in its definition is the conversion relation (\fref{def:conversion}).
 
@@ -454,6 +463,7 @@ in its definition is the conversion relation (\fref{def:conversion}).
 $U \op i A$ is isomorphic to $A → U$.
 \end{theorem}
 \begin{proof}~
+\begin{multicols}{2}
   \begin{enumerate}
   \item
     $\begin{array}[t]{l@{\,}l}
@@ -465,6 +475,9 @@ $U \op i A$ is isomorphic to $A → U$.
       g &: (P : A → U) → U \op i A\\
       g &P = (\CTimes i {x:A} (P x)) \param i
     \end{array}$
+  \end{enumerate}
+\end{multicols}
+\begin{enumerate}[start=3]
   \item $\CP i A {(\CTimes i {y:A} (P y)) \param i} \op i x = (\CTimes i {y:A} (P y)) \op i x = P x$
     by \textsc{Pair-Param} then \textsc{Pair-Pred}, and we conclude by
     $η$-contraction.
@@ -517,7 +530,8 @@ parametricity for the polymorphic identity and Church-encoded natural numbers.
 \begin{example}
   \label{ex:poly-id}
   Any function $f : (X : U) → X → X$ is the polymorphic identity, \ie,
-  its output is Leibniz-equal to its second input. Assume a context
+  its output is Leibniz-equal to its second input. Assume a
+  context\\[-.75\baselineskip]%
   $$Γ = f : (X : U) → X → X,\enspace
     A : U,\enspace
     P : A → U,\enspace
@@ -529,7 +543,7 @@ parametricity for the polymorphic identity and Church-encoded natural numbers.
   %(because $Γ ⊢ (\CTimes i {x:A} {(P\,x)}) \op i a = P\,a$)
   $Γ, i:𝕀⊢\CP i a p : \CTimes i {x:A} {(P\,x)}$, thus
   $Γ, i:𝕀⊢f\, (\CTimes i {x:A} {(P\,x)})\, {\CP i a p} : \CTimes i {x:A} {(P\,x)}$
-  and finally
+  and finally\\[-1.5\baselineskip]%
   \begin{align*}
    Γ ⊢(f\, (\CTimes i {x:A} {(P\,x)})\, {\CP i a p}) \param i
    &: (\CTimes i {x:A} {(P\,x)}) \op i \proj i {(f\, (\CTimes i {x:A} {(P\,x)})\, {\CP i a p})} \\
@@ -541,7 +555,7 @@ parametricity for the polymorphic identity and Church-encoded natural numbers.
 \begin{example}
   \label{ex:church-nat}
 Let $N = (X : U) → X → (X → X) → X$.
-Proving (unary) parametricity for $N$ means that, assuming a context $Γ$
+Proving (unary) parametricity for $N$ means that, assuming a context $Γ$\\[-.75\baselineskip]%
   $$f : N,\enspace
     A : U,\enspace
     P : A → U,\enspace
@@ -556,7 +570,7 @@ Indeed
   and by \textsc{Pair-Pred}
   $Γ, i:𝕀⊢ \CP i z {z'} : \CTimes i {x:A} {(P\,x)}$ and
   $Γ, i:𝕀⊢ \fp i s {s'} : \CTimes i {x:A} {(P\,x)} → \CTimes i {x:A} {(P\,x)}$,
-thus
+thus\\[-1.5\baselineskip]
   \begin{align*}
     &Γ, i:𝕀 ⊢ f\, (\CTimes i {x:A} {(P\,x)})\, {\CP i z {z'}}\, \fp i s {s'} : \CTimes i {x:A} {(P\,x)}\text{, and finally}\\
     &Γ ⊢ (f\, (\CTimes i {x:A} {(P\,x)})\, {\CP i z {z'}}\, \fp i s {s'}) \param i
@@ -593,14 +607,14 @@ proof of their type.  The following example illustrates this technique:
 
   Let $T = \CTimes i {x:A} {(P\,x)}$.
 %  and $Δ = Γ, h:A → A, h': (T → T) \op i h$.
-  We have $Γ, i:𝕀 ⊢ T$ and
+  We have $Γ, i:𝕀 ⊢ T$ and\\[-1.3\baselineskip]%
   \begin{align*}
     \!\!\!&Γ, h:A → A, h': (T → T) \op i h, x : A, x' : P\, x, i:𝕀 ⊢ \CP i h {h'} : T → T\text{, hence}
     \\
     \!\!\!&Γ, h:A → A, h': (T → T) \op i h, x : A, x' : P\, x ⊢ (\CP i h {h'}\, \CP i x {x'}) \param i : T \op i h\, x = P\, (h\, x)
     \\
     \!\!\!&Γ, h:A → A, h': (T → T) \op i h ⊢ g'\, h\, (λ (x : A).\, λ (x' : P\, x).\, (\CP i h {h'}\, \CP i x {x'}) \param i) : P\, (g\, h)
-  \end{align*}
+  \end{align*}\\[-1.3\baselineskip]%
   Let $g'' = λ h.\, λ h'.\, g'\, h\, λ (x : A).\, λ (x' : P\, x).\, (\CP i h {h'}\, \CP i x {x'}) \param i$.
   Since we have $Γ ⊢ g'' : (h:A → A) → (T → T) \op i h → P\, (g\, h)$
   we can pair it with $g$ and
@@ -610,9 +624,9 @@ proof of their type.  The following example illustrates this technique:
 
 \subsection{Iterating Parametricity}
 \label{sec:nested-parametricity}
-In our system, one can use parametricity generically as follows:
+In our system, one can use parametricity generically as follows:\\[-.75\baselineskip]%
 $$\begin{array}[t]{l@{\,}l}
-  p &: (X:U) → (x:X) → X \op i x\\
+  p &: (X:U) → (x:X) → X \op i x\\[-1ex]%
   p & X\, x = x\param i
 \end{array}$$
 We have already seen that $A \op i $ corresponds to the parametricity
@@ -623,10 +637,11 @@ the \textsc{Color-elim} rule introduces a color, limiting the depth of
 nested applications of parametricity can trivially be enforced in our
 system by limiting the number of free colors in the context.)
 We can iterate the operator $A \op {·} $ to construct
-relations between parametricity witnesses. That is, given a context with
+relations between parametricity witnesses. That is, given a context
+with\\[-.75\baselineskip]%
 $$x :A,\enspace
   y : A \op j x,\enspace
-  z : A \op i x,$$
+  z : A \op i x,$$\\[-.75\baselineskip]%
 the type $A \op i \CP j x y \op j z$ is well formed ($∋$ is left
 associative), and can be understood as a binary relation
 between the parametricity \emph{proofs} $y$ and $z$. The following results about this relation illustrate the expressivity of our system.
@@ -635,14 +650,11 @@ between the parametricity \emph{proofs} $y$ and $z$. The following results about
 If the type $A$ does not depend on either $i$ or $j$, the relation $λy z. A \op i \CP j x y \op j z$ is symmetric.
 \end{theorem}
 \begin{proof}
-  We first construct the proof term:
-  \vspace{-.5\baselineskip}
+  We first construct the proof term:\\[-1.5\baselineskip]%
   \begin{align*}
     &\sigma_1 : (x:A) → (y : A \op i x) → (z : A \op i x) → A \op i \CP j x y \op j z → A \op j \CP i x z \op i y \\
     &\sigma_1\, x\, y\, z\, w = \CP i {\CP j x y}{\CP j z w} \param j \param i
-  \end{align*}
-
-  \vspace{-.5\baselineskip}\noindent
+  \end{align*}\\[-1.5\baselineskip]%
   And, by α-equivalence on colors, $A \op j \CP i x z \op i y = A \op i \CP j x z \op j y$.
 \end{proof}
 
@@ -661,7 +673,7 @@ If the type $A$ does not depend on either $i$ or $j$, the relation $λy z. A \op
   $\proj i {t'} = \CP j x y = \proj i t$,
   $\proj j {t'} = \CP i x z = \proj j t$, and
   $\projp i {t\param j} = y$.
-We now continue to reason by deduction:
+We now continue to reason by deduction:\\[-1.75\baselineskip]%
   \begin{align*}
     w' &= t \param j \param i & \text{By def}\\
     {\CP i y {w'}} &= t\param j & \text{Because $\projp i {t\param j} = y $}  \\
@@ -681,13 +693,19 @@ We now continue to reason by deduction:
     \CP i x z \op i y$ rather than an isomorphism.
   % \item conversion rules such as $\CP j a b \param i = \CP j {a \param
   %     i}{b \param i}$.
- The answer is that the equation
-  $$A \op i \CP j x y \op j z = A \op j \CP i x z \op i y$$  
-  is inconsistent: in particular for $A = U$ one gets
-  $$U \op i \CP j X P \op j Q = U \op j \CP i X Q \op i P$$
+  The answer is that the equation%
+  \\[-.5\baselineskip]%
+  $$A \op i \CP j x y \op j z = A \op j \CP i x z \op i y$$%
+  \\[-.5\baselineskip]%
+  is inconsistent: in particular for $A = U$ one gets%
+  \\[-.5\baselineskip]%
+  $$U \op i \CP j X P \op j Q = U \op j \CP i X Q \op i P$$%
+  \\[-.5\baselineskip]%
   for arbitrary $P$ and $Q$ of type $U \op i X$.  The above equality
-  in turn implies
+  in turn implies%
+  \\[-.5\baselineskip]%
   $$(x:X) → P x → Q x → U = (x:X) → Q x → P x → U$$
+  \\[-.5\baselineskip]%
   for arbitrary predicates $P$ and $Q$ over $X$, which is obviously
   inconsistent.
 \end{remark}
@@ -698,13 +716,15 @@ We now continue to reason by deduction:
   $A \op i \CP j a {a \param i} \op j a'$.
 \end{theorem}
 \begin{proof}
-We can construct the following closed term:
+We can construct the following closed term:%
+  \\[-1.75\baselineskip]%
   \begin{align*}
     &q   : (A:U) → (x:A) → (x':A \op i x) → A \op i \CP j x {x \param i} \op j x'\\
     &q   : (A:U) → (x:A) → (x':A \op i x) → A \op i x \op j x' &\text{by \textsc{Surj-Param}}\\
     &q\, A\, x\, x' = x' \param j
-  \end{align*}
-The result is obtained by substituting $a$ for $x$ and $a'$ for $x'$.
+  \end{align*}%
+  \\[-1.5\baselineskip]%
+  The result is then obtained by substituting $a$ for $x$ and $a'$ for $x'$.
 \end{proof}
 
 To conclude the section we note that by iterating parametricity $n$
@@ -734,7 +754,8 @@ In this section we show how to interpret our type theory by a presheaf model.
   If $f : I → J$ and $g : J → K$, we define the composition as the
   Kleisli one: $fg : I → K$
   as $fg(i) = 0$ if $f(i) = 0$ and $fg(i) = g(f(i))$ if $f(i) ∈ J$.
-  We write $1_I : I → I$ for the identity map, and define it as $1_I(i) = i$ for each $i ∈ I$.
+  We write $1_I : I → I$ for the identity map.
+  % and define it as $1_I(i) = i$ for each $i ∈ I$.
   It is easy to check that \pI{} is a category (see \cite[ex.~9.7
   p.~176]{PittsAM:nomsns} for another description of this category).
 \end{definition}
@@ -970,7 +991,7 @@ We proceed to interpret each type construction.
   non-empty $J ⊆ I$.
 \end{remark}
 
-\bigskip
+\medskip
 We now describe how to interpret terms.
 \begin{description}
   \item[\sc Var.]
@@ -1026,7 +1047,7 @@ We now describe how to interpret terms.
 
   \begin{description}
     \item[\sc Pair-Param.]
-      Let $ρ ∈ Γ(I)$ and $j = \fresh I$.  We have
+      Let $ρ ∈ Γ(I)$ and $j = \fresh I$.  We have\\[-1.5\baselineskip]%
       \begin{align*}
         &v ∈ ({((x:A)\times_i P)} \op {i} a)ρ
         \\
@@ -1068,7 +1089,7 @@ We now describe how to interpret terms.
   we have
   (leaving out the context interpretation $ρ$ for the sake of
   readability)
-  on the one hand
+  on the one hand\\[-1.5\baselineskip]%
   \begin{align*}
     &v ∈ (U \op i (X ,_j P) \op j Q) ρ
     \\
@@ -1077,9 +1098,8 @@ We now describe how to interpret terms.
     \text{ iff. }& ((X ,_j P)[ρ,j=k] ,_l (Qρ ,_k v)) ∈ U(l,k)
     \\
     \text{ iff. }& ((Xρ ,_k Pρ) ,_l (Qρ ,_k v)) ∈ U(l,k)
-  \end{align*}
-
-  while on the other hand
+  \end{align*}\\[-1.5\baselineskip]%
+  while on the other hand\\[-1.5\baselineskip]%
   \begin{align*}
     &v ∈ (U \op j (X ,_i Q) \op i P) ρ
     \\
@@ -1088,9 +1108,8 @@ We now describe how to interpret terms.
     \text{ iff. }& ((X ,_i Q)[ρ,i=k] ,_l (Pρ ,_k v)) ∈ U(k,l)
     \\
     \text{ iff. }& ((Xρ ,_k Qρ) ,_l (Pρ ,_k v)) ∈ U(k,l)
-  \end{align*}
-
-  Hence $(U \op i (X ,_j P) \op j Q) ρ ≠ (U \op j (X ,_i Q) \op i P) ρ$
+  \end{align*}\\[-1.5\baselineskip]%
+  hence $(U \op i (X ,_j P) \op j Q) ρ ≠ (U \op j (X ,_i Q) \op i P) ρ$
   since the map $U(l,k) → U(k,l)$, $u ↦ ug$ where $g(k) = l$ and $g(l)=k$
   is not the identity.
 \end{remark}
@@ -1098,7 +1117,7 @@ We now describe how to interpret terms.
 
 \begin{theorem}[Validity]
   If $Γ ⊢ a : A$ then $aρ ∈ Aρ$ for any $ρ ∈ Γ(I)$.
-\end{theorem}
+\end{theorem}\vspace{-.5\baselineskip}
 \begin{proof}
   By induction on the typing judgment.  We only show the cases \textsc{In-Abs} and \textsc{Color-Elim}.  \textsc{In-Fun} is similar to the former, and the other
   cases match the usual proof (using \fref{thm:convertible-in-model} for \textsc{Conv}).
