@@ -126,7 +126,7 @@ Wrong! Wrong! Wrong!
 
 in the above x.i re-binds i, so this does not work.v
 
-TODO: should we discuss this in the paper? It's a thorny problem that
+DONE: should we discuss this in the paper? It's a thorny problem that
 confused us before -- JP.
 I got the remark at TYPES.  Might help to write that it doesn't work,
 but we don't have enough space to discuss why (except maybe an informal

@@ -377,6 +377,12 @@ congruence containing the following rules.
   \textsc{Pair-App}, \textsc{Surj-Param}, \textsc{Surj-Fun} and
   \textsc{Surj-Typ} needs to end with the color binding $i : 𝕀$.
 \end{remark}
+\begin{remark}
+  Although it looks as if $\fp i t u$ can be definable as
+  $λx. \CP i {t\,x} {u\, x\, x\param i}$, the latter rebinds $i$, and
+  does not allow us to prove parametricity for the Church-encoded
+  naturals (\fref{ex:church-nat}) for instance.
+\end{remark}
 
 %\begin{corollary}[Any term can be seen as a pair of a realizer and a parametricity proof]
 %  \label{cor:equalities}
