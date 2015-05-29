@@ -149,13 +149,13 @@ Our technical contributions are as follows:
   with application.)
   The name $i$ in the above construction is what we call a “color”;
   we want internalized parametricity not only for LF but also for the
-  extended calculus, and as explains in
-  \cite{bernardy_type-theory_2013}, colors enable nested
+  extended calculus, and as explains
+  in~\cite{bernardy_type-theory_2013}, colors enable nested
   parametricity by keeping track of the different uses
   (this is analogous to building hypercubes and accessing
-  their vertices as in \citep{bernardy_computational_2012}).
-  However, unlike previous type theories with internalized parametricity
-  \citep{bernardy_computational_2012, bernardy_type-theory_2013}, the
+  their vertices as in~\citep{bernardy_computational_2012}).
+  However, unlike previous type theories with internalized
+  parametricity~\citep{bernardy_computational_2012, bernardy_type-theory_2013}, the
   system presented here does not \emph{compute} parametricity types:
   for instance, parametricity conditions are \emph{isomorphic to}
   functions, rather than functions themselves.  (As shown in
@@ -185,8 +185,8 @@ presented here is that terms may depend on (a finite number of)
 colors.  For any term $a$, we note $\support{a}$ the set of free colors
 in $a$.
 
-We do not attempt to explain what lead us to consider Colored Type
-Theory; for that we refer to \cite{bernardy_type-theory_2013} instead.
+We do not attempt to explain what lead us to consider a colored type
+theory; for that we refer to \cite{bernardy_type-theory_2013} instead.
 \begin{definition}[Syntax of terms and contexts]
   \begin{align*}
     A,B,P,T,a,p,t,u
@@ -395,9 +395,9 @@ congruence containing the following rules.
 
 \vspace{-.25\baselineskip}
 \begin{remark}
-  In order to be well-typed any context for the conclusion of the
+  In order to be well-typed, any context for the conclusion of the
   \textsc{Pair-App}, \textsc{Surj-Param}, \textsc{Surj-Fun} and
-  \textsc{Surj-Typ} needs to end with a color binding.
+  \textsc{Surj-Typ} rules needs to end with a color binding.
 \end{remark}
 \begin{remark}
   Although it looks as if $\fp i t u$ can be definable as
@@ -426,7 +426,7 @@ conversion relation is decidable.
 %\todo{more examples: any $f : U → Bool$ is constant,…}
 In this section we prove that our system properly internalizes unary
 parametricity; it could naturally be extended to the $n$-ary case by
-using further special symbols $0,1,…,n-1$.
+using further special symbols $1,…,n-1$.
 We also illustrate the system by giving a few simple
 proofs relying on parametricity (including iterated parametricity).
 For the sake of readability, we leave out the distinction between types
@@ -532,11 +532,11 @@ parametricity for the polymorphic identity and Church-encoded natural numbers.
   Any function $f : (X : U) → X → X$ is the polymorphic identity, \ie,
   its output is Leibniz-equal to its second input. Assume a
   context\\[-.75\baselineskip]%
-  $$Γ = f : (X : U) → X → X,\enspace
+  $$Γ = (f : (X : U) → X → X,\enspace
     A : U,\enspace
     P : A → U,\enspace
     a : A,\enspace
-    p : P\, a$$
+    p : P\, a).$$
   Then
   $Γ, i:𝕀⊢\CTimes i {x:A} {(P\,x)}$
   and by \textsc{Pair-Pred}
@@ -588,7 +588,7 @@ does not reduce.
 
 At this point one may wonder, since a new syntactic construction was
 introduced for function types, whether yet another construction is required
-for higher order functions.  This objection is preemptively refuted by
+for higher order functions.  This objection was preemptively refuted by
 \fref{thm:iso-fun}: it turns out that $\fp i t u$ can be combined
 with $\CP i a p$ to pair higher order functions with the parametricity
 proof of their type.  The following example illustrates this technique:
@@ -629,7 +629,7 @@ $$\begin{array}[t]{l@{\,}l}
   p &: (X:U) → (x:X) → X \op i x\\[-1ex]%
   p & X\, x = x\param i
 \end{array}$$
-We have already seen that $A \op i $ corresponds to the parametricity
+We have already seen that $A \op i $ corresponds to a parametricity
 predicate for the type $A$.
 As we hinted at in the introduction, the color index $i$ allows us to
 distinguish each application of parametricity.  (As a side remark, since
@@ -675,11 +675,11 @@ If the type $A$ does not depend on either $i$ or $j$, the relation $λy z. A \op
   $\projp i {t\param j} = y$.
 We now continue to reason by deduction:\\[-1.75\baselineskip]%
   \begin{align*}
-    w' &= t \param j \param i & \text{By def}\\
-    {\CP i y {w'}} &= t\param j & \text{Because $\projp i {t\param j} = y $}  \\
-    t'\param j &= t\param j & \text{By def}\\
-    t' &= t &\text{Because $\proj j {t'} = \proj j t$} \\
-    t' &= \CP i {\CP j x y} {\CP j z w} & \text{By def} \\
+    w' &= t \param j \param i & \text{by def.}\\
+    {\CP i y {w'}} &= t\param j & \text{because $\projp i {t\param j} = y $}  \\
+    t'\param j &= t\param j & \text{by def.}\\
+    t' &= t &\text{because $\proj j {t'} = \proj j t$} \\
+    t' &= \CP i {\CP j x y} {\CP j z w} & \text{by def.} \\
     t'\param i &= \CP j z w \\
     t'\param i\param j &= w
   \qedhere
@@ -704,7 +704,7 @@ We now continue to reason by deduction:\\[-1.75\baselineskip]%
   for arbitrary $P$ and $Q$ of type $U \op i X$.  The above equality
   in turn implies%
   \\[-.5\baselineskip]%
-  $$(x:X) → P x → Q x → U = (x:X) → Q x → P x → U$$
+  $$(x:X) → P\, x → Q\, x → U = (x:X) → Q\, x → P\, x → U$$
   \\[-.5\baselineskip]%
   for arbitrary predicates $P$ and $Q$ over $X$, which is obviously
   inconsistent.
@@ -830,16 +830,19 @@ We use a refined presheaf on $\pI^\opp$ by requiring two further conditions:
     \label{itm:presheaf-refinement-1}
   \item for any projection map $α : I → I_α$, the restriction
     map $F(I) → F(I_α)$, $u ↦ uα$ is the projection operation, \ie,
-    $uα_J = u_J$ for any $J ⊆ I$.
+    $uα_J = u_J$ for any $J ⊆ I$
+    (alternatively, seeing $I$-elements as tuples indexed by projection
+    maps, $(uα)_β = u_{αβ}$).
     \label{itm:presheaf-refinement-2}
 \end{enumerate}
 Unless written otherwise, any presheaf in the remainder of this section
 is assumed to satisfy these conditions.
+The refinement is necessary for the interpretation of some of our
+syntactic constructions.  Indeed, without it, it is not clear how to
+validate the equality \textsc{Pair-Pred}:
+${{(\CTimes i {x:A} P[x])} \op i a = P[a]}$.
 
-Seeing an $I$-element $u$ as a tuple indexed by projection maps
-$α : I → I_α$, the second requirement can be written $(uα)_β = u_{αβ}$.
-
-\smallskip
+\medskip
 A context $Γ ⊢$ is interpreted by a (non-refined) presheaf on $\pI^\opp$, \ie,
 by a family of sets $Γ(I)$ for each object $I$, together with
 restriction maps $Γ(I) → Γ(J)$, $ρ ↦ ρf$ for $f : I → J$ satisfying the
@@ -884,15 +887,8 @@ $[ρ,i=0]f = [ρf,i=0]$ and $[ρ,i=j]f = [ρ(f-j),i=f(j)]$.
 %  \end{align*}
 \end{remark}
 
-The above refinement on presheaves (conditions
-(\ref{itm:presheaf-refinement-1}) and
-(\ref{itm:presheaf-refinement-2})) is necessary for the interpretation
-of some of our syntactic constructions.  Indeed, without this refinement,
-it is not clear how to validate the equality \textsc{Pair-Pred}:
-${{(\CTimes i {x:A} P[x])} \op i a = P[a]}$.
-
 \smallskip
-The semantics we define satisfies the substitution law. That is, if $Γ,x:A ⊢ B$
+The semantics we define satisfy the substitution law. That is, if $Γ,x:A ⊢ B$
 and $Γ ⊢ a:A$ then for any $ρ ∈ Γ(I)$ we have
 $B[a]ρ = B⟨ρ,x=aρ⟩$.
 It also satisfies the substitution law on colors, \ie, if $Γ,i:𝕀 ⊢ A$
